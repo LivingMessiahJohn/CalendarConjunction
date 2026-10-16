@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[FlattenByDates]
     [MoonHalfWaxing]   BIT            NOT NULL,
     [MoonFull]         BIT            NOT NULL,
     [MonthDescription] NVARCHAR (100) NOT NULL,
-    CONSTRAINT [PK_FlattenByDates] PRIMARY KEY CLUSTERED ([GregorianDate] ASC, [ImportId] ASC),
+    CONSTRAINT [PK_FlattenByDates] PRIMARY KEY CLUSTERED ([GregorianDate] ASC),
     CONSTRAINT [CK_FlattenByDates_YomDay] CHECK ([YomDay] BETWEEN 1 AND 30)
 );
 GO

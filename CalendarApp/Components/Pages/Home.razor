@@ -60,21 +60,6 @@ else
         <TemplateColumn Title="Day" Sortable="false" Align="Align.End">
             @context.YomDay
         </TemplateColumn>
-        <TemplateColumn Title="Notes" Sortable="false">
-            <div class="notes-cell">@context.YomNote</div>
-        </TemplateColumn>
-        <TemplateColumn Title="RKErev" Sortable="false" Align="Align.Center">
-            @if (context.RoshKodeshErev)
-            {
-                <i class="fa-solid fa-check" title="Rosh Kodesh evening"></i>
-            }
-        </TemplateColumn>
-        <TemplateColumn Title="RKDay" Sortable="false" Align="Align.Center">
-            @if (context.RoshKodeshDay)
-            {
-                <i class="fa-solid fa-check" title="Rosh Kodesh day"></i>
-            }
-        </TemplateColumn>
         <TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
             @if (context.MoonHalfWaning)
             {
@@ -88,6 +73,21 @@ else
             {
                 <span class="moon-mark" title="Full moon">○</span>
             }
+        </TemplateColumn>
+        <TemplateColumn Title="RKErev" Sortable="false" Align="Align.Center">
+            @if (context.RoshKodeshErev)
+            {
+                <i class="fa-solid fa-check" title="Rosh Kodesh evening"></i>
+            }
+        </TemplateColumn>
+        <TemplateColumn Title="RKDay" Sortable="false" Align="Align.Center">
+            @if (context.RoshKodeshDay)
+            {
+                <i class="fa-solid fa-check" title="Rosh Kodesh day"></i>
+            }
+        </TemplateColumn>
+        <TemplateColumn Title="Notes" Sortable="false">
+            <div class="notes-cell">@context.YomNote</div>
         </TemplateColumn>
     </QuickGrid>
 }
