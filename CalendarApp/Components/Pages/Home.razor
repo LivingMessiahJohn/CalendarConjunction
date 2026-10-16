@@ -1,0 +1,160 @@
+@page "/"
+@inject FlattenByDatesReader Reader
+
+<PageTitle>Calendar</PageTitle>
+
+<h1 class="h3 mb-3">
+    <i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>
+    Calendar 5862–5867
+</h1>
+
+@if (loadError is not null)
+{
+    <div class="alert alert-danger" role="alert">@loadError</div>
+}
+else if (rows is null)
+{
+    <p>Loading calendar…</p>
+}
+else
+{
+    <div class="row g-2 align-items-end mb-3">
+        <div class="col-auto">
+            <label class="form-label" for="year-filter">Year</label>
+            <select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
+                <option value="">All</option>
+                @foreach (var year in years)
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <label class="form-label" for="date-filter">Date</label>
+            <input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
+        </div>
+        <div class="col-auto">
+            <label class="form-label" for="month-filter">Month</label>
+            <select id="month-filter" class="form-select" @bind="monthFilter" @bind:after="OnFilterChanged">
+                <option value="">All</option>
+                @foreach (var month in months)
+                {
+                    <option value="@month">@month</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <span class="form-label d-block">&nbsp;</span>
+            <span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
+        </div>
+    </div>
+
+    <QuickGrid TGridItem="CalendarDayRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
+        <PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
+        <TemplateColumn Title="Date" Sortable="false">
+            @context.DateText
+        </TemplateColumn>
+        <TemplateColumn Title="Month" Sortable="false">
+            @context.Month
+        </TemplateColumn>
+        <TemplateColumn Title="Day" Sortable="false" Align="Align.End">
+            @context.YomDay
+        </TemplateColumn>
+        <TemplateColumn Title="Notes" Sortable="false">
+            <div class="notes-cell">@context.YomNote</div>
+        </TemplateColumn>
+        <TemplateColumn Title="RKErev" Sortable="false" Align="Align.Center">
+            @if (context.RoshKodeshErev)
+            {
+                <i class="fa-solid fa-check" title="Rosh Kodesh evening"></i>
+            }
+        </TemplateColumn>
+        <TemplateColumn Title="RKDay" Sortable="false" Align="Align.Center">
+            @if (context.RoshKodeshDay)
+            {
+                <i class="fa-solid fa-check" title="Rosh Kodesh day"></i>
+            }
+        </TemplateColumn>
+        <TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
+            @if (context.MoonHalfWaning)
+            {
+                <span class="moon-mark" title="Half waning">◖</span>
+            }
+            @if (context.MoonHalfWaxing)
+            {
+                <span class="moon-mark" title="Half waxing">◗</span>
+            }
+            @if (context.MoonFull)
+            {
+                <span class="moon-mark" title="Full moon">○</span>
+            }
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private QuickGrid<CalendarDayRow>? grid;
+
+    private IReadOnlyList<CalendarDayRow>? rows;
+    private string? loadError;
+    private string yearFilter = "";
+    private string monthFilter = "";
+    private DateOnly? dateFilter;
+
+    private IEnumerable<int> years => rows is null
+        ? []
+        : rows.Select(row => row.Year).Distinct().Order();
+
+    private IEnumerable<string> months => rows is null
+        ? []
+        : rows.Select(row => row.GregorianDate.Month)
+            .Distinct()
+            .Order()
+            .Select(month => new DateOnly(2000, month, 1).ToString("MMM", System.Globalization.CultureInfo.InvariantCulture));
+
+    private int FilteredCount => FilteredRows().Count();
+
+    private IEnumerable<CalendarDayRow> FilteredRows() => (rows ?? []).Where(row =>
+        (yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
+        && (dateFilter is null || row.GregorianDate == dateFilter)
+        && (monthFilter.Length == 0 || row.Month == monthFilter));
+
+    private ValueTask<GridItemsProviderResult<CalendarDayRow>> ProvideItems(GridItemsProviderRequest<CalendarDayRow> request)
+    {
+        var items = FilteredRows().ToList();
+        var count = request.Count ?? items.Count;
+        var page = items.Skip(request.StartIndex).Take(count).ToList();
+        return ValueTask.FromResult(GridItemsProviderResult.From<CalendarDayRow>(page, items.Count));
+    }
+
+    private string DateFilterValue => dateFilter?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            rows = await Reader.GetAllAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            loadError = ex.Message;
+        }
+    }
+
+    private async Task OnFilterChanged()
+    {
+        if (grid is not null)
+        {
+            await grid.RefreshDataAsync();
+        }
+    }
+
+    private Task OnDateChanged(ChangeEventArgs change)
+    {
+        var text = change.Value?.ToString();
+        dateFilter = string.IsNullOrWhiteSpace(text)
+            ? null
+            : DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+        return OnFilterChanged();
+    }
+}

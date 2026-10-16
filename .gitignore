@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+.playwright-mcp/
+*.user
+*.dbmdl
+*.jfm
+*.dacpac
+*.log
