@@ -34,14 +34,21 @@ else
             <input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
         </div>
         <div class="col-auto">
-            <label class="form-label" for="month-filter">Month</label>
-            <select id="month-filter" class="form-select" @bind="monthFilter" @bind:after="OnFilterChanged">
+            <label class="form-label" for="moon-filter">Moon</label>
+            <select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
                 <option value="">All</option>
-                @foreach (var month in months)
+                @foreach (var moon in Moon.List.Where(moon => moon != Moon.None).OrderBy(moon => moon.Value))
                 {
-                    <option value="@month">@month</option>
+                    <option value="@moon.Value">@moon.Name</option>
                 }
             </select>
+        </div>
+        <div class="col-auto">
+            <span class="form-label d-block">&nbsp;</span>
+            <div class="form-check">
+                <input id="relevant-filter" class="form-check-input" type="checkbox" @bind="relevantOnly" @bind:after="OnFilterChanged" />
+                <label class="form-check-label" for="relevant-filter">Relevant Data</label>
+            </div>
         </div>
         <div class="col-auto">
             <span class="form-label d-block">&nbsp;</span>
@@ -51,39 +58,17 @@ else
 
     <QuickGrid TGridItem="CalendarDayRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
         <PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
+        <PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
         <TemplateColumn Title="Date" Sortable="false">
             @context.DateText
-        </TemplateColumn>
-        <TemplateColumn Title="Month" Sortable="false">
-            @context.Month
         </TemplateColumn>
         <TemplateColumn Title="Day" Sortable="false" Align="Align.End">
             @context.YomDay
         </TemplateColumn>
         <TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
-            @if (context.MoonHalfWaning)
+            @if (Moon.FromValue(context.MoonId) is { Image.Length: > 0 } moon)
             {
-                <span class="moon-mark" title="Half waning">◖</span>
-            }
-            @if (context.MoonHalfWaxing)
-            {
-                <span class="moon-mark" title="Half waxing">◗</span>
-            }
-            @if (context.MoonFull)
-            {
-                <span class="moon-mark" title="Full moon">○</span>
-            }
-        </TemplateColumn>
-        <TemplateColumn Title="RKErev" Sortable="false" Align="Align.Center">
-            @if (context.RoshKodeshErev)
-            {
-                <i class="fa-solid fa-check" title="Rosh Kodesh evening"></i>
-            }
-        </TemplateColumn>
-        <TemplateColumn Title="RKDay" Sortable="false" Align="Align.Center">
-            @if (context.RoshKodeshDay)
-            {
-                <i class="fa-solid fa-check" title="Rosh Kodesh day"></i>
+                <img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
             }
         </TemplateColumn>
         <TemplateColumn Title="Notes" Sortable="false">
@@ -98,26 +83,25 @@ else
     private IReadOnlyList<CalendarDayRow>? rows;
     private string? loadError;
     private string yearFilter = "";
-    private string monthFilter = "";
+    private string moonFilter = "";
     private DateOnly? dateFilter;
+    private bool relevantOnly = true;
 
     private IEnumerable<int> years => rows is null
         ? []
         : rows.Select(row => row.Year).Distinct().Order();
-
-    private IEnumerable<string> months => rows is null
-        ? []
-        : rows.Select(row => row.GregorianDate.Month)
-            .Distinct()
-            .Order()
-            .Select(month => new DateOnly(2000, month, 1).ToString("MMM", System.Globalization.CultureInfo.InvariantCulture));
 
     private int FilteredCount => FilteredRows().Count();
 
     private IEnumerable<CalendarDayRow> FilteredRows() => (rows ?? []).Where(row =>
         (yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
         && (dateFilter is null || row.GregorianDate == dateFilter)
-        && (monthFilter.Length == 0 || row.Month == monthFilter));
+        && (moonFilter.Length == 0 || row.MoonId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
+        && (!relevantOnly || HasMoonOrNote(row)));
+
+    private static bool HasMoonOrNote(CalendarDayRow row) =>
+        Moon.FromValue(row.MoonId).Image.Length > 0
+        || !string.IsNullOrWhiteSpace(row.YomNote);
 
     private ValueTask<GridItemsProviderResult<CalendarDayRow>> ProvideItems(GridItemsProviderRequest<CalendarDayRow> request)
     {
