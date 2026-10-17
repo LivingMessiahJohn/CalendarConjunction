@@ -16,11 +16,7 @@ public sealed class FlattenByDatesReader(IConfiguration configuration)
                 GregorianDate,
                 YomDay,
                 YomNote,
-                RoshKodeshErev,
-                RoshKodeshDay,
-                MoonHalfWaning,
-                MoonHalfWaxing,
-                MoonFull,
+                MoonId,
                 MonthDescription
             FROM dbo.FlattenByDates
             ORDER BY GregorianDate, YomDay;
@@ -41,12 +37,8 @@ public sealed class FlattenByDatesReader(IConfiguration configuration)
                 GregorianDate = DateOnly.FromDateTime(reader.GetDateTime(1)),
                 YomDay = reader.GetByte(2),
                 YomNote = reader.IsDBNull(3) ? null : reader.GetString(3),
-                RoshKodeshErev = reader.GetBoolean(4),
-                RoshKodeshDay = reader.GetBoolean(5),
-                MoonHalfWaning = reader.GetBoolean(6),
-                MoonHalfWaxing = reader.GetBoolean(7),
-                MoonFull = reader.GetBoolean(8),
-                MonthDescription = reader.GetString(9)
+                MoonId = reader.GetInt32(4),
+                MonthDescription = reader.GetString(5)
             });
         }
 

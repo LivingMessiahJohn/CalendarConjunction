@@ -11,11 +11,6 @@ h1:focus {
     white-space: normal;
 }
 
-.moon-mark {
-    font-size: 1.25rem;
-    line-height: 1;
-}
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
