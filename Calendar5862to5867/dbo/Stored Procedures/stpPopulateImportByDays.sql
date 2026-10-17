@@ -9,7 +9,7 @@
     RoshKodeshDay is stored here. Create-FlattenByDates.sql uses it only
     to choose which duplicate Yom 1 to keep, then drops it.
 */
-CREATE OR ALTER PROCEDURE [dbo].[stpPopulateImportByDays]
+CREATE PROCEDURE [dbo].[stpPopulateImportByDays]
 AS
 BEGIN
     SET NOCOUNT ON;
