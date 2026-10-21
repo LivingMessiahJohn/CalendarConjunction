@@ -4,141 +4,141 @@
 <PageTitle>Calendar</PageTitle>
 
 <h1 class="h3 mb-3">
-    <i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>
-    Calendar 5862–5867
+	<i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>
+	Calendar 5862–5867
 </h1>
 
 @if (loadError is not null)
 {
-    <div class="alert alert-danger" role="alert">@loadError</div>
+	<div class="alert alert-danger" role="alert">@loadError</div>
 }
 else if (rows is null)
 {
-    <p>Loading calendar…</p>
+	<p>Loading calendar…</p>
 }
 else
 {
-    <div class="row g-2 align-items-end mb-3">
-        <div class="col-auto">
-            <label class="form-label" for="year-filter">Year</label>
-            <select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
-                <option value="">All</option>
-                @foreach (var year in years)
-                {
-                    <option value="@year">@year</option>
-                }
-            </select>
-        </div>
-        <div class="col-auto">
-            <label class="form-label" for="date-filter">Date</label>
-            <input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
-        </div>
-        <div class="col-auto">
-            <label class="form-label" for="moon-filter">Moon</label>
-            <select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
-                <option value="">All</option>
-                @foreach (var moon in Moon.List.Where(moon => moon != Moon.None).OrderBy(moon => moon.Value))
-                {
-                    <option value="@moon.Value">@moon.Name</option>
-                }
-            </select>
-        </div>
-        <div class="col-auto">
-            <span class="form-label d-block">&nbsp;</span>
-            <div class="form-check">
-                <input id="relevant-filter" class="form-check-input" type="checkbox" @bind="relevantOnly" @bind:after="OnFilterChanged" />
-                <label class="form-check-label" for="relevant-filter">Relevant Data</label>
-            </div>
-        </div>
-        <div class="col-auto">
-            <span class="form-label d-block">&nbsp;</span>
-            <span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
-        </div>
-    </div>
+	<div class="row g-2 align-items-end mb-3">
+		<div class="col-auto">
+			<label class="form-label" for="year-filter">Year</label>
+			<select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
+				<option value="">All</option>
+				@foreach (var year in years)
+				{
+					<option value="@year">@year</option>
+				}
+			</select>
+		</div>
+		<div class="col-auto">
+			<label class="form-label" for="date-filter">Date</label>
+			<input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
+		</div>
+		<div class="col-auto">
+			<label class="form-label" for="moon-filter">Moon</label>
+			<select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
+				<option value="">All</option>
+				@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
+				{
+					<option value="@moon.Value">@moon.Name</option>
+				}
+			</select>
+		</div>
+		<div class="col-auto">
+			<span class="form-label d-block">&nbsp;</span>
+			<div class="form-check">
+				<input id="relevant-filter" class="form-check-input" type="checkbox" @bind="relevantOnly" @bind:after="OnFilterChanged" />
+				<label class="form-check-label" for="relevant-filter">Relevant Data</label>
+			</div>
+		</div>
+		<div class="col-auto">
+			<span class="form-label d-block">&nbsp;</span>
+			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
+		</div>
+	</div>
 
-    <QuickGrid TGridItem="CalendarDayRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
-        <PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
-        <PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
-        <TemplateColumn Title="Date" Sortable="false">
-            @context.DateText
-        </TemplateColumn>
-        <TemplateColumn Title="Day" Sortable="false" Align="Align.End">
-            @context.YomDay
-        </TemplateColumn>
-        <TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
-            @if (Moon.FromValue(context.MoonId) is { Image.Length: > 0 } moon)
-            {
-                <img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
-            }
-        </TemplateColumn>
-        <TemplateColumn Title="Notes" Sortable="false">
-            <div class="notes-cell">@context.YomNote</div>
-        </TemplateColumn>
-    </QuickGrid>
+	<QuickGrid TGridItem="CalendarDayRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
+		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
+		<PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
+		<TemplateColumn Title="Date" Sortable="false">
+			@context.DateText
+		</TemplateColumn>
+		<TemplateColumn Title="Day" Sortable="false" Align="Align.End">
+			@context.YomDay
+		</TemplateColumn>
+		<TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
+			@if (MoonPhase.FromValue(context.MoonId) is { Image.Length: > 0 } moon)
+			{
+				<img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
+			}
+		</TemplateColumn>
+		<TemplateColumn Title="Notes" Sortable="false">
+			<div class="notes-cell">@context.YomNote</div>
+		</TemplateColumn>
+	</QuickGrid>
 }
 
 @code {
-    private QuickGrid<CalendarDayRow>? grid;
+	private QuickGrid<CalendarDayRow>? grid;
 
-    private IReadOnlyList<CalendarDayRow>? rows;
-    private string? loadError;
-    private string yearFilter = "";
-    private string moonFilter = "";
-    private DateOnly? dateFilter;
-    private bool relevantOnly = true;
+	private IReadOnlyList<CalendarDayRow>? rows;
+	private string? loadError;
+	private string yearFilter = "";
+	private string moonFilter = "";
+	private DateOnly? dateFilter;
+	private bool relevantOnly = true;
 
-    private IEnumerable<int> years => rows is null
-        ? []
-        : rows.Select(row => row.Year).Distinct().Order();
+	private IEnumerable<int> years => rows is null
+			? []
+			: rows.Select(row => row.Year).Distinct().Order();
 
-    private int FilteredCount => FilteredRows().Count();
+	private int FilteredCount => FilteredRows().Count();
 
-    private IEnumerable<CalendarDayRow> FilteredRows() => (rows ?? []).Where(row =>
-        (yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
-        && (dateFilter is null || row.GregorianDate == dateFilter)
-        && (moonFilter.Length == 0 || row.MoonId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
-        && (!relevantOnly || HasMoonOrNote(row)));
+	private IEnumerable<CalendarDayRow> FilteredRows() => (rows ?? []).Where(row =>
+			(yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
+			&& (dateFilter is null || row.GregorianDate == dateFilter)
+			&& (moonFilter.Length == 0 || row.MoonId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
+			&& (!relevantOnly || HasMoonOrNote(row)));
 
-    private static bool HasMoonOrNote(CalendarDayRow row) =>
-        Moon.FromValue(row.MoonId).Image.Length > 0
-        || !string.IsNullOrWhiteSpace(row.YomNote);
+	private static bool HasMoonOrNote(CalendarDayRow row) =>
+			MoonPhase.FromValue(row.MoonId).Image.Length > 0
+			|| !string.IsNullOrWhiteSpace(row.YomNote);
 
-    private ValueTask<GridItemsProviderResult<CalendarDayRow>> ProvideItems(GridItemsProviderRequest<CalendarDayRow> request)
-    {
-        var items = FilteredRows().ToList();
-        var count = request.Count ?? items.Count;
-        var page = items.Skip(request.StartIndex).Take(count).ToList();
-        return ValueTask.FromResult(GridItemsProviderResult.From<CalendarDayRow>(page, items.Count));
-    }
+	private ValueTask<GridItemsProviderResult<CalendarDayRow>> ProvideItems(GridItemsProviderRequest<CalendarDayRow> request)
+	{
+		var items = FilteredRows().ToList();
+		var count = request.Count ?? items.Count;
+		var page = items.Skip(request.StartIndex).Take(count).ToList();
+		return ValueTask.FromResult(GridItemsProviderResult.From<CalendarDayRow>(page, items.Count));
+	}
 
-    private string DateFilterValue => dateFilter?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+	private string DateFilterValue => dateFilter?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            rows = await Reader.GetAllAsync(CancellationToken.None);
-        }
-        catch (Exception ex)
-        {
-            loadError = ex.Message;
-        }
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			rows = await Reader.GetAllAsync(CancellationToken.None);
+		}
+		catch (Exception ex)
+		{
+			loadError = ex.Message;
+		}
+	}
 
-    private async Task OnFilterChanged()
-    {
-        if (grid is not null)
-        {
-            await grid.RefreshDataAsync();
-        }
-    }
+	private async Task OnFilterChanged()
+	{
+		if (grid is not null)
+		{
+			await grid.RefreshDataAsync();
+		}
+	}
 
-    private Task OnDateChanged(ChangeEventArgs change)
-    {
-        var text = change.Value?.ToString();
-        dateFilter = string.IsNullOrWhiteSpace(text)
-            ? null
-            : DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-        return OnFilterChanged();
-    }
+	private Task OnDateChanged(ChangeEventArgs change)
+	{
+		var text = change.Value?.ToString();
+		dateFilter = string.IsNullOrWhiteSpace(text)
+				? null
+				: DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+		return OnFilterChanged();
+	}
 }

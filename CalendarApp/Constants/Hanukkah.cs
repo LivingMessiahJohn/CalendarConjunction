@@ -1,0 +1,22 @@
+﻿namespace CalendarApp.Constants;
+
+public static class Hanukkah
+{
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-12-05");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-12-25");
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-12-13");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-12-02");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-12-21");
+	private static readonly DateOnly Year6 = DateOnly.Parse("2031-12-10");
+
+	public static readonly Dictionary<YearEnum, DateOnly> Dates = new()
+	{
+		[YearEnum.Year1] = Year1,
+		[YearEnum.Year2] = Year2,
+		[YearEnum.Year3] = Year3,
+		[YearEnum.Year4] = Year4,
+		[YearEnum.Year5] = Year5,
+		[YearEnum.Year6] = Year6
+	};
+
+}
