@@ -74,7 +74,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public LambSelectedSE() : base($"{nameof(Id.LambSelected)}", Id.LambSelected) { }
 		public override string Hebrew => "פֶּסַח";
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten. Also, this becomes the first day of Unleavened bread";
-		public override string Title => nameof(Id.LambSelected);
+		public override string Title => "Lamb Selected";
 		public override string Icon => "fas fa-door-open";
 		public override bool HasCounting => true;
 		public override DateOnly Date => FeastDayDates.LambSelected;

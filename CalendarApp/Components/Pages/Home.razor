@@ -1,5 +1,4 @@
 @page "/"
-@inject FlattenByDatesReader Reader
 
 <PageTitle>Calendar</PageTitle>
 
@@ -45,47 +44,50 @@ else
 		</div>
 		<div class="col-auto">
 			<span class="form-label d-block">&nbsp;</span>
-			<div class="form-check">
-				<input id="relevant-filter" class="form-check-input" type="checkbox" @bind="relevantOnly" @bind:after="OnFilterChanged" />
-				<label class="form-check-label" for="relevant-filter">Relevant Data</label>
-			</div>
-		</div>
-		<div class="col-auto">
-			<span class="form-label d-block">&nbsp;</span>
 			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
 		</div>
 	</div>
 
-	<QuickGrid TGridItem="CalendarDayRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
+	<QuickGrid TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
 		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
 		<PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
-		<TemplateColumn Title="Date" Sortable="false">
-			@context.DateText
-		</TemplateColumn>
+		<PropertyColumn Property="@(row => row.DateText)" Title="Date" Sortable="false" />
 		<TemplateColumn Title="Day" Sortable="false" Align="Align.End">
-			@context.YomDay
+			@context.Day
 		</TemplateColumn>
 		<TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
-			@if (MoonPhase.FromValue(context.MoonId) is { Image.Length: > 0 } moon)
+			@if (MoonPhase.FromValue(context.MoonPhaseId) is { Image.Length: > 0 } moon)
 			{
 				<img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
 			}
 		</TemplateColumn>
-		<TemplateColumn Title="Notes" Sortable="false">
-			<div class="notes-cell">@context.YomNote</div>
+		<TemplateColumn Title="Count" Sortable="false">
+			<div class="count-cell">
+				@foreach (var count in context.Counts)
+				{
+					<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
+				}
+			</div>
+		</TemplateColumn>
+		<TemplateColumn Title="Event" Sortable="false">
+			<div class="count-cell">
+				@foreach (var item in context.Events)
+				{
+					<span class="@item.BadgeCss">@item.Text</span>
+				}
+			</div>
 		</TemplateColumn>
 	</QuickGrid>
 }
 
 @code {
-	private QuickGrid<CalendarDayRow>? grid;
+	private QuickGrid<CalendarGridRow>? grid;
 
-	private IReadOnlyList<CalendarDayRow>? rows;
+	private IReadOnlyList<CalendarGridRow>? rows;
 	private string? loadError;
 	private string yearFilter = "";
 	private string moonFilter = "";
 	private DateOnly? dateFilter;
-	private bool relevantOnly = true;
 
 	private IEnumerable<int> years => rows is null
 			? []
@@ -93,31 +95,26 @@ else
 
 	private int FilteredCount => FilteredRows().Count();
 
-	private IEnumerable<CalendarDayRow> FilteredRows() => (rows ?? []).Where(row =>
+	private IEnumerable<CalendarGridRow> FilteredRows() => (rows ?? []).Where(row =>
 			(yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
 			&& (dateFilter is null || row.GregorianDate == dateFilter)
-			&& (moonFilter.Length == 0 || row.MoonId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
-			&& (!relevantOnly || HasMoonOrNote(row)));
+			&& (moonFilter.Length == 0 || row.MoonPhaseId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture)));
 
-	private static bool HasMoonOrNote(CalendarDayRow row) =>
-			MoonPhase.FromValue(row.MoonId).Image.Length > 0
-			|| !string.IsNullOrWhiteSpace(row.YomNote);
-
-	private ValueTask<GridItemsProviderResult<CalendarDayRow>> ProvideItems(GridItemsProviderRequest<CalendarDayRow> request)
+	private ValueTask<GridItemsProviderResult<CalendarGridRow>> ProvideItems(GridItemsProviderRequest<CalendarGridRow> request)
 	{
 		var items = FilteredRows().ToList();
 		var count = request.Count ?? items.Count;
 		var page = items.Skip(request.StartIndex).Take(count).ToList();
-		return ValueTask.FromResult(GridItemsProviderResult.From<CalendarDayRow>(page, items.Count));
+		return ValueTask.FromResult(GridItemsProviderResult.From<CalendarGridRow>(page, items.Count));
 	}
 
 	private string DateFilterValue => dateFilter?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		try
 		{
-			rows = await Reader.GetAllAsync(CancellationToken.None);
+			rows = ConstantCalendar.Build();
 		}
 		catch (Exception ex)
 		{

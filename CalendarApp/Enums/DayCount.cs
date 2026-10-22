@@ -21,7 +21,7 @@ public static class Helper
 
 	public static string FontAwesomeNumberCSS(int count)
 	{
-		return $"<i class='fa-solid fa-{count.ToString("00").Substring(0, 1)}'></i> < i class='fa-solid fa-{count.ToString("00").Substring(1, 1)}'></i>";
+		return $"<i class='fa-solid fa-{count.ToString("00").Substring(0, 1)}'></i><i class='fa-solid fa-{count.ToString("00").Substring(1, 1)}'></i>";
 	}
 
 }
@@ -79,7 +79,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 7;
 		public override string Description => "Days of Chag Hamatzot"; //
 		public override string Title => "Matzot";
-		public override string BadgeCss => "badge bg-secondary-subtle text-black\""; 
+		public override string BadgeCss => "badge bg-secondary-subtle text-black"; 
 	}
 
 	// This is just a count
