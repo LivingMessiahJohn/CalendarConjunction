@@ -1,18 +1,9 @@
 ﻿using Ardalis.SmartEnum;
-//using RCL.Constants;
 
 namespace CalendarApp.Enums;
 
 public static class Helper
 {
-
-	public static DateOnly GetDate()
-	{
-		// ToDo: Bug
-		return DateOnly.Parse("2026-12-05");
-		//return DayCount.Omer.Value;
-	}
-
 
 	public static int ParentResolver(int id)
 	{
@@ -33,7 +24,6 @@ public enum ParentTypeEnum
 }
 
 public record ParentRecord(ParentTypeEnum EnumType, int Id);
-//DateRange = new DateRange(new DateOnly(CurrentDate.Year, 1, 1), new DateOnly(CurrentDate.Year, 12, 31));
 
 public abstract class DayCount : SmartEnum<DayCount>
 {
@@ -79,7 +69,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 7;
 		public override string Description => "Days of Chag Hamatzot"; //
 		public override string Title => "Matzot";
-		public override string BadgeCss => "badge bg-secondary-subtle text-black"; 
+		public override string BadgeCss => "badge bg-warning text-black"; 
 	}
 
 	// This is just a count
@@ -90,7 +80,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 50;
 		public override string Description => "Omer"; //
 		public override string Title => "Omer";
-		public override string BadgeCss => "badge bg-danger text-black";
+		public override string BadgeCss => "badge bg-warning-subtle text-black-50";
 	}
 
 	private sealed class RepentanceSE : DayCount
@@ -100,7 +90,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 40;
 		public override string Description => "Days of Repentance"; //
 		public override string Title => "Repentance";
-		public override string BadgeCss => "badge bg-info text-black";
+		public override string BadgeCss => "badge bg-info-subtle text-black-50";
 	}
 
 	private sealed class AweSE : DayCount
@@ -110,7 +100,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 10;
 		public override string Description => "Days of Awe"; //
 		public override string Title => "Awe";
-		public override string BadgeCss => "badge bg-primary text-black";
+		public override string BadgeCss => "badge bg-primary-subtle text-black-50";
 	}
 
 	private sealed class SukkotSE : DayCount
@@ -120,7 +110,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 7;
 		public override string Description => "Days of Sukkot"; //
 		public override string Title => "Sukkot";
-		public override string BadgeCss => "badge bg-danger text-black";
+		public override string BadgeCss => "badge bg-success";
 	}
 
 	private sealed class HanukkahSE : DayCount
@@ -130,7 +120,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 8;
 		public override string Description => "Days of Hanukkah"; //
 		public override string Title => "Hanukkah";
-		public override string BadgeCss => "badge bg-warning text-black";
+		public override string BadgeCss => "badge bg-primary-subtle text-black";
 	}
 
 	#endregion

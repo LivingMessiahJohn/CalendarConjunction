@@ -17,44 +17,76 @@ else if (rows is null)
 }
 else
 {
-	<div class="row g-2 align-items-end mb-3">
-		<div class="col-auto">
-			<label class="form-label" for="year-filter">Year</label>
-			<select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
-				<option value="">All</option>
-				@foreach (var year in years)
-				{
-					<option value="@year">@year</option>
-				}
-			</select>
-		</div>
-		<div class="col-auto">
-			<label class="form-label" for="date-filter">Date</label>
-			<input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
-		</div>
-		<div class="col-auto">
-			<label class="form-label" for="moon-filter">Moon</label>
-			<select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
-				<option value="">All</option>
-				@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
-				{
-					<option value="@moon.Value">@moon.Name</option>
-				}
-			</select>
-		</div>
-		<div class="col-auto">
-			<span class="form-label d-block">&nbsp;</span>
+	<div class="card border-secondary mb-3">
+		<div class="card-header d-flex justify-content-between align-items-center">
+			<span>Filter</span>
 			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
+		</div>
+		<div class="card-body">
+			<div class="row g-2 align-items-end">
+				<div class="col-auto">
+					<label class="form-label" for="year-filter">Year</label>
+					<select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
+						<option value="">All</option>
+						@foreach (var year in years)
+						{
+							<option value="@year">@year</option>
+						}
+					</select>
+				</div>
+				<div class="col-auto">
+					<label class="form-label" for="date-filter">Date</label>
+					<input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
+				</div>
+				<div class="col-auto">
+					<label class="form-label" for="moon-filter">Moon</label>
+					<select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
+						<option value="">All</option>
+						@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
+						{
+							<option value="@moon.Value">@moon.Name</option>
+						}
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card border-secondary mb-3">
+		<div class="card-header" id="event-filter-label">Events</div>
+		<div class="card-body">
+			<div class="event-filters @(eventFilter.Length == 0 ? null : "is-filtered")" role="group" aria-labelledby="event-filter-label">
+			<button type="button"
+					class="event-filter badge bg-secondary text-black @(eventFilter.Length == 0 ? "event-filter-active" : null)"
+					aria-pressed="@(eventFilter.Length == 0 ? "true" : "false")"
+					@onclick="ClearEventFilter">
+				All
+			</button>
+			@foreach (var item in eventChoices)
+			{
+				var selected = string.Equals(eventFilter, item.Text, StringComparison.Ordinal);
+				<button type="button"
+						class="event-filter @item.BadgeCss @(selected ? "event-filter-active" : null)"
+						aria-pressed="@(selected ? "true" : "false")"
+						@onclick="() => SelectEvent(item.Text)">
+					@if (!string.IsNullOrEmpty(item.Icon))
+					{
+						<i class="@item.Icon me-1" aria-hidden="true"></i>
+					}
+					@item.Text
+				</button>
+			}
+			</div>
 		</div>
 	</div>
 
 	<QuickGrid TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
 		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
 		<PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
-		<PropertyColumn Property="@(row => row.DateText)" Title="Date" Sortable="false" />
-		<TemplateColumn Title="Day" Sortable="false" Align="Align.End">
+		<TemplateColumn Title="Day" Sortable="false" Align="Align.Center">
 			@context.Day
 		</TemplateColumn>
+		<PropertyColumn Property="@(row => row.DateText)" Title="Date" Sortable="false" />
 		<TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
 			@if (MoonPhase.FromValue(context.MoonPhaseId) is { Image.Length: > 0 } moon)
 			{
@@ -73,7 +105,13 @@ else
 			<div class="count-cell">
 				@foreach (var item in context.Events)
 				{
-					<span class="@item.BadgeCss">@item.Text</span>
+					<span class="@item.BadgeCss">
+						@if (!string.IsNullOrEmpty(item.Icon))
+						{
+							<i class="@item.Icon me-1" aria-hidden="true"></i>
+						}
+						@item.Text
+					</span>
 				}
 			</div>
 		</TemplateColumn>
@@ -87,7 +125,9 @@ else
 	private string? loadError;
 	private string yearFilter = "";
 	private string moonFilter = "";
+	private string eventFilter = "";
 	private DateOnly? dateFilter;
+	private IReadOnlyList<EventBadge> eventChoices = [];
 
 	private IEnumerable<int> years => rows is null
 			? []
@@ -98,7 +138,8 @@ else
 	private IEnumerable<CalendarGridRow> FilteredRows() => (rows ?? []).Where(row =>
 			(yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
 			&& (dateFilter is null || row.GregorianDate == dateFilter)
-			&& (moonFilter.Length == 0 || row.MoonPhaseId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture)));
+			&& (moonFilter.Length == 0 || row.MoonPhaseId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
+			&& (eventFilter.Length == 0 || row.Events.Any(item => string.Equals(item.Text, eventFilter, StringComparison.Ordinal))));
 
 	private ValueTask<GridItemsProviderResult<CalendarGridRow>> ProvideItems(GridItemsProviderRequest<CalendarGridRow> request)
 	{
@@ -115,11 +156,50 @@ else
 		try
 		{
 			rows = ConstantCalendar.Build();
+			eventChoices = DistinctEvents(rows);
 		}
 		catch (Exception ex)
 		{
 			loadError = ex.Message;
 		}
+	}
+
+	private Task SelectEvent(string text)
+	{
+		eventFilter = string.Equals(eventFilter, text, StringComparison.Ordinal) ? "" : text;
+		return OnFilterChanged();
+	}
+
+	private Task ClearEventFilter()
+	{
+		eventFilter = "";
+		return OnFilterChanged();
+	}
+
+	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
+	{
+		var order = new List<string>();
+		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
+		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
+		foreach (var row in source)
+		{
+			foreach (var item in row.Events)
+			{
+				if (!cssCounts.TryGetValue(item.Text, out var counts))
+				{
+					counts = new Dictionary<string, int>(StringComparer.Ordinal);
+					cssCounts[item.Text] = counts;
+					icons[item.Text] = item.Icon;
+					order.Add(item.Text);
+				}
+
+				counts[item.BadgeCss] = counts.TryGetValue(item.BadgeCss, out var count) ? count + 1 : 1;
+			}
+		}
+
+		return order
+				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text]))
+				.ToList();
 	}
 
 	private async Task OnFilterChanged()

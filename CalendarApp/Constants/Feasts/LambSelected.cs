@@ -1,4 +1,4 @@
-﻿namespace CalendarApp.Constants;
+﻿namespace CalendarApp.Constants.Feasts;
 
 // Relevant FlattenByDates rows only. DateOnly.MinValue means that year has no row.
 public static class LambSelected

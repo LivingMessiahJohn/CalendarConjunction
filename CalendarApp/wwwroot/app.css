@@ -18,6 +18,27 @@ h1:focus {
     align-items: center;
 }
 
+.event-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+button.event-filter {
+    cursor: pointer;
+    border: 0;
+}
+
+.event-filters.is-filtered button.event-filter:not(.event-filter-active) {
+    opacity: 0.45;
+}
+
+button.event-filter.event-filter-active {
+    outline: 2px solid var(--bs-emphasis-color);
+    outline-offset: 2px;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

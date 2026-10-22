@@ -1,4 +1,6 @@
-﻿namespace CalendarApp.Constants;
+﻿using CalendarApp.Constants.Feasts;
+
+namespace CalendarApp.Constants.Moons;
 
 // Relevant FlattenByDates rows only. DateOnly.MinValue means that year has no row.
 public static class Adar
