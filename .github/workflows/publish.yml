@@ -43,7 +43,5 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
-            az webapp deploy --resource-group LmmWebAppGroup --name livingmessiah-calendar --src-path "$RUNNER_TEMP/calendarapp.zip" --type zip --clean true
+        shell: bash
+        run: az webapp deploy --resource-group LmmWebAppGroup --name livingmessiah-calendar --src-path "$RUNNER_TEMP/calendarapp.zip" --type zip --clean true
