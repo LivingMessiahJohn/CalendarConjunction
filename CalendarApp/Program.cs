@@ -1,11 +1,9 @@
 using CalendarApp.Components;
-using CalendarApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
-builder.Services.AddSingleton<FlattenByDatesReader>();
 
 var app = builder.Build();
 

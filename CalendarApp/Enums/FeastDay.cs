@@ -1,10 +1,6 @@
-﻿
-using Ardalis.SmartEnum;
-//using CalendarApp;
+﻿using Ardalis.SmartEnum;
 
 namespace CalendarApp.Enums;
-
-public record DateRange(DateOnly Min, DateOnly Max);
 
 public abstract class FeastDay : SmartEnum<FeastDay>
 {
@@ -16,7 +12,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		internal const int LambSelected = 3;
 		internal const int Passover = 4;
 		internal const int Omer = 5;
-		internal const int Weeks = 6;
+		internal const int Shavuot = 6;
 		internal const int Trumpets = 7;
 		internal const int YomKippur = 8;
 		internal const int Sukkot = 9;
@@ -28,7 +24,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	public static readonly FeastDay LambSelected = new LambSelectedSE();
 	public static readonly FeastDay Passover = new PassoverSE();
 	public static readonly FeastDay Omer = new OmerSE();
-	public static readonly FeastDay Weeks = new WeeksSE();
+	public static readonly FeastDay Shavuot = new ShavuotSE();
 	public static readonly FeastDay Trumpets = new TrumpetsSE();
 	public static readonly FeastDay YomKippur = new YomKippurSE();
 	public static readonly FeastDay Sukkot = new SukkotSE();
@@ -44,14 +40,11 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	public abstract string Title { get; }
 	public abstract string Icon { get; }              
 	public abstract bool HasCounting { get; }
-	public abstract DateOnly Date { get; }
-	public abstract DateRange DateRange { get; }
 	#endregion
 
 
 	#region Extra Properties
-	//public DateOnly ErevDate => Date.AddDays(-1);
-	//public DateOnly DayTimeDate => Date;
+
 	#endregion
 
 
@@ -65,8 +58,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => nameof(Id.Purim);
 		public override string Icon => "fas fa-dice";  // far fa-square
 		public override bool HasCounting => false;
-		public override DateOnly Date => FeastDayDates.Purim;
-		public override DateRange DateRange => new(Date, Date);
 	}
 
 	private sealed class LambSelectedSE : FeastDay
@@ -77,8 +68,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => "Lamb Selected";
 		public override string Icon => "fas fa-door-open";
 		public override bool HasCounting => true;
-		public override DateOnly Date => FeastDayDates.LambSelected;
-		public override DateRange DateRange => new(Date, Date.AddDays(DayCount.Hanukkah.TotalDays));
 	}
 
 	private sealed class PassoverSE : FeastDay
@@ -89,8 +78,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => nameof(Id.Passover);
 		public override string Icon => "fas fa-door-open";
 		public override bool HasCounting => true;
-		public override DateOnly Date => FeastDayDates.Passover;
-		public override DateRange DateRange => new(Date, Date.AddDays(DayCount.Hanukkah.TotalDays));
 	}
 
 	private sealed class OmerSE : FeastDay
@@ -101,20 +88,16 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => nameof(Id.Omer);
 		public override string Icon => "fa-solid fa-list-ol";
 		public override bool HasCounting => true;
-		public override DateOnly Date => FeastDayDates.Omer;
-		public override DateRange DateRange => new(Date, Date.AddDays(DayCount.Omer.TotalDays));
 	}
 
-	private sealed class WeeksSE : FeastDay
+	private sealed class ShavuotSE : FeastDay
 	{
-		public WeeksSE() : base($"{nameof(Id.Weeks)}", Id.Weeks) { }
+		public ShavuotSE() : base($"{nameof(Id.Shavuot)}", Id.Shavuot) { }
 		public override string Hebrew => "שָׁבוּעוֹת";
-		public override string Details => "The hight sabbath begins the evening before; This is also called Pentecost";
-		public override string Title => nameof(Id.Weeks);
+		public override string Details => "The high sabbath begins the evening before; This is also called Pentecost";
+		public override string Title => nameof(Id.Shavuot);
 		public override string Icon => "fab fa-creative-commons-zero";
 		public override bool HasCounting => false;  
-		public override DateOnly Date => FeastDayDates.Weeks;
-		public override DateRange DateRange => new(Date, Date);
 	}
 
 	private sealed class TrumpetsSE : FeastDay
@@ -125,8 +108,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => nameof(Id.Trumpets);
 		public override string Icon => "fas fa-bullhorn";
 		public override bool HasCounting => false;
-		public override DateOnly Date => FeastDayDates.Sukkot;
-		public override DateRange DateRange => new(Date, Date);
 	}
 
 	private sealed class YomKippurSE : FeastDay
@@ -137,8 +118,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => "Yom Kippur";
 		public override string Icon => "fas fa-hands-helping";
 		public override bool HasCounting => false;
-		public override DateOnly Date => FeastDayDates.YomKippur;
-		public override DateRange DateRange => new(Date, Date);
 	}
 
 	private sealed class SukkotSE : FeastDay
@@ -149,8 +128,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => "Sukkot | Day 1";
 		public override string Icon => "fas fa-campground";
 		public override bool HasCounting => true;
-		public override DateOnly Date => FeastDayDates.Sukkot;
-		public override DateRange DateRange => new(Date, Date.AddDays(DayCount.Sukkot.TotalDays));
 	}
 
 	private sealed class HanukkahSE : FeastDay
@@ -161,8 +138,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Title => nameof(Id.Hanukkah);
 		public override string Icon => "fas fa-hanukiah";
 		public override bool HasCounting => true;
-		public override DateOnly Date => FeastDayDates.Hanukkah;
-		public override DateRange DateRange => new(Date, Date.AddDays(DayCount.Hanukkah.TotalDays));
 	}
 
 	#endregion
