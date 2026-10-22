@@ -11,6 +11,13 @@ h1:focus {
     white-space: normal;
 }
 
+.quickgrid .count-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
