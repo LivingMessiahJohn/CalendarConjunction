@@ -1,0 +1,49 @@
+name: Publish CalendarApp
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: publish-calendar
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish
+        run: dotnet publish CalendarApp/CalendarApp.csproj --configuration Release --output "$RUNNER_TEMP/publish"
+
+      - name: Zip
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP/publish"
+          zip -r "$RUNNER_TEMP/calendarapp.zip" .
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp deploy --resource-group LmmWebAppGroup --name livingmessiah-calendar --src-path "$RUNNER_TEMP/calendarapp.zip" --type zip --clean true
