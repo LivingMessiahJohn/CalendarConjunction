@@ -1,4 +1,4 @@
-﻿namespace CalendarApp.Constants.Feasts;
+﻿namespace CalendarApp.Constants;
 
 public enum YearEnum
 {

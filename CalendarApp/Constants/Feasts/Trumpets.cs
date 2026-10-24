@@ -1,6 +1,7 @@
 ﻿namespace CalendarApp.Constants.Feasts;
 
 // Relevant FlattenByDates rows only. DateOnly.MinValue means that year has no row.
+// ToDo: consider changing to Yom Teruah
 public static class Trumpets
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;

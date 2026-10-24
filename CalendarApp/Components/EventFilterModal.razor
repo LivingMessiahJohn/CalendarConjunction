@@ -1,0 +1,147 @@
+@if (Visible)
+{
+	<div @ref="modal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="event-filter-label" @onclick="Close" @onkeydown="OnKeyDown">
+		<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" @onclick:stopPropagation="true">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title h5" id="event-filter-label">Events Filter</h2>
+					<button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="event-filters mb-3 @(Selected.Count == 0 ? null : "is-filtered")" role="group" aria-label="All events">
+						<button type="button"
+								class="event-filter badge bg-secondary text-black @(Selected.Count == 0 ? "event-filter-active" : null)"
+								aria-pressed="@(Selected.Count == 0 ? "true" : "false")"
+								@onclick="Clear">
+							All
+						</button>
+					</div>
+					@foreach (var section in Sections())
+					{
+						var groupSelected = IsGroupSelected(section.Items);
+						<h3 class="h6 mb-2" id="@GroupId(section.Title)">
+							<button type="button"
+									class="btn btn-link link-body-emphasis p-0 @(groupSelected ? "fw-semibold" : null)"
+									aria-pressed="@(groupSelected ? "true" : "false")"
+									@onclick="() => SelectGroup(section.Items)">
+								@section.Title
+							</button>
+						</h3>
+						<div class="event-filters mb-3 @(Selected.Count == 0 ? null : "is-filtered")" role="group" aria-labelledby="@GroupId(section.Title)">
+							@foreach (var item in section.Items)
+							{
+								var selected = Contains(item.Text);
+								<button type="button"
+										class="event-filter @item.BadgeCss @(selected ? "event-filter-active" : null)"
+										aria-pressed="@(selected ? "true" : "false")"
+										@onclick="() => Select(item.Text)">
+									@if (!string.IsNullOrEmpty(item.Icon))
+									{
+										<i class="@item.Icon me-1" aria-hidden="true"></i>
+									}
+									@item.Text
+								</button>
+							}
+						</div>
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" @onclick="Close">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-backdrop fade show"></div>
+}
+
+@code {
+	[Parameter] public bool Visible { get; set; }
+	[Parameter] public EventCallback Closed { get; set; }
+	[Parameter] public IReadOnlyList<EventBadge> Choices { get; set; } = []; // why does this half to be passed in?
+	[Parameter] public IReadOnlyList<string> Selected { get; set; } = [];
+	[Parameter] public EventCallback<IReadOnlyList<string>> FilterChanged { get; set; }
+
+	private ElementReference modal;
+	private bool focused;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (Visible && !focused)
+		{
+			focused = true;
+			await modal.FocusAsync();
+		}
+		else if (!Visible)
+		{
+			focused = false;
+		}
+	}
+
+	private Task Close() => Closed.InvokeAsync();
+
+	private Task OnKeyDown(KeyboardEventArgs e) =>
+			e.Key == "Escape" ? Close() : Task.CompletedTask;
+
+	private static readonly (string Title, string[] Names)[] Groups =
+	[
+		("Winter", ["Hanukkah", "Purim"]),
+		("Passover", ["Lamb Selected", "Passover", "Matzot"]),
+		("Omer and Shavuot", ["Omer", "Shavuot"]),
+		("Days of", ["Repentance", "Awe"]),
+		("Fall", ["Yom Teruah", "Yom Kippur", "Sukkot"]),
+	];
+
+	private IEnumerable<(string Title, IReadOnlyList<EventBadge> Items)> Sections()
+	{
+		var used = new HashSet<string>(StringComparer.Ordinal);
+		foreach (var group in Groups)
+		{
+			var items = new List<EventBadge>();
+			foreach (var name in group.Names)
+			{
+				var item = Choices.FirstOrDefault(choice => string.Equals(choice.Text, name, StringComparison.Ordinal));
+				if (item is not null)
+				{
+					items.Add(item);
+					used.Add(item.Text);
+				}
+			}
+
+			if (items.Count > 0)
+			{
+				yield return (group.Title, items);
+			}
+		}
+
+		var rest = Choices.Where(choice => !used.Contains(choice.Text)).ToList();
+		if (rest.Count > 0)
+		{
+			var title = rest.Count == 1 ? rest[0].Text : "Also";
+			yield return (title, rest);
+		}
+	}
+
+	private static string GroupId(string title) => "event-group-" + title.ToLowerInvariant().Replace(' ', '-');
+
+	private bool Contains(string text) =>
+			Selected.Any(name => string.Equals(name, text, StringComparison.Ordinal));
+
+	private bool IsGroupSelected(IReadOnlyList<EventBadge> items) =>
+			Selected.Count == items.Count && items.All(item => Contains(item.Text));
+
+	private Task Select(string text)
+	{
+		var onlyThis = Selected.Count == 1 && string.Equals(Selected[0], text, StringComparison.Ordinal);
+		IReadOnlyList<string> next = onlyThis ? [] : [text];
+		return FilterChanged.InvokeAsync(next);
+	}
+
+	private Task SelectGroup(IReadOnlyList<EventBadge> items)
+	{
+		var names = items.Select(item => item.Text).ToArray();
+		IReadOnlyList<string> next = IsGroupSelected(items) ? [] : names;
+		return FilterChanged.InvokeAsync(next);
+	}
+
+	private Task Clear() => FilterChanged.InvokeAsync([]);
+}

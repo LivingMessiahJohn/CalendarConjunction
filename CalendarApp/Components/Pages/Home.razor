@@ -1,11 +1,8 @@
 @page "/"
 
-<PageTitle>Calendar</PageTitle>
+<PageHeader />
 
-<h1 class="h3 mb-3">
-	<i class="fa-solid fa-calendar-days me-2" aria-hidden="true"></i>
-	Calendar 5862–5867
-</h1>
+<MenuCard FilteredCount="FilteredCount" DateSelection="dateFilter" Events="eventFilter" OpenDateFilter="ShowDateFilter" OpenEventFilter="ShowEventFilter" />
 
 @if (loadError is not null)
 {
@@ -17,68 +14,9 @@ else if (rows is null)
 }
 else
 {
-	<div class="card border-secondary mb-3">
-		<div class="card-header d-flex justify-content-between align-items-center">
-			<span>Filter</span>
-			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
-		</div>
-		<div class="card-body">
-			<div class="row g-2 align-items-end">
-				<div class="col-auto">
-					<label class="form-label" for="year-filter">Year</label>
-					<select id="year-filter" class="form-select" @bind="yearFilter" @bind:after="OnFilterChanged">
-						<option value="">All</option>
-						@foreach (var year in years)
-						{
-							<option value="@year">@year</option>
-						}
-					</select>
-				</div>
-				<div class="col-auto">
-					<label class="form-label" for="date-filter">Date</label>
-					<input id="date-filter" type="date" class="form-control" value="@DateFilterValue" @onchange="OnDateChanged" />
-				</div>
-				<div class="col-auto">
-					<label class="form-label" for="moon-filter">Moon</label>
-					<select id="moon-filter" class="form-select" @bind="moonFilter" @bind:after="OnFilterChanged">
-						<option value="">All</option>
-						@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
-						{
-							<option value="@moon.Value">@moon.Name</option>
-						}
-					</select>
-				</div>
-			</div>
-		</div>
-	</div>
+	<DateFilterModal Visible="dateFilterOpen" Closed="HideDateFilter" Selection="dateFilter" FilterChanged="OnDateFilterChanged" />
 
-	<div class="card border-secondary mb-3">
-		<div class="card-header" id="event-filter-label">Events</div>
-		<div class="card-body">
-			<div class="event-filters @(eventFilter.Length == 0 ? null : "is-filtered")" role="group" aria-labelledby="event-filter-label">
-			<button type="button"
-					class="event-filter badge bg-secondary text-black @(eventFilter.Length == 0 ? "event-filter-active" : null)"
-					aria-pressed="@(eventFilter.Length == 0 ? "true" : "false")"
-					@onclick="ClearEventFilter">
-				All
-			</button>
-			@foreach (var item in eventChoices)
-			{
-				var selected = string.Equals(eventFilter, item.Text, StringComparison.Ordinal);
-				<button type="button"
-						class="event-filter @item.BadgeCss @(selected ? "event-filter-active" : null)"
-						aria-pressed="@(selected ? "true" : "false")"
-						@onclick="() => SelectEvent(item.Text)">
-					@if (!string.IsNullOrEmpty(item.Icon))
-					{
-						<i class="@item.Icon me-1" aria-hidden="true"></i>
-					}
-					@item.Text
-				</button>
-			}
-			</div>
-		</div>
-	</div>
+	<EventFilterModal Visible="eventFilterOpen" Closed="HideEventFilter" Choices="eventChoices" Selected="@eventFilter" FilterChanged="OnEventFilterChanged" />
 
 	<QuickGrid TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
 		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
@@ -123,23 +61,19 @@ else
 
 	private IReadOnlyList<CalendarGridRow>? rows;
 	private string? loadError;
-	private string yearFilter = "";
-	private string moonFilter = "";
-	private string eventFilter = "";
-	private DateOnly? dateFilter;
+	private DateFilterSelection dateFilter = new(string.Empty, null, string.Empty);
+	private bool dateFilterOpen;
+	private bool eventFilterOpen;
+	private IReadOnlyList<string> eventFilter = [];
 	private IReadOnlyList<EventBadge> eventChoices = [];
-
-	private IEnumerable<int> years => rows is null
-			? []
-			: rows.Select(row => row.Year).Distinct().Order();
 
 	private int FilteredCount => FilteredRows().Count();
 
 	private IEnumerable<CalendarGridRow> FilteredRows() => (rows ?? []).Where(row =>
-			(yearFilter.Length == 0 || row.Year == int.Parse(yearFilter, System.Globalization.CultureInfo.InvariantCulture))
-			&& (dateFilter is null || row.GregorianDate == dateFilter)
-			&& (moonFilter.Length == 0 || row.MoonPhaseId == int.Parse(moonFilter, System.Globalization.CultureInfo.InvariantCulture))
-			&& (eventFilter.Length == 0 || row.Events.Any(item => string.Equals(item.Text, eventFilter, StringComparison.Ordinal))));
+			(dateFilter.Year.Length == 0 || row.Year == int.Parse(dateFilter.Year, System.Globalization.CultureInfo.InvariantCulture))
+			&& (dateFilter.Date is null || row.GregorianDate == dateFilter.Date)
+			&& (dateFilter.Moon.Length == 0 || row.MoonPhaseId == int.Parse(dateFilter.Moon, System.Globalization.CultureInfo.InvariantCulture))
+			&& (eventFilter.Count == 0 || row.Events.Any(item => eventFilter.Any(name => string.Equals(item.Text, name, StringComparison.Ordinal)))));
 
 	private ValueTask<GridItemsProviderResult<CalendarGridRow>> ProvideItems(GridItemsProviderRequest<CalendarGridRow> request)
 	{
@@ -148,8 +82,6 @@ else
 		var page = items.Skip(request.StartIndex).Take(count).ToList();
 		return ValueTask.FromResult(GridItemsProviderResult.From<CalendarGridRow>(page, items.Count));
 	}
-
-	private string DateFilterValue => dateFilter?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
 
 	protected override void OnInitialized()
 	{
@@ -162,18 +94,6 @@ else
 		{
 			loadError = ex.Message;
 		}
-	}
-
-	private Task SelectEvent(string text)
-	{
-		eventFilter = string.Equals(eventFilter, text, StringComparison.Ordinal) ? "" : text;
-		return OnFilterChanged();
-	}
-
-	private Task ClearEventFilter()
-	{
-		eventFilter = "";
-		return OnFilterChanged();
 	}
 
 	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
@@ -202,20 +122,31 @@ else
 				.ToList();
 	}
 
-	private async Task OnFilterChanged()
+	private void ShowDateFilter() => dateFilterOpen = true;
+
+	private void HideDateFilter() => dateFilterOpen = false;
+
+	private void ShowEventFilter() => eventFilterOpen = true;
+
+	private void HideEventFilter() => eventFilterOpen = false;
+
+	private Task OnDateFilterChanged(DateFilterSelection selection)
+	{
+		dateFilter = selection;
+		return RefreshGrid();
+	}
+
+	private Task OnEventFilterChanged(IReadOnlyList<string> selection)
+	{
+		eventFilter = selection;
+		return RefreshGrid();
+	}
+
+	private async Task RefreshGrid()
 	{
 		if (grid is not null)
 		{
 			await grid.RefreshDataAsync();
 		}
-	}
-
-	private Task OnDateChanged(ChangeEventArgs change)
-	{
-		var text = change.Value?.ToString();
-		dateFilter = string.IsNullOrWhiteSpace(text)
-				? null
-				: DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-		return OnFilterChanged();
 	}
 }
