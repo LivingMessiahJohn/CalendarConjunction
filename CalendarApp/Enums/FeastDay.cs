@@ -100,12 +100,13 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCounting => false;  
 	}
 
+	// ToDo: change to Yom Teruah
 	private sealed class TrumpetsSE : FeastDay
 	{
 		public TrumpetsSE() : base($"{nameof(Id.Trumpets)}", Id.Trumpets) { }
 		public override string Hebrew => "יוֹם תְּרוּעָה";
 		public override string Details => "A high holy day sabbath";
-		public override string Title => nameof(Id.Trumpets);
+		public override string Title => "Yom Teruah"; // nameof(Id.Trumpets);
 		public override string Icon => "fas fa-bullhorn";
 		public override bool HasCounting => false;
 	}
@@ -125,7 +126,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public SukkotSE() : base($"{nameof(Id.Sukkot)}", Id.Sukkot) { }
 		public override string Hebrew => "סֻּכּוֹת";
 		public override string Details => "Preparation Day, High Sabbath begins at sunset";
-		public override string Title => "Sukkot | Day 1";
+		public override string Title => "Sukkot";
 		public override string Icon => "fas fa-campground";
 		public override bool HasCounting => true;
 	}

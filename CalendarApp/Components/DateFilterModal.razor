@@ -1,0 +1,99 @@
+@using CalendarApp.Constants
+@using CalendarApp.Constants.Feasts
+
+@if (Visible)
+{
+	<div @ref="modal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="date-filter-title" @onclick="Close" @onkeydown="OnKeyDown">
+		<div class="modal-dialog modal-lg modal-dialog-centered" @onclick:stopPropagation="true">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 class="modal-title h5" id="date-filter-title">Date Filter</h2>
+					<button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row g-2 align-items-end">
+						<div class="col-auto">
+							<label class="form-label" for="year-filter">Year</label>
+							<select id="year-filter" class="form-select" value="@Selection.Year" @onchange="OnYearChanged">
+								<option value="">All</option>
+								@foreach (var year in Enum.GetValues<YearEnum>())
+								{
+									<option value="@((int)year)">@((int)year)</option>
+								}
+							</select>
+						</div>
+						<div class="col-auto">
+							<label class="form-label" for="date-filter">Date</label>
+							<input id="date-filter" type="date" class="form-control" value="@DateValue" @onchange="OnDateChanged" />
+						</div>
+						<div class="col-auto">
+							<label class="form-label" for="moon-filter">Moon</label>
+							<select id="moon-filter" class="form-select" value="@Selection.Moon" @onchange="OnMoonChanged">
+								<option value="">All</option>
+								@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
+								{
+									<option value="@moon.Value">@moon.Name</option>
+								}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" @onclick="Close">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-backdrop fade show"></div>
+}
+
+@code {
+	[Parameter] public bool Visible { get; set; }
+	[Parameter] public EventCallback Closed { get; set; }
+	[Parameter] public DateFilterSelection Selection { get; set; } = new(string.Empty, null, string.Empty);
+	[Parameter]	public EventCallback<DateFilterSelection> FilterChanged { get; set; }
+
+	private ElementReference modal;
+	private bool focused;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (Visible && !focused)
+		{
+			focused = true;
+			await modal.FocusAsync();
+		}
+		else if (!Visible)
+		{
+			focused = false;
+		}
+	}
+
+	private Task Close() => Closed.InvokeAsync();
+
+	private Task OnKeyDown(KeyboardEventArgs e) =>
+			e.Key == "Escape" ? Close() : Task.CompletedTask;
+
+	private string DateValue => Selection.Date?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
+
+	private Task OnYearChanged(ChangeEventArgs change)
+	{
+		var year = change.Value?.ToString() ?? "";
+		return FilterChanged.InvokeAsync(Selection with { Year = year });
+	}
+
+	private Task OnDateChanged(ChangeEventArgs change)
+	{
+		var text = change.Value?.ToString();
+		DateOnly? date = string.IsNullOrWhiteSpace(text)
+				? null
+				: DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
+		return FilterChanged.InvokeAsync(Selection with { Date = date });
+	}
+
+	private Task OnMoonChanged(ChangeEventArgs change)
+	{
+		var moon = change.Value?.ToString() ?? "";
+		return FilterChanged.InvokeAsync(Selection with { Moon = moon });
+	}
+}

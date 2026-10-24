@@ -1,0 +1,17 @@
+﻿<PageTitle>@Title</PageTitle>
+
+<div class="pb-n1 mt-2 mb-3 @BorderCSS">
+	@* <div class="fs-2 text-center"><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</div> *@
+	<div class="fs-2 text-center"><i class="@Icon"></i>&nbsp;&nbsp;@Title</div>
+</div>
+
+@code {
+	//[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
+	//[Parameter] public string? PageTitle { get; set; }
+	//@if (String.IsNullOrEmpty(PageTitle)) {	@PageEnum.Title	}	else { @PageTitle	}
+	//[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
+
+	string Title = "Conjunction Calendar";
+	string? BorderCSS = "border-bottom border-info";
+	string Icon = "far fa-calendar-check";
+}
