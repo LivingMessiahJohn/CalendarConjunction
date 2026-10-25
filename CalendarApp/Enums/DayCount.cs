@@ -2,21 +2,6 @@
 
 namespace CalendarApp.Enums;
 
-public static class Helper
-{
-
-	public static int ParentResolver(int id)
-	{
-		return DayCount.Omer.Value;
-	}
-
-	public static string FontAwesomeNumberCSS(int count)
-	{
-		return $"<i class='fa-solid fa-{count.ToString("00").Substring(0, 1)}'></i><i class='fa-solid fa-{count.ToString("00").Substring(1, 1)}'></i>";
-	}
-
-}
-
 public enum ParentTypeEnum 
 {
 	FeastDay = 1,

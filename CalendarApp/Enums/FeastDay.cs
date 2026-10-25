@@ -38,7 +38,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	public abstract string Hebrew { get; }            
 	public abstract string Details { get; }           
 	public abstract string Title { get; }
-	public abstract string Icon { get; }              
+	public abstract string Icon { get; }
+	public abstract string BadgeCss { get; }
 	public abstract bool HasCounting { get; }
 	#endregion
 
@@ -57,6 +58,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Tradition is to read the book of Esther; date determined by Rabbinic sources";
 		public override string Title => nameof(Id.Purim);
 		public override string Icon => "fas fa-dice";  // far fa-square
+		public override string BadgeCss => "badge bg-danger";
 		public override bool HasCounting => false;
 	}
 
@@ -67,6 +69,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten. Also, this becomes the first day of Unleavened bread";
 		public override string Title => "Lamb Selected";
 		public override string Icon => "fas fa-door-open";
+		public override string BadgeCss => "badge bg-info text-black";
 		public override bool HasCounting => true;
 	}
 
@@ -77,6 +80,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten. Also, this becomes the first day of Unleavened bread";
 		public override string Title => nameof(Id.Passover);
 		public override string Icon => "fas fa-door-open";
+		public override string BadgeCss => DayCount.UnleavenedBread.BadgeCss;
 		public override bool HasCounting => true;
 	}
 
@@ -87,6 +91,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "the counting of the Omer";
 		public override string Title => nameof(Id.Omer);
 		public override string Icon => "fa-solid fa-list-ol";
+		public override string BadgeCss => DayCount.Omer.BadgeCss;
 		public override bool HasCounting => true;
 	}
 
@@ -97,7 +102,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The high sabbath begins the evening before; This is also called Pentecost";
 		public override string Title => nameof(Id.Shavuot);
 		public override string Icon => "fab fa-creative-commons-zero";
-		public override bool HasCounting => false;  
+		public override string BadgeCss => "badge bg-primary";
+		public override bool HasCounting => false;
 	}
 
 	// ToDo: change to Yom Teruah
@@ -108,6 +114,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "A high holy day sabbath";
 		public override string Title => "Yom Teruah"; // nameof(Id.Trumpets);
 		public override string Icon => "fas fa-bullhorn";
+		public override string BadgeCss => "badge bg-danger-subtle text-black";
 		public override bool HasCounting => false;
 	}
 
@@ -118,6 +125,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "In the afternoon we have our Yom Kippur service and break the fast after the sun sets";
 		public override string Title => "Yom Kippur";
 		public override string Icon => "fas fa-hands-helping";
+		public override string BadgeCss => "badge bg-success-subtle text-black";
 		public override bool HasCounting => false;
 	}
 
@@ -128,6 +136,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Preparation Day, High Sabbath begins at sunset";
 		public override string Title => "Sukkot";
 		public override string Icon => "fas fa-campground";
+		public override string BadgeCss => DayCount.Sukkot.BadgeCss;
 		public override bool HasCounting => true;
 	}
 
@@ -138,6 +147,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "First day of Hanukkah; Date determined by Rabbinic sources";
 		public override string Title => nameof(Id.Hanukkah);
 		public override string Icon => "fas fa-hanukiah";
+		public override string BadgeCss => DayCount.Hanukkah.BadgeCss;
 		public override bool HasCounting => true;
 	}
 

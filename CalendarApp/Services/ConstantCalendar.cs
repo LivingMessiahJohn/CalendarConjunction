@@ -100,7 +100,7 @@ public static class ConstantCalendar
 		{
 			if (seen.Add(feast.Title))
 			{
-				events.Add(new EventBadge(feast.Title, BadgeCssFor(feast, counts), feast.Icon));
+				events.Add(new EventBadge(feast.Title, feast.BadgeCss, feast.Icon));
 			}
 		}
 
@@ -128,18 +128,6 @@ public static class ConstantCalendar
 		}
 
 		return FeastDay.FromValue(count.Parent.Id).Icon;
-	}
-
-	private static string BadgeCssFor(FeastDay feast, List<DayCount> counts)
-	{
-		var parented = DayCount.List.FirstOrDefault(count =>
-				count.Parent.EnumType == ParentTypeEnum.FeastDay && count.Parent.Id == feast.Value);
-		if (parented is not null)
-		{
-			return parented.BadgeCss;
-		}
-
-		return counts.Count == 1 ? counts[0].BadgeCss : "badge bg-secondary text-black";
 	}
 
 	private static MonthAnchor? LatestAnchor(List<MonthAnchor> monthAnchors, DateOnly date)
