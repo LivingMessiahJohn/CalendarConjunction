@@ -20,30 +20,34 @@ else
 
 	<QuickGrid TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
 		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
-		<PropertyColumn Property="@(row => row.Month)" Title="Month" Sortable="false" />
+		<TemplateColumn Title="Month" Sortable="false">
+			<span title="@context.MonthDescription">@context.Month</span>
+		</TemplateColumn>
 		<TemplateColumn Title="Day" Sortable="false" Align="Align.Center">
-			@context.Day
+			@if (context.Day == 1)
+			{
+				<span class="@FeastGroupBadgeColor.RoshKodesh">@context.Day</span>
+			}
+			else
+			{
+				@context.Day
+			}
 		</TemplateColumn>
 		<PropertyColumn Property="@(row => row.DateText)" Title="Date" Sortable="false" />
+@* 		
 		<TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
 			@if (MoonPhase.FromValue(context.MoonPhaseId) is { Image.Length: > 0 } moon)
 			{
 				<img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
 			}
 		</TemplateColumn>
-		<TemplateColumn Title="Count" Sortable="false">
-			<div class="count-cell">
-				@foreach (var count in context.Counts)
-				{
-					<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
-				}
-			</div>
-		</TemplateColumn>
+ *@
+
 		<TemplateColumn Title="Event" Sortable="false">
 			<div class="count-cell">
 				@foreach (var item in context.Events)
 				{
-					<span class="@item.BadgeCss">
+					<span class="@item.BadgeCss" title="@item.Details">
 						@if (!string.IsNullOrEmpty(item.Icon))
 						{
 							<i class="@item.Icon me-1" aria-hidden="true"></i>
@@ -53,6 +57,16 @@ else
 				}
 			</div>
 		</TemplateColumn>
+
+		<TemplateColumn Title="Count" Sortable="false">
+			<div class="count-cell">
+				@foreach (var count in context.Counts)
+				{
+					<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
+				}
+			</div>
+		</TemplateColumn>
+
 	</QuickGrid>
 }
 
@@ -100,6 +114,7 @@ else
 	{
 		var order = new List<string>();
 		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
+		var details = new Dictionary<string, string>(StringComparer.Ordinal);
 		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
 		foreach (var row in source)
 		{
@@ -110,6 +125,7 @@ else
 					counts = new Dictionary<string, int>(StringComparer.Ordinal);
 					cssCounts[item.Text] = counts;
 					icons[item.Text] = item.Icon;
+					details[item.Text] = item.Details;
 					order.Add(item.Text);
 				}
 
@@ -118,7 +134,7 @@ else
 		}
 
 		return order
-				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text]))
+				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text], details[text]))
 				.ToList();
 	}
 

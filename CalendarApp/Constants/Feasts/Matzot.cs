@@ -1,7 +1,6 @@
 ﻿namespace CalendarApp.Constants.Feasts;
 
-// Relevant FlattenByDates rows only. DateOnly.MinValue means that year has no row.
-public static class Passover
+public static class Matzot
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-04-21");

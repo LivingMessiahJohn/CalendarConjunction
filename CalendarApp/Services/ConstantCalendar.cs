@@ -72,6 +72,7 @@ public static class ConstantCalendar
 		{
 			Year = bucket.Year,
 			Month = anchor is null ? "" : $"{anchor.Moon.Name} - {anchor.Moon.Value}",
+			MonthDescription = anchor is null ? "" : anchor.Moon.Description,
 			GregorianDate = date,
 			DateText = date.ToString("yyyy-MMM-dd ddd", Invariant),
 			Day = anchor is null ? null : date.DayNumber - anchor.Date.DayNumber + 1,
@@ -89,10 +90,6 @@ public static class ConstantCalendar
 
 	private static List<EventBadge> BuildEvents(DateBucket bucket)
 	{
-		var counts = bucket.Counts
-				.OrderBy(count => count.Count.Value)
-				.Select(count => count.Count)
-				.ToList();
 		var events = new List<EventBadge>();
 		var seen = new HashSet<string>(StringComparer.Ordinal);
 
@@ -100,24 +97,37 @@ public static class ConstantCalendar
 		{
 			if (seen.Add(feast.Title))
 			{
-				events.Add(new EventBadge(feast.Title, BadgeCssFor(feast, counts), feast.Icon));
+				events.Add(new EventBadge(feast.Title, feast.BadgeCss, feast.Icon, feast.Details));
 			}
 		}
 
-		foreach (var count in counts)
+		foreach (var entry in bucket.Counts.OrderBy(entry => entry.Count.Value))
 		{
+			var count = entry.Count;
 			if (seen.Add(count.Title))
 			{
-				events.Add(new EventBadge(count.Title, count.BadgeCss, IconFor(count)));
+				events.Add(new EventBadge(count.Title, BadgeCssFor(count, entry.Number), IconFor(count), count.Details));
 			}
 		}
 
 		if (bucket.IsNewMoon && seen.Add("Rosh Kodesh"))
 		{
-			events.Add(new EventBadge("Rosh Kodesh", "badge bg-dark text-white"));
+			events.Add(new EventBadge("Rosh Kodesh", FeastGroupBadgeColor.RoshKodesh));
 		}
 
 		return events;
+	}
+
+	private static string BadgeCssFor(DayCount count, int number)
+	{
+		if (count.LastDayIsHighSabbath
+				&& number == count.TotalDays
+				&& count.Parent.EnumType == ParentTypeEnum.FeastDay)
+		{
+			return FeastDay.FromValue(count.Parent.Id).BadgeCss;
+		}
+
+		return count.BadgeCss;
 	}
 
 	private static string? IconFor(DayCount count)
@@ -128,18 +138,6 @@ public static class ConstantCalendar
 		}
 
 		return FeastDay.FromValue(count.Parent.Id).Icon;
-	}
-
-	private static string BadgeCssFor(FeastDay feast, List<DayCount> counts)
-	{
-		var parented = DayCount.List.FirstOrDefault(count =>
-				count.Parent.EnumType == ParentTypeEnum.FeastDay && count.Parent.Id == feast.Value);
-		if (parented is not null)
-		{
-			return parented.BadgeCss;
-		}
-
-		return counts.Count == 1 ? counts[0].BadgeCss : "badge bg-secondary text-black";
 	}
 
 	private static MonthAnchor? LatestAnchor(List<MonthAnchor> monthAnchors, DateOnly date)
@@ -184,10 +182,11 @@ public static class ConstantCalendar
 	{
 		"Purim" => DateFor(Purim.Dates, year),
 		"LambSelected" => DateFor(LambSelected.Dates, year),
-		"Passover" => DateFor(Passover.Dates, year),
+		"PassoverMeal" => DateFor(PassoverMeal.Dates, year),
+		"Matzot" => DateFor(Matzot.Dates, year),
 		"Omer" => DateFor(Omer.Dates, year),
 		"Shavuot" => DateFor(Shavuot.Dates, year),
-		"Trumpets" => DateFor(Trumpets.Dates, year),
+		"YomTeruah" => DateFor(Trumpets.Dates, year),
 		"YomKippur" => DateFor(YomKippur.Dates, year),
 		"Sukkot" => DateFor(Sukkot.Dates, year),
 		"Hanukkah" => DateFor(Hanukkah.Dates, year),
