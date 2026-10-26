@@ -10,9 +10,9 @@
 				<div class="modal-body">
 					<div class="event-filters mb-3 @(Selected.Count == 0 ? null : "is-filtered")" role="group" aria-label="All events">
 						<button type="button"
-								class="event-filter badge bg-secondary text-black @(Selected.Count == 0 ? "event-filter-active" : null)"
-								aria-pressed="@(Selected.Count == 0 ? "true" : "false")"
-								@onclick="Clear">
+										class="event-filter badge bg-secondary text-black @(Selected.Count == 0 ? "event-filter-active" : null)"
+										aria-pressed="@(Selected.Count == 0 ? "true" : "false")"
+										@onclick="Clear">
 							All
 						</button>
 					</div>
@@ -21,9 +21,9 @@
 						var groupSelected = IsGroupSelected(section.Items);
 						<h3 class="h6 mb-2" id="@GroupId(section.Title)">
 							<button type="button"
-									class="btn btn-link link-body-emphasis p-0 @(groupSelected ? "fw-semibold" : null)"
-									aria-pressed="@(groupSelected ? "true" : "false")"
-									@onclick="() => SelectGroup(section.Items)">
+											class="btn btn-link link-body-emphasis p-0 @(groupSelected ? "fw-semibold" : null)"
+											aria-pressed="@(groupSelected ? "true" : "false")"
+											@onclick="() => SelectGroup(section.Items)">
 								@section.Title
 							</button>
 						</h3>
@@ -32,9 +32,9 @@
 							{
 								var selected = Contains(item.Text);
 								<button type="button"
-										class="event-filter @item.BadgeCss @(selected ? "event-filter-active" : null)"
-										aria-pressed="@(selected ? "true" : "false")"
-										@onclick="() => Select(item.Text)">
+												class="event-filter @item.BadgeCss @(selected ? "event-filter-active" : null)"
+												aria-pressed="@(selected ? "true" : "false")"
+												@onclick="() => Select(item.Text)">
 									@if (!string.IsNullOrEmpty(item.Icon))
 									{
 										<i class="@item.Icon me-1" aria-hidden="true"></i>
@@ -82,22 +82,13 @@
 	private Task OnKeyDown(KeyboardEventArgs e) =>
 			e.Key == "Escape" ? Close() : Task.CompletedTask;
 
-	private static readonly (string Title, string[] Names)[] Groups =
-	[
-		("Winter", ["Hanukkah", "Purim"]),
-		("Passover", ["Lamb Selected", "Passover", "Matzot"]),
-		("Omer and Shavuot", ["Omer", "Shavuot"]),
-		("Days of", ["Repentance", "Awe"]),
-		("Fall", ["Yom Teruah", "Yom Kippur", "Sukkot"]),
-	];
-
 	private IEnumerable<(string Title, IReadOnlyList<EventBadge> Items)> Sections()
 	{
 		var used = new HashSet<string>(StringComparer.Ordinal);
-		foreach (var group in Groups)
+		foreach (var group in FeastGroup.List.OrderBy(group => group.Value))
 		{
 			var items = new List<EventBadge>();
-			foreach (var name in group.Names)
+			foreach (var name in group.Titles())
 			{
 				var item = Choices.FirstOrDefault(choice => string.Equals(choice.Text, name, StringComparison.Ordinal));
 				if (item is not null)

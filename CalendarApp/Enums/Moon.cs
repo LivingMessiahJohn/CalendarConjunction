@@ -12,7 +12,7 @@ public abstract class Moon : SmartEnum<Moon>
 	#region Id's
 	private static class Id
 	{
-		internal const int Nissan = 1; // Aviv
+		internal const int Nissan = 1; // biblical: Aviv
 		internal const int Iyar = 2;   // biblical: Ziv
 		internal const int Sivan = 3;
 		internal const int Tammuz = 4;
