@@ -1,4 +1,9 @@
 ﻿using Ardalis.SmartEnum;
+using CalendarApp.Constants;
+using CalendarApp.Constants.Moons;
+using AnchorHanukkah = CalendarApp.Constants.Feasts.Hanukkah;
+using AnchorOmer = CalendarApp.Constants.Moons.Omer;
+using AnchorPurim = CalendarApp.Constants.Feasts.Purim;
 
 namespace CalendarApp.Enums;
 
@@ -75,10 +80,22 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	public abstract string BadgeCss { get; }
 	public abstract bool HasCounting { get; }
 	public abstract FeastGroup Group { get; }
+	public abstract int AddDays { get; }
+	public abstract IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates { get; }
 	#endregion
 
 
 	#region Extra Properties
+
+	public DateOnly DateFor(YearEnum year)
+	{
+		if (!AnchorDates.TryGetValue(year, out var anchor) || anchor == DateOnly.MinValue)
+		{
+			return DateOnly.MinValue;
+		}
+
+		return anchor.AddDays(AddDays);
+	}
 
 	#endregion
 
@@ -95,6 +112,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.Purim;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.Winter;
+		public override int AddDays => 0;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => AnchorPurim.Dates;
 	}
 
 	private sealed class LambSelectedSE : FeastDay
@@ -107,6 +126,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
+		public override int AddDays => 10;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Nissan.Dates;
 	}
 
 	private sealed class PassoverMealSE : FeastDay
@@ -119,6 +140,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
+		public override int AddDays => 13;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Nissan.Dates;
 	}
 
 	// Rename Matzot
@@ -132,6 +155,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
+		public override int AddDays => 14;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Nissan.Dates;
 	}
 
 	private sealed class OmerSE : FeastDay
@@ -144,6 +169,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.Omer;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
+		public override int AddDays => 0;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => AnchorOmer.Dates;
 	}
 
 	private sealed class ShavuotSE : FeastDay
@@ -156,6 +183,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.Shavuot;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
+		public override int AddDays => 49;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => AnchorOmer.Dates;
 	}
 
 	private sealed class YomTeruahSE : FeastDay
@@ -168,6 +197,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.YomTeruah;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.Fall;
+		public override int AddDays => 1;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Tishri.Dates;
 	}
 
 	private sealed class YomKippurSE : FeastDay
@@ -180,6 +211,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.YomKippur;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.Fall;
+		public override int AddDays => 10;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Tishri.Dates;
 	}
 
 	private sealed class SukkotSE : FeastDay
@@ -192,6 +225,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.Sukkot;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.Fall;
+		public override int AddDays => 15;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Tishri.Dates;
 	}
 
 	private sealed class HanukkahSE : FeastDay
@@ -204,6 +239,8 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string BadgeCss => FeastGroupBadgeColor.Hanukkah;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.Winter;
+		public override int AddDays => 0;
+		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => AnchorHanukkah.Dates;
 	}
 
 	#endregion

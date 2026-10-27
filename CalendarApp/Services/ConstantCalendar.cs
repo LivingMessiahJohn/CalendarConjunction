@@ -1,6 +1,5 @@
 using System.Globalization;
 using CalendarApp.Constants;
-using CalendarApp.Constants.Feasts;
 using CalendarApp.Constants.Moons;
 using CalendarApp.Enums;
 using CalendarApp.Models;
@@ -74,7 +73,8 @@ public static class ConstantCalendar
 			Month = anchor is null ? "" : $"{anchor.Moon.Name} - {anchor.Moon.Value}",
 			MonthDescription = anchor is null ? "" : anchor.Moon.Description,
 			GregorianDate = date,
-			DateText = date.ToString("yyyy-MMM-dd ddd", Invariant),
+			DateText = date.ToString("yyyy-MM-dd", Invariant),
+			//DateText = date.ToString("yyyy-MMM-dd ddd", Invariant),
 			Day = anchor is null ? null : date.DayNumber - anchor.Date.DayNumber + 1,
 			MoonPhaseId = bucket.IsNewMoon ? MoonPhase.New.Value : MoonPhase.None.Value,
 			Counts = bucket.Counts
@@ -115,7 +115,26 @@ public static class ConstantCalendar
 			events.Add(new EventBadge("Rosh Kodesh", FeastGroupBadgeColor.RoshKodesh));
 		}
 
-		return events;
+		return events
+				.OrderBy(item => EventRank(item.Text))
+				.ToList();
+	}
+
+	private static int EventRank(string title)
+	{
+		if (title == "Rosh Kodesh")
+		{
+			return 2;
+		}
+
+		if (title == DayCount.Omer.Title
+				|| title == DayCount.Repentance.Title
+				|| title == DayCount.Awe.Title)
+		{
+			return 1;
+		}
+
+		return 0;
 	}
 
 	private static string BadgeCssFor(DayCount count, int number)
@@ -178,20 +197,7 @@ public static class ConstantCalendar
 		};
 	}
 
-	private static DateOnly FeastDate(FeastDay feast, YearEnum year) => feast.Name switch
-	{
-		"Purim" => DateFor(Purim.Dates, year),
-		"LambSelected" => DateFor(LambSelected.Dates, year),
-		"PassoverMeal" => DateFor(PassoverMeal.Dates, year),
-		"Matzot" => DateFor(Matzot.Dates, year),
-		"Omer" => DateFor(Omer.Dates, year),
-		"Shavuot" => DateFor(Shavuot.Dates, year),
-		"YomTeruah" => DateFor(Trumpets.Dates, year),
-		"YomKippur" => DateFor(YomKippur.Dates, year),
-		"Sukkot" => DateFor(Sukkot.Dates, year),
-		"Hanukkah" => DateFor(Hanukkah.Dates, year),
-		_ => throw new InvalidOperationException($"No constant dates for feast {feast.Name}.")
-	};
+	private static DateOnly FeastDate(FeastDay feast, YearEnum year) => feast.DateFor(year);
 
 	private static DateOnly MoonDate(Moon moon, YearEnum year) => moon.Name switch
 	{
