@@ -32,7 +32,7 @@ public static class FeastGroupBadgeColor  // GroupColor
 	public const string Awe = "badge bg-primary-subtle text-black-50";
 
 	// Moon Season
-	public const string RoshKodesh = "badge bg-dark text-white"; 
+	public const string RoshKodesh = "badge bg-dark text-white"; // fa-regular fa-circle
 
 
 }
@@ -144,14 +144,13 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override IReadOnlyDictionary<YearEnum, DateOnly> AnchorDates => Nissan.Dates;
 	}
 
-	// Rename Matzot
 	private sealed class MatzotSE : FeastDay
 	{
 		public MatzotSE() : base($"{nameof(Id.Matzot)}", Id.Matzot) { }
 		public override string Hebrew => "פֶּסַח";
 		public override string Details => "Feast of leavened bread; days 1 and 7 are high sabbaths";
 		public override string Title => nameof(Id.Matzot);
-		public override string Icon => "fas fa-door-open";  //fa-times-circle
+		public override string Icon => "fa-solid fa-bread-slice";  // fas fa-door-openfa-times-circle 
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
@@ -165,7 +164,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Hebrew => "סְפִירַת הָעוֹמֶר"; // Sefirat HaOmer
 		public override string Details => "the counting of the Omer";
 		public override string Title => nameof(Id.Omer);
-		public override string Icon => "fa-solid fa-list-ol";
+		public override string Icon => "fa-solid fa-wheat-awn"; //fa-solid fa-list-ol
 		public override string BadgeCss => FeastGroupBadgeColor.Omer;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;

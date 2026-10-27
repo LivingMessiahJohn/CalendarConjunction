@@ -112,7 +112,7 @@ public static class ConstantCalendar
 
 		if (bucket.IsNewMoon && seen.Add("Rosh Kodesh"))
 		{
-			events.Add(new EventBadge("Rosh Kodesh", FeastGroupBadgeColor.RoshKodesh));
+			events.Add(new EventBadge("Rosh Kodesh", FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle"));
 		}
 
 		return events
@@ -151,6 +151,11 @@ public static class ConstantCalendar
 
 	private static string? IconFor(DayCount count)
 	{
+		if (!string.IsNullOrWhiteSpace(count.DayCountIcon))
+		{
+			return count.DayCountIcon;
+		}
+
 		if (count.Parent.EnumType != ParentTypeEnum.FeastDay)
 		{
 			return null;

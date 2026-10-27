@@ -42,6 +42,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 	public abstract string Details { get; }
 	public abstract string Title { get; }
 	public abstract string BadgeCss { get; }
+	public abstract string DayCountIcon { get; } // If blank, use FeastDay.Icon
 	public abstract bool LastDayIsHighSabbath { get; }
 	public abstract FeastGroup Group { get; }
 	#endregion
@@ -56,6 +57,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 7;
 		public override string Details => "Days of Chag Hamatzot"; //
 		public override string Title => "Matzot";
+		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.UnleavenedBreadCount;
 		public override bool LastDayIsHighSabbath => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
@@ -69,6 +71,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 50;
 		public override string Details => "Omer"; //
 		public override string Title => "Omer";
+		public override string DayCountIcon => "fa-solid fa-wheat-awn"; 
 		public override string BadgeCss => FeastGroupBadgeColor.Omer;
 		public override bool LastDayIsHighSabbath => false;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
@@ -79,8 +82,10 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public RepentanceSE() : base($"{nameof(Id.Repentance)}", Id.Repentance) { }
 		public override ParentRecord Parent => new(ParentTypeEnum.Month, Moon.Elul.Value);
 		public override int TotalDays => 40;
-		public override string Details => "Days of Repentance"; //
+		public override string Details => "Days of Repentance"; 
 		public override string Title => "Repentance";
+
+		public override string DayCountIcon => "fa-solid fa-rotate-left"; //  fa-sharp-duotone fa-solid fa-rotate-left
 		public override string BadgeCss => FeastGroupBadgeColor.Repentance;
 		public override bool LastDayIsHighSabbath => false;
 		public override FeastGroup Group => FeastGroup.DaysOf;
@@ -93,6 +98,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 10;
 		public override string Details => "Days of Awe"; //
 		public override string Title => "Awe";
+		public override string DayCountIcon => "fa-regular fa-face-surprise"; //   fa-regular fa-face-astonished 
 		public override string BadgeCss => FeastGroupBadgeColor.Awe;
 		public override bool LastDayIsHighSabbath => false;
 		public override FeastGroup Group => FeastGroup.DaysOf;
@@ -105,6 +111,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 8;
 		public override string Details => "Days of Sukkot"; // 8th day is Shemini Atzeret (8th day of Assembly)
 		public override string Title => "Sukkot";
+		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.SukkotCount;
 		public override bool LastDayIsHighSabbath => true;
 		public override FeastGroup Group => FeastGroup.Fall;
@@ -117,6 +124,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override int TotalDays => 8;
 		public override string Details => "Nights for lighting the hanukiah"; //
 		public override string Title => "Hanukkah";
+		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.MenorahCount; // "fa-solid fa-hanukiah"
 		public override bool LastDayIsHighSabbath => false;
 		public override FeastGroup Group => FeastGroup.Winter;
