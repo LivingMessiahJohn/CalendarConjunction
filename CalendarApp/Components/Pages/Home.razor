@@ -2,7 +2,7 @@
 
 <PageHeader />
 
-<MenuCard FilteredCount="FilteredCount" DateSelection="dateFilter" Events="eventFilter" OpenDateFilter="ShowDateFilter" OpenEventFilter="ShowEventFilter" />
+<MenuCard FilteredCount="FilteredCount" DateSelection="dateFilter" Events="EventFlag.SelectedTitles(eventFilter)" OpenDateFilter="ShowDateFilter" OpenEventFilter="ShowEventFilter" />
 
 @if (loadError is not null)
 {
@@ -16,7 +16,7 @@ else
 {
 	<DateFilterModal Visible="dateFilterOpen" Closed="HideDateFilter" Selection="dateFilter" FilterChanged="OnDateFilterChanged" />
 
-	<EventFilterModal Visible="eventFilterOpen" Closed="HideEventFilter" Choices="eventChoices" Selected="@eventFilter" FilterChanged="OnEventFilterChanged" />
+	<EventFilterModal Visible="eventFilterOpen" Closed="HideEventFilter" Choices="eventChoices" Selection="eventFilter" FilterChanged="OnEventFilterChanged" />
 
 	<QuickGrid TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ProvideItems" Class="table table-sm table-striped table-hover align-middle">
 		<PropertyColumn Property="@(row => row.Year)" Title="Year" Sortable="false" />
@@ -78,7 +78,7 @@ else
 	private DateFilterSelection dateFilter = new(string.Empty, null, string.Empty);
 	private bool dateFilterOpen;
 	private bool eventFilterOpen;
-	private IReadOnlyList<string> eventFilter = [];
+	private int eventFilter = EventFlag.DefaultMask;
 	private IReadOnlyList<EventBadge> eventChoices = [];
 
 	private int FilteredCount => FilteredRows().Count();
@@ -87,7 +87,7 @@ else
 			(dateFilter.Year.Length == 0 || row.Year == int.Parse(dateFilter.Year, System.Globalization.CultureInfo.InvariantCulture))
 			&& (dateFilter.Date is null || row.GregorianDate == dateFilter.Date)
 			&& (dateFilter.Moon.Length == 0 || row.MoonPhaseId == int.Parse(dateFilter.Moon, System.Globalization.CultureInfo.InvariantCulture))
-			&& (eventFilter.Count == 0 || row.Events.Any(item => eventFilter.Any(name => string.Equals(item.Text, name, StringComparison.Ordinal)))));
+			&& EventFlag.Matches(eventFilter, row.Events.Select(item => item.Text)));
 
 	private ValueTask<GridItemsProviderResult<CalendarGridRow>> ProvideItems(GridItemsProviderRequest<CalendarGridRow> request)
 	{
@@ -152,7 +152,7 @@ else
 		return RefreshGrid();
 	}
 
-	private Task OnEventFilterChanged(IReadOnlyList<string> selection)
+	private Task OnEventFilterChanged(int selection)
 	{
 		eventFilter = selection;
 		return RefreshGrid();

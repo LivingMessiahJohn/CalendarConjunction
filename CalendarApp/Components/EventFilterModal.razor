@@ -8,12 +8,18 @@
 					<button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
 				</div>
 				<div class="modal-body">
-					<div class="event-filters mb-3 @(Selected.Count == 0 ? null : "is-filtered")" role="group" aria-label="All events">
+					<div class="event-filters mb-3 @(Selection == 0 ? null : "is-filtered")" role="group" aria-label="Event presets">
 						<button type="button"
-										class="event-filter badge bg-secondary text-black @(Selected.Count == 0 ? "event-filter-active" : null)"
-										aria-pressed="@(Selected.Count == 0 ? "true" : "false")"
-										@onclick="Clear">
+										class="event-filter badge bg-secondary text-black @(Selection == EventFlag.AllMask ? "event-filter-active" : null)"
+										aria-pressed="@(Selection == EventFlag.AllMask ? "true" : "false")"
+										@onclick="ToggleAll">
 							All
+						</button>
+						<button type="button"
+										class="event-filter badge bg-secondary text-black @(Selection == EventFlag.DefaultMask ? "event-filter-active" : null)"
+										aria-pressed="@(Selection == EventFlag.DefaultMask ? "true" : "false")"
+										@onclick="ApplyDefault">
+							Default
 						</button>
 					</div>
 					@foreach (var section in Sections())
@@ -27,7 +33,7 @@
 								@section.Title
 							</button>
 						</h3>
-						<div class="event-filters mb-3 @(Selected.Count == 0 ? null : "is-filtered")" role="group" aria-labelledby="@GroupId(section.Title)">
+						<div class="event-filters mb-3 @(Selection == 0 ? null : "is-filtered")" role="group" aria-labelledby="@GroupId(section.Title)">
 							@foreach (var item in section.Items)
 							{
 								var selected = Contains(item.Text);
@@ -58,8 +64,8 @@
 	[Parameter] public bool Visible { get; set; }
 	[Parameter] public EventCallback Closed { get; set; }
 	[Parameter] public IReadOnlyList<EventBadge> Choices { get; set; } = []; // why does this half to be passed in?
-	[Parameter] public IReadOnlyList<string> Selected { get; set; } = [];
-	[Parameter] public EventCallback<IReadOnlyList<string>> FilterChanged { get; set; }
+	[Parameter] public int Selection { get; set; }
+	[Parameter] public EventCallback<int> FilterChanged { get; set; }
 
 	private ElementReference modal;
 	private bool focused;
@@ -115,24 +121,32 @@
 	private static string GroupId(string title) => "event-group-" + title.ToLowerInvariant().Replace(' ', '-');
 
 	private bool Contains(string text) =>
-			Selected.Any(name => string.Equals(name, text, StringComparison.Ordinal));
+			EventFlag.TryFromTitle(text, out var flag) && (Selection & flag.Value) == flag.Value;
 
-	private bool IsGroupSelected(IReadOnlyList<EventBadge> items) =>
-			Selected.Count == items.Count && items.All(item => Contains(item.Text));
+	private bool IsGroupSelected(IReadOnlyList<EventBadge> items)
+	{
+		var mask = EventFlag.MaskForTitles(items.Select(item => item.Text));
+		return mask != 0 && (Selection & mask) == mask;
+	}
 
 	private Task Select(string text)
 	{
-		var onlyThis = Selected.Count == 1 && string.Equals(Selected[0], text, StringComparison.Ordinal);
-		IReadOnlyList<string> next = onlyThis ? [] : [text];
-		return FilterChanged.InvokeAsync(next);
+		if (!EventFlag.TryFromTitle(text, out var flag))
+		{
+			return Task.CompletedTask;
+		}
+
+		return FilterChanged.InvokeAsync(Selection ^ flag.Value);
 	}
 
 	private Task SelectGroup(IReadOnlyList<EventBadge> items)
 	{
-		var names = items.Select(item => item.Text).ToArray();
-		IReadOnlyList<string> next = IsGroupSelected(items) ? [] : names;
+		var mask = EventFlag.MaskForTitles(items.Select(item => item.Text));
+		var next = (Selection & mask) == mask ? Selection & ~mask : Selection | mask;
 		return FilterChanged.InvokeAsync(next);
 	}
 
-	private Task Clear() => FilterChanged.InvokeAsync([]);
+	private Task ToggleAll() => FilterChanged.InvokeAsync(Selection == EventFlag.AllMask ? 0 : EventFlag.AllMask);
+
+	private Task ApplyDefault() => FilterChanged.InvokeAsync(EventFlag.DefaultMask);
 }
