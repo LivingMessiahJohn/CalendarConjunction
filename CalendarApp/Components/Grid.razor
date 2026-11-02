@@ -1,0 +1,66 @@
+@if (Year != YearEnum.All)
+{
+	<h3 class="text-center text-body-secondary mb-2"><b>@Year.Label()</b></h3>
+}
+
+<QuickGrid @key="Year == YearEnum.All" TGridItem="CalendarGridRow" @ref="grid" ItemsProvider="ItemsProvider" Class="table table-sm table-striped table-hover align-middle">
+	@if (Year == YearEnum.All)
+	{
+		<TemplateColumn Title="Year" Sortable="false">
+			@(((YearEnum)context.Year).Label())
+		</TemplateColumn>
+	}
+	<TemplateColumn Title="Month" Sortable="false">
+		<span title="@context.MonthDescription">@context.Month</span>
+	</TemplateColumn>
+	<TemplateColumn Title="Day" Sortable="false" Align="Align.Center">
+		@if (context.Day == 1)
+		{
+			<span class="@FeastGroupBadgeColor.RoshKodesh">@context.Day</span>
+		}
+		else
+		{
+			@context.Day
+		}
+	</TemplateColumn>
+	<PropertyColumn Property="@(row => row.DateText)" Title="Date" Sortable="false" />
+@*
+	<TemplateColumn Title="Moon" Sortable="false" Align="Align.Center">
+		@if (MoonPhase.FromValue(context.MoonPhaseId) is { Image.Length: > 0 } moon)
+		{
+			<img src="images/moons/@moon.Image" alt="@moon.Title" title="@moon.Title" width="25" height="25" />
+		}
+	</TemplateColumn>
+*@
+	<TemplateColumn Title="Event" Sortable="false">
+		<div class="count-cell">
+			@foreach (var item in context.Events)
+			{
+				<span class="@item.BadgeCss" title="@item.Details">
+					@if (!string.IsNullOrEmpty(item.Icon))
+					{
+						<i class="@item.Icon me-1" aria-hidden="true"></i>
+					}
+					@item.Text
+				</span>
+			}
+		</div>
+	</TemplateColumn>
+	<TemplateColumn Title="Count" Sortable="false">
+		<div class="count-cell">
+			@foreach (var count in context.Counts)
+			{
+				<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
+			}
+		</div>
+	</TemplateColumn>
+</QuickGrid>
+
+@code {
+	private QuickGrid<CalendarGridRow>? grid;
+
+	[Parameter] public YearEnum Year { get; set; } = YearEnum.All;
+	[Parameter] public GridItemsProvider<CalendarGridRow> ItemsProvider { get; set; } = default!;
+
+	public Task RefreshAsync() => grid is null ? Task.CompletedTask : grid.RefreshDataAsync();
+}
