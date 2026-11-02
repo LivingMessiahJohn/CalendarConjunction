@@ -14,7 +14,7 @@
 
 @code {
 	[Parameter] public int FilteredCount { get; set; }
-	[Parameter] public DateFilterSelection DateSelection { get; set; } = new(string.Empty, null, string.Empty);
+	[Parameter] public DateFilterSelection DateSelection { get; set; } = new(YearEnum.All);
 	[Parameter] public IReadOnlyList<string> Events { get; set; } = [];
 	[Parameter] public EventCallback OpenDateFilter { get; set; }
 	[Parameter] public EventCallback OpenEventFilter { get; set; }
@@ -24,21 +24,9 @@
 		get
 		{
 			var parts = new List<string>();
-			if (DateSelection.Year.Length > 0)
+			if (DateSelection.Year != YearEnum.All)
 			{
-				parts.Add("Year " + DateSelection.Year);
-			}
-
-			if (DateSelection.Date is DateOnly date)
-			{
-				parts.Add(date.ToString("yyyy-MMM-dd ddd", System.Globalization.CultureInfo.InvariantCulture));
-			}
-
-			if (DateSelection.Moon.Length > 0
-					&& int.TryParse(DateSelection.Moon, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var moonId)
-					&& MoonPhase.TryFromValue(moonId, out var moon))
-			{
-				parts.Add(moon.Name);
+				parts.Add("Year " + DateSelection.Year.Label());
 			}
 
 			if (Events.Count > 0)

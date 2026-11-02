@@ -1,6 +1,3 @@
-@using CalendarApp.Constants
-@using CalendarApp.Constants.Feasts
-
 @if (Visible)
 {
 	<div @ref="modal" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="date-filter-title" @onclick="Close" @onkeydown="OnKeyDown">
@@ -14,25 +11,10 @@
 					<div class="row g-2 align-items-end">
 						<div class="col-auto">
 							<label class="form-label" for="year-filter">Year</label>
-							<select id="year-filter" class="form-select" value="@Selection.Year" @onchange="OnYearChanged">
-								<option value="">All</option>
+							<select id="year-filter" class="form-select" value="@((int)Selection.Year)" @onchange="OnYearChanged">
 								@foreach (var year in Enum.GetValues<YearEnum>())
 								{
-									<option value="@((int)year)">@((int)year)</option>
-								}
-							</select>
-						</div>
-						<div class="col-auto">
-							<label class="form-label" for="date-filter">Date</label>
-							<input id="date-filter" type="date" class="form-control" value="@DateValue" @onchange="OnDateChanged" />
-						</div>
-						<div class="col-auto">
-							<label class="form-label" for="moon-filter">Moon</label>
-							<select id="moon-filter" class="form-select" value="@Selection.Moon" @onchange="OnMoonChanged">
-								<option value="">All</option>
-								@foreach (var moon in MoonPhase.List.Where(moon => moon != MoonPhase.None).OrderBy(moon => moon.Value))
-								{
-									<option value="@moon.Value">@moon.Name</option>
+									<option value="@((int)year)">@(year == YearEnum.All ? "All" : year.Label())</option>
 								}
 							</select>
 						</div>
@@ -50,8 +32,8 @@
 @code {
 	[Parameter] public bool Visible { get; set; }
 	[Parameter] public EventCallback Closed { get; set; }
-	[Parameter] public DateFilterSelection Selection { get; set; } = new(string.Empty, null, string.Empty);
-	[Parameter]	public EventCallback<DateFilterSelection> FilterChanged { get; set; }
+	[Parameter] public DateFilterSelection Selection { get; set; } = new(YearEnum.All);
+	[Parameter] public EventCallback<DateFilterSelection> FilterChanged { get; set; }
 
 	private ElementReference modal;
 	private bool focused;
@@ -74,26 +56,13 @@
 	private Task OnKeyDown(KeyboardEventArgs e) =>
 			e.Key == "Escape" ? Close() : Task.CompletedTask;
 
-	private string DateValue => Selection.Date?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture) ?? "";
-
 	private Task OnYearChanged(ChangeEventArgs change)
 	{
-		var year = change.Value?.ToString() ?? "";
-		return FilterChanged.InvokeAsync(Selection with { Year = year });
-	}
-
-	private Task OnDateChanged(ChangeEventArgs change)
-	{
 		var text = change.Value?.ToString();
-		DateOnly? date = string.IsNullOrWhiteSpace(text)
-				? null
-				: DateOnly.Parse(text, System.Globalization.CultureInfo.InvariantCulture);
-		return FilterChanged.InvokeAsync(Selection with { Date = date });
-	}
-
-	private Task OnMoonChanged(ChangeEventArgs change)
-	{
-		var moon = change.Value?.ToString() ?? "";
-		return FilterChanged.InvokeAsync(Selection with { Moon = moon });
+		var year = int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var value)
+				&& Enum.IsDefined(typeof(YearEnum), value)
+				? (YearEnum)value
+				: YearEnum.All;
+		return FilterChanged.InvokeAsync(new DateFilterSelection(year));
 	}
 }

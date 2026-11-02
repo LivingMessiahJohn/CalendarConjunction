@@ -17,6 +17,11 @@ public static class ConstantCalendar
 
 		foreach (var year in Enum.GetValues<YearEnum>())
 		{
+			if (year == YearEnum.All)
+			{
+				continue;
+			}
+
 			foreach (var feast in FeastDay.List)
 			{
 				var date = FeastDate(feast, year);
