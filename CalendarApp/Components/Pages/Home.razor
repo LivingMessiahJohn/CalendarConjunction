@@ -2,7 +2,12 @@
 
 <PageHeader LinkHref="/about" LinkText="About" Icon="fa-solid fa-circle-info" />
 
-<MenuCard FilteredCount="FilteredCount" DateSelection="dateFilter" Events="EventFlag.SelectedTitles(eventFilter)" OpenDateFilter="ShowDateFilter" OpenEventFilter="ShowEventFilter" />
+<FilterCard FilteredCount="FilteredCount"
+						DateSelection="dateFilter"
+						Events="EventFlag.SelectedTitles(eventFilter)"
+						OpenDateFilter="ShowDateFilter"
+						OpenEventFilter="ShowEventFilter" />
+
 
 @if (loadError is not null)
 {
@@ -14,19 +19,28 @@ else if (rows is null)
 }
 else
 {
-	<DateFilterModal Visible="dateFilterOpen" Closed="HideDateFilter" Selection="dateFilter" FilterChanged="OnDateFilterChanged" />
+	<DatePickerFilterModal Visible="dateFilterOpen"
+												 Closed="HideDateFilter"
+												 Selection="dateFilter"
+												 FilterChanged="OnDateFilterChanged" />
 
-	<EventFilterModal Visible="eventFilterOpen" Closed="HideEventFilter" Choices="eventChoices" Selection="eventFilter" FilterChanged="OnEventFilterChanged" />
+	<EventFilterModal Visible="eventFilterOpen"
+										Closed="HideEventFilter"
+										Choices="eventChoices"
+										Selection="eventFilter"
+										FilterChanged="OnEventFilterChanged" />
 
-	<Grid @ref="grid" Year="dateFilter.Year" ItemsProvider="ProvideItems" />
+	<Table @ref="table" Year="dateFilter" data="FilteredRows().ToList()" />
 }
 
 @code {
-	private Grid? grid;
+	private Table? table;
 
 	private IReadOnlyList<CalendarGridRow>? rows;
 	private string? loadError;
-	private DateFilterSelection dateFilter = new(YearEnum.All);
+	//private DateFilterSelection dateFilter = new(YearEnum.All);
+	private int dateFilter = YearHelper.Default;
+
 	private bool dateFilterOpen;
 	private bool eventFilterOpen;
 	private int eventFilter = EventFlag.DefaultMask;
@@ -34,24 +48,16 @@ else
 
 	private int FilteredCount => FilteredRows().Count();
 
+	//(dateFilter.Year == YearEnum.All || row.Year == (int)dateFilter.Year)
 	private IEnumerable<CalendarGridRow> FilteredRows() => (rows ?? []).Where(row =>
-			(dateFilter.Year == YearEnum.All || row.Year == (int)dateFilter.Year)
+			(dateFilter == 0 || row.Year == dateFilter)
 			&& EventFlag.Matches(eventFilter, row.Events.Select(item => item.Text)));
-
-	private ValueTask<GridItemsProviderResult<CalendarGridRow>> ProvideItems(GridItemsProviderRequest<CalendarGridRow> request)
-	{
-		var items = FilteredRows().ToList();
-		var count = request.Count ?? items.Count;
-		var page = items.Skip(request.StartIndex).Take(count).ToList();
-		return ValueTask.FromResult(GridItemsProviderResult.From<CalendarGridRow>(page, items.Count));
-	}
 
 	protected override void OnInitialized()
 	{
 		try
 		{
 			rows = ConstantCalendar.Build();
-			dateFilter = new DateFilterSelection(YearDefault.For(DateOnly.FromDateTime(DateTime.Today)));
 			eventChoices = DistinctEvents(rows);
 		}
 		catch (Exception ex)
@@ -89,14 +95,12 @@ else
 	}
 
 	private void ShowDateFilter() => dateFilterOpen = true;
-
 	private void HideDateFilter() => dateFilterOpen = false;
-
 	private void ShowEventFilter() => eventFilterOpen = true;
-
 	private void HideEventFilter() => eventFilterOpen = false;
 
-	private Task OnDateFilterChanged(DateFilterSelection selection)
+
+	private Task OnDateFilterChanged(int selection)
 	{
 		dateFilter = selection;
 		return RefreshGrid();
@@ -110,9 +114,9 @@ else
 
 	private async Task RefreshGrid()
 	{
-		if (grid is not null)
+		if (table is not null)
 		{
-			await grid.RefreshAsync();
+			await table.RefreshAsync();
 		}
 	}
 }

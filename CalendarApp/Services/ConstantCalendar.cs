@@ -1,5 +1,4 @@
 using System.Globalization;
-using CalendarApp.Constants;
 using CalendarApp.Constants.Moons;
 using CalendarApp.Enums;
 using CalendarApp.Models;
@@ -15,13 +14,8 @@ public static class ConstantCalendar
 		var buckets = new Dictionary<DateOnly, DateBucket>();
 		var monthAnchors = new List<MonthAnchor>();
 
-		foreach (var year in Enum.GetValues<YearEnum>())
+		foreach (var year in YearHelper.HebrewYears)
 		{
-			if (year == YearEnum.All)
-			{
-				continue;
-			}
-
 			foreach (var feast in FeastDay.List)
 			{
 				var date = FeastDate(feast, year);
@@ -185,18 +179,18 @@ public static class ConstantCalendar
 		return latest;
 	}
 
-	private static DateBucket Bucket(Dictionary<DateOnly, DateBucket> buckets, DateOnly date, YearEnum year)
+	private static DateBucket Bucket(Dictionary<DateOnly, DateBucket> buckets, DateOnly date, int year)
 	{
 		if (!buckets.TryGetValue(date, out var bucket))
 		{
-			bucket = new DateBucket { Year = (int)year };
+			bucket = new DateBucket { Year = year };
 			buckets.Add(date, bucket);
 		}
 
 		return bucket;
 	}
 
-	private static DateOnly ParentDate(DayCount count, YearEnum year)
+	private static DateOnly ParentDate(DayCount count, int year)
 	{
 		var parent = count.Parent;
 		return parent.EnumType switch
@@ -207,9 +201,9 @@ public static class ConstantCalendar
 		};
 	}
 
-	private static DateOnly FeastDate(FeastDay feast, YearEnum year) => feast.DateFor(year);
+	private static DateOnly FeastDate(FeastDay feast, int year) => feast.DateFor(year);
 
-	private static DateOnly MoonDate(Moon moon, YearEnum year) => moon.Name switch
+	private static DateOnly MoonDate(Moon moon, int year) => moon.Name switch
 	{
 		"Nissan" => DateFor(Nissan.Dates, year),
 		"Iyar" => DateFor(Iyar.Dates, year),
@@ -227,7 +221,7 @@ public static class ConstantCalendar
 		_ => throw new InvalidOperationException($"No constant dates for moon {moon.Name}.")
 	};
 
-	private static DateOnly DateFor(IReadOnlyDictionary<YearEnum, DateOnly> dates, YearEnum year) =>
+	private static DateOnly DateFor(IReadOnlyDictionary<int, DateOnly> dates, int year) =>
 			dates.TryGetValue(year, out var date) ? date : DateOnly.MinValue;
 
 	private sealed class DateBucket

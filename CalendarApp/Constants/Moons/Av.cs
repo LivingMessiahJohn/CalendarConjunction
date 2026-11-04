@@ -1,22 +1,25 @@
-﻿namespace CalendarApp.Constants.Moons;
+﻿using CalendarApp.Enums;
 
-// Relevant FlattenByDates rows only. DateOnly.MinValue means that year has no row.
-public static class Av
+namespace CalendarApp.Constants.Moons;
+
+public static class Av // Month 5
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-08-02");
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-07-22");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-08-10");
 	private static readonly DateOnly Year5 = DateOnly.Parse("2030-07-30");
-	private static readonly DateOnly Year6 = DateOnly.MinValue;
+	private static readonly DateOnly Year6 = DateOnly.Parse("2031-07-20");
+	private static readonly DateOnly Year7 = DateOnly.Parse("2032-08-07");
 
-	public static readonly Dictionary<YearEnum, DateOnly> Dates = new()
+	public static readonly Dictionary<int, DateOnly> Dates = new()
 	{
-		[YearEnum.Year1] = Year1,
-		[YearEnum.Year2] = Year2,
-		[YearEnum.Year3] = Year3,
-		[YearEnum.Year4] = Year4,
-		[YearEnum.Year5] = Year5,
-		[YearEnum.Year6] = Year6
+		[YearHelper.HebrewYears[0]] = Year1,
+		[YearHelper.HebrewYears[1]] = Year2,
+		[YearHelper.HebrewYears[2]] = Year3,
+		[YearHelper.HebrewYears[3]] = Year4,
+		[YearHelper.HebrewYears[4]] = Year5,
+		[YearHelper.HebrewYears[5]] = Year6,
+		[YearHelper.HebrewYears[6]] = Year7
 	};
 }

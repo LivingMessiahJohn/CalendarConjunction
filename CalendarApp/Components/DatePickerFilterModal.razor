@@ -11,10 +11,11 @@
 					<div class="row g-2 align-items-end">
 						<div class="col-auto">
 							<label class="form-label" for="year-filter">Year</label>
-							<select id="year-filter" class="form-select" value="@((int)Selection.Year)" @onchange="OnYearChanged">
-								@foreach (var year in Enum.GetValues<YearEnum>())
+							<select id="year-filter" class="form-select" value="@Selection" @onchange="OnYearChanged">
+								<option value="0">All</option>
+								@foreach (var year in YearHelper.HebrewYears)
 								{
-									<option value="@((int)year)">@(year == YearEnum.All ? "All" : year.Label())</option>
+									<option value="@year">@year - @YearHelper.GetGregorianYear(year)</option>
 								}
 							</select>
 						</div>
@@ -32,11 +33,21 @@
 @code {
 	[Parameter] public bool Visible { get; set; }
 	[Parameter] public EventCallback Closed { get; set; }
-	[Parameter] public DateFilterSelection Selection { get; set; } = new(YearEnum.All);
-	[Parameter] public EventCallback<DateFilterSelection> FilterChanged { get; set; }
+	[Parameter] public int Selection { get; set; }
+	[Parameter] public EventCallback<int> FilterChanged { get; set; }
 
 	private ElementReference modal;
 	private bool focused;
+
+	private async Task OnYearChanged(ChangeEventArgs e)
+	{
+		if (int.TryParse(e.Value?.ToString(), out int year))
+		{
+			Selection = year;
+			await FilterChanged.InvokeAsync(year);
+		}
+	}
+
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -56,13 +67,5 @@
 	private Task OnKeyDown(KeyboardEventArgs e) =>
 			e.Key == "Escape" ? Close() : Task.CompletedTask;
 
-	private Task OnYearChanged(ChangeEventArgs change)
-	{
-		var text = change.Value?.ToString();
-		var year = int.TryParse(text, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var value)
-				&& Enum.IsDefined(typeof(YearEnum), value)
-				? (YearEnum)value
-				: YearEnum.All;
-		return FilterChanged.InvokeAsync(new DateFilterSelection(year));
-	}
+
 }

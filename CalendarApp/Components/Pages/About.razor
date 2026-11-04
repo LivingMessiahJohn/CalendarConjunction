@@ -26,22 +26,41 @@
 	<h2>Questions</h2>
 	<ul>
 		<li>When does the new-moon determination start, relative to the spring equinox?</li>
-		<li>What is the purpose of showing the waxing, waning, and full moon?</li>
+		<li>What is the rules for `awe` and `repentance` ?</li>
 		<li>How should the setting moon be understood, including the two days when the moon cannot be seen?</li>
 	</ul>
 
 	<h2>Future ideas</h2>
 	<ul>
 		<li>Moon details such as moonrise time, moonrise azimuth, moonset time, and moonset azimuth.</li>
-		<li>A link to an online source for the new moon, including the day before and the day after.</li>
+		<li>A link to an online source for the new moon, including the day before and the day after. Something like `C:\Source\SDLC\279-CalendarConjunction\Starry-Night-App-Notes.md`</li>
 		<li>A screenshot of the new moon against a constellation background.</li>
 		<li>Bring this calendar into LivingMessiah.com and use it as a planner.</li>
 		<li>Let people in different time zones customize the dates.</li>
 		<li>Add another year.</li>
 		<li>Add graphics, including the constellation on Yom Kippur.</li>
+		<li>Add Full Moon because Josephus et. al. points out that during Unleavened bread and Sukkot it was fully lite night. Waxing and waning isn't that significant so don't really need them.</li>
+		<li>Should we include the Parasha</li>
 	</ul>
 
 	<p class="mb-0">
 		<a href="https://github.com/LivingMessiahJohn/CalendarConjunction">CalendarConjunction on GitHub</a>
 	</p>
+@* 
+	“give me a date and location and show the sky,” these are more practical:
+
+	| Option | Type | Notes |
+	|--------|------|-------|
+	| **Stellarium** | Free / open-source | Best match. Desktop version has a **Remote Control plugin** with a full HTTP API (runs on localhost). You can set location, date/time, view direction, and trigger screenshots. Also has scripting support. |
+	| **Stellarium Web / Web Engine** | Free | Web version accepts URL parameters for location/date; the JavaScript engine can be embedded. |
+	| **starplot** (Python) | Free library | Excellent for generating customizable star charts (zenith charts, horizon charts, etc.) from an observer’s lat/lon + datetime. Outputs SVG/PNG. |
+	| **Starmap360 API** | Commercial | Explicitly designed for this: date + lat/lon/time → SVG or PNG star map. |
+	| Online generators | Free web tools | Sites such as Starlight Tools or Skylit Studio generate maps in the browser from date/location. |
+
+	https://starmap360.com/blog/starmap-api-for-developers-and-sellers
+	GET /api/starmap.svg?api_key=your-api-key&latitude=52.2297&longitude=21.0122&date=2025-01-01&time=20:15:00&background_color=000000&main_color=FFFFFF&show_milky_way=true&show_constellations=true
+
+
+ *@
+
 </article>

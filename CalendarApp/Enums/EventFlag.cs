@@ -47,7 +47,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 
 	public static int AllMask => List.Aggregate(0, (mask, flag) => mask | flag.Value);
 
-	public static int DefaultMask => Matzot.Value | MaskFor(FeastGroup.Fall) | RoshKodesh.Value;
+	public static int DefaultMask => Matzot.Value | Shavuot.Value | MaskFor(FeastGroup.Fall) | RoshKodesh.Value;
 
 	public static int MaskFor(FeastGroup group)
 	{
