@@ -1,0 +1,83 @@
+﻿@using CalendarApp.Enums
+
+@* Class="table table-sm table-striped table-hover align-middle"> *@
+
+@if (Year != 0)
+{
+	<h3 class="text-center text-body-secondary mb-2"><b>@Year - @YearHelper.GetGregorianYear(Year)</b></h3>
+}
+
+<TableTemplate Items="data">
+	<TableHeader>
+
+		@if (Year == 0)
+		{
+			<th>Year</th>
+		}
+		<th>Month</th>
+		
+		<th>Day</th>
+		<th>Date</th>
+		<th>Events <sup><mark><u>Day of</u></mark></sup> </th>
+		<th>Count</th>
+	</TableHeader>
+	<RowTemplate>
+		@if (Year == 0)
+		{
+			<td>@context.Year</td>
+		}
+
+		<td>@context.Month</td>
+		<td>@context.Day</td>
+		<td>@context.GregorianDate</td>
+		<td>
+			<div class="count-cell">
+				@foreach (var item in context.Events)
+				{
+					<span class="@item.BadgeCss" title="@item.Details">
+						@if (!string.IsNullOrEmpty(item.Icon))
+						{
+							<i class="@item.Icon me-1" aria-hidden="true"></i>
+						}
+						@item.Text
+					</span>
+				}
+			</div>
+		</td>
+		<td>
+			<div class="count-cell">
+				@foreach (var count in context.Counts)
+				{
+					<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
+				}
+			</div>
+		</td>
+	</RowTemplate>
+</TableTemplate>
+
+
+@code {
+	[Parameter, EditorRequired] public int Year { get; set; } 
+	[Parameter, EditorRequired] public IReadOnlyList<CalendarGridRow>? data { get; set; }
+
+	public Task RefreshAsync()
+	{
+		StateHasChanged();
+		return Task.CompletedTask;
+	}
+	//private QuickGrid<CalendarGridRow>? grid;
+	//private List<CalendarGridRow> data;
+
+	// protected override void OnInitialized()
+	// {
+	// 	data = await db!.GetAllStripe();
+	// }
+
+
+
+	// private List<CalendarGridRow>? filteredData =>
+	// 	CurrentFilter != CalendarEnumDateType.All
+	// 	? BaseData!.Where(w => w.Filter == CurrentFilter).ToList()
+	// 	: BaseData;
+
+}
