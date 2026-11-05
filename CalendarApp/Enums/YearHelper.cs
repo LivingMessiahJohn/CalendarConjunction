@@ -2,8 +2,6 @@
 
 public static class YearHelper
 {
-	public const int Min = 5862;
-	public const int Max = 5868;
 	public const int Default = 5863;
 
 	public static readonly List<int> HebrewYears =
@@ -16,6 +14,10 @@ public static class YearHelper
 		5867,
 		5868
 	];
+
+	public static int Min => HebrewYears[0];
+	public static int Max => HebrewYears[^1]; // The ^ operator counts backward from the end; i.e. HebrewYears[HebrewYears.Count - 1].
+	public static string Range => $"{Min}-{Max}";
 
 	private const int Offset = 3836;
 	public static int GetGregorianYear(int hebrewYear) { return hebrewYear - Offset; }
