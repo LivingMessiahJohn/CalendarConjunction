@@ -10,14 +10,16 @@
 				<div class="modal-body">
 					<div class="row g-2 align-items-end">
 						<div class="col-auto">
-							<label class="form-label" for="year-filter">Year</label>
-							<select id="year-filter" class="form-select" value="@Selection" @onchange="OnYearChanged">
-								<option value="0">All</option>
-								@foreach (var year in YearHelper.HebrewYears)
-								{
-									<option value="@year">@year - @YearHelper.GetGregorianYear(year)</option>
-								}
-							</select>
+							<SelectorDropDown T="int"
+																Options="YearHelper.HebrewYears"
+																SelectedOption="Selection"
+																SelectedOptionChanged="OnYearChanged"
+																OptionLabel="FormatYear"
+																LeadingText="All"
+																LeadingValue="0"
+																LabelText="Year"
+																Superscript="@YearHelper.Range"
+																Id="year-filter" />
 						</div>
 					</div>
 				</div>
@@ -39,13 +41,12 @@
 	private ElementReference modal;
 	private bool focused;
 
-	private async Task OnYearChanged(ChangeEventArgs e)
+	private static string FormatYear(int year) => $"{year} - {YearHelper.GetGregorianYear(year)}";
+
+	private Task OnYearChanged(int year)
 	{
-		if (int.TryParse(e.Value?.ToString(), out int year))
-		{
-			Selection = year;
-			await FilterChanged.InvokeAsync(year);
-		}
+		Selection = year;
+		return FilterChanged.InvokeAsync(year);
 	}
 
 

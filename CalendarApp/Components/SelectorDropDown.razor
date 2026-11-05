@@ -1,0 +1,62 @@
+@using System.Globalization
+@typeparam T where T : IParsable<T>
+
+<label class="form-label" for="@Id">
+	@LabelText
+	@if (!string.IsNullOrEmpty(Superscript))
+	{
+		<sup>@Superscript</sup>
+	}
+</label>
+<select id="@Id" class="form-select" value="@SelectedOption" @onchange="OnSelectionChanged">
+	@if (!string.IsNullOrEmpty(LeadingText))
+	{
+		<option value="@LeadingValue">@LeadingText</option>
+	}
+	@if (Options is not null)
+	{
+		@foreach (var option in Options)
+		{
+			<option value="@option">@Format(option)</option>
+		}
+	}
+</select>
+
+@code {
+	[Parameter] public string Id { get; set; } = "selectorDropdown";
+	[Parameter] public string LabelText { get; set; } = "Select an option";
+	[Parameter] public string? Superscript { get; set; }
+	[Parameter] public T SelectedOption { get; set; } = default!;
+	[Parameter] public EventCallback<T> SelectedOptionChanged { get; set; }
+	[Parameter] public IEnumerable<T>? Options { get; set; }
+	[Parameter] public Func<T, string>? OptionLabel { get; set; }
+	[Parameter] public string? LeadingText { get; set; }
+	[Parameter] public T LeadingValue { get; set; } = default!;
+
+	/*
+	 ### What is `T`?
+	 - `T` is not a reserved word but rather the usual name people pick for a generic type parameter.
+	 - The `<`...`>` wrapper is reserved. You can constrain it with `where`
+	 - `T` is the type parameter, it's fixed by the caller e.g. `<SelectorDropDown T="int" ... />`
+	 - `SelectorDropDown` causes `LeadingValue` to be fixed as an `int` and sets `LeadingText` to `"0"`
+	 */
+
+	private string Format(T option) => OptionLabel?.Invoke(option) ?? option.ToString() ?? string.Empty;
+
+	private async Task OnSelectionChanged(ChangeEventArgs e)
+	{
+		var text = e.Value?.ToString();
+		if (!T.TryParse(text, CultureInfo.InvariantCulture, out var value))
+		{
+			return;
+		}
+
+		if (EqualityComparer<T>.Default.Equals(value, SelectedOption))
+		{
+			return;
+		}
+
+		SelectedOption = value;
+		await SelectedOptionChanged.InvokeAsync(value);
+	}
+}
