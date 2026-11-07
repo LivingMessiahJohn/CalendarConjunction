@@ -3,26 +3,15 @@ namespace CalendarApp.Models;
 public sealed class ConstellationDTO
 {
 	public int? CircleOrder { get; init; }
-
 	public int? MonthOrder { get; init; }
-
+	public string Month { get; init; } = "";
 	public string Sign { get; init; } = "";
-
-	/// <summary>
-	/// Mazzaroth name. Gospel-in-the-Stars spelling for a sign, biblical Hebrew name for a constellation named in Scripture.
-	/// </summary>
-	public string Mazzarah { get; init; } = "";
-
+	//public string Mazzarah { get; init; } = ""; // Mazzaroth name. Gospel-in-the-Stars spelling for a sign, biblical Hebrew name for a constellation named in Scripture.
 	public string HebrewTransliteration { get; init; } = "";
-
 	public string HebrewWord { get; init; } = "";
-
 	public string Verses { get; init; } = "";
-
 	public string Meaning { get; init; } = "";
-
 	public string KeyIdea { get; init; } = "";
-
 	public string MainStars { get; init; } = "";
 
 	public static IReadOnlyList<ConstellationDTO> All { get; } =
@@ -31,8 +20,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 1,
 			MonthOrder = 6,
+			Month = "Nisan",
 			Sign = "Virgo",
-			Mazzarah = "Bethulah",
+			//Mazzarah = "Bethulah",
 			HebrewTransliteration = "Betulah",
 			HebrewWord = "בתולה",
 			Verses = "Gen 3:15",
@@ -44,8 +34,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 2,
 			MonthOrder = 7,
+			Month = "Iyar",
 			Sign = "Libra",
-			Mazzarah = "Moznayim",
+			//Mazzarah = "Moznayim",
 			HebrewTransliteration = "Moznayim",
 			HebrewWord = "מאזנים",
 			Meaning = "The price paid / the required sacrifice",
@@ -56,8 +47,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 3,
 			MonthOrder = 8,
+			Month = "Sivan",
 			Sign = "Scorpio",
-			Mazzarah = "Akrav",
+			//Mazzarah = "Akrav",
 			HebrewTransliteration = "Akrav",
 			HebrewWord = "עקרב",
 			Meaning = "The mortal conflict",
@@ -68,8 +60,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 4,
 			MonthOrder = 9,
+			Month = "Tammuz",
 			Sign = "Sagittarius",
-			Mazzarah = "Keshet",
+			//Mazzarah = "Keshet",
 			HebrewTransliteration = "Keshet",
 			HebrewWord = "קשת",
 			Meaning = "The triumphant archer / the going forth",
@@ -79,8 +72,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 5,
 			MonthOrder = 10,
+			Month = "Tevet",
 			Sign = "Capricorn",
-			Mazzarah = "Gedi",
+			//Mazzarah = "Gedi",
 			HebrewTransliteration = "Gedi",
 			HebrewWord = "גדי",
 			Meaning = "Life out of death / the sacrifice",
@@ -91,8 +85,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 6,
 			MonthOrder = 11,
+			Month = "Shevat",
 			Sign = "Aquarius",
-			Mazzarah = "Deli",
+			//Mazzarah = "Deli",
 			HebrewTransliteration = "Deli / D'li",
 			HebrewWord = "דלי",
 			Meaning = "The outpoured blessing / the living water",
@@ -103,8 +98,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 7,
 			MonthOrder = 12,
+			Month = "Adar",
 			Sign = "Pisces",
-			Mazzarah = "Dagim",
+			//Mazzarah = "Dagim",
 			HebrewTransliteration = "Dagim",
 			HebrewWord = "דגים",
 			Meaning = "The multiplied / the redeemed people",
@@ -114,8 +110,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 8,
 			MonthOrder = 1,
+			Month = "Nissan ",
 			Sign = "Aries",
-			Mazzarah = "Taleh",
+			//Mazzarah = "Taleh",
 			HebrewTransliteration = "Taleh / Ṭ'leh",
 			HebrewWord = "טלה",
 			Meaning = "The substitute Lamb / glory out of humiliation",
@@ -126,8 +123,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 9,
 			MonthOrder = 2,
+			Month = "Iyar ",
 			Sign = "Taurus",
-			Mazzarah = "Shor",
+			//Mazzarah = "Shor",
 			HebrewTransliteration = "Shor",
 			HebrewWord = "שור",
 			Meaning = "His glorious coming in judgment",
@@ -138,8 +136,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 10,
 			MonthOrder = 3,
+			Month = "Sivan ",
 			Sign = "Gemini",
-			Mazzarah = "Teomim",
+			//Mazzarah = "Teomim",
 			HebrewTransliteration = "Teomim",
 			HebrewWord = "תאומים",
 			Meaning = "The two natures united / His rule",
@@ -149,8 +148,9 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 11,
 			MonthOrder = 4,
+			Month = "Tammuz",
 			Sign = "Cancer",
-			Mazzarah = "Sartan",
+			//Mazzarah = "Sartan",
 			HebrewTransliteration = "Sartan",
 			HebrewWord = "סרטן",
 			Meaning = "The sheepfold / His possessions held secure",
@@ -160,14 +160,16 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 12,
 			MonthOrder = 5,
+			Month = "Av",
 			Sign = "Leo",
-			Mazzarah = "Aryeh",
+			//Mazzarah = "Aryeh",
 			HebrewTransliteration = "Aryeh / Ari",
 			HebrewWord = "אריה",
 			Meaning = "The triumphant King / enemies destroyed",
 			KeyIdea = "The lion",
 			MainStars = "Regulus = \"the little king\"",
 		},
+		/*
 		new()
 		{
 			Sign = "Pleiades",
@@ -236,5 +238,6 @@ public sealed class ConstellationDTO
 			Meaning = "Often identified with the constellation Draco",
 			KeyIdea = "The crooked serpent",
 		},
+		*/
 	];
 }

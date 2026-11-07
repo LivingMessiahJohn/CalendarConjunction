@@ -1,0 +1,75 @@
+
+<p class="">
+	Each of the 12 signs has three associated “decan” constellations that expand the theme 
+	(e.g., under Virgo: Coma “the desired one,” Centaurus, Boötes “the coming shepherd”)
+</p>
+
+<div class="table-responsive">
+	<TableTemplate TItem="DecanSignRow" Items="Rows" HeaderCSS="table table-sm table-striped align-middle">
+		<TableHeader>
+			<th>Sign</th>
+			<th>1<sup>st</sup></th>
+			<th>2<sup>nd</sup></th>
+			<th>3<sup>rd</sup></th>
+		</TableHeader>
+		<RowTemplate>
+			<td class="fw-bold">@context.Sign</td>
+			<td>@FormatDecan(context.First)</td>
+			<td>@FormatDecan(context.Second)</td>
+			<td>@FormatDecan(context.Third)</td>
+		</RowTemplate>
+		<TableFooter>
+				<td colspan="4" class="small text-body-secondary">
+					<sup id="orion-decan-note">1</sup>
+					Orion: @OrionNote
+			</td>
+		</TableFooter>
+	</TableTemplate>
+</div>
+
+<p class="">
+		This is the standard grouping used by writers such as Frances Rolleston, Joseph Seiss, and E.W. Bullinger.
+		The original Egyptian decans were independent star groups used as a star clock;
+		this table reflects the later interpretive association of three constellations with each of the twelve zodiac signs.
+
+</p>
+
+@code {
+	[Parameter, EditorRequired] public IReadOnlyList<DecanDTO> Items { get; set; } = [];
+
+	private IReadOnlyList<DecanSignRow> Rows =>
+		Items
+			.GroupBy(item => item.Sign)
+			.Select(group => new DecanSignRow(
+				group.Key,
+				group.FirstOrDefault(item => item.DecanOrder == 1),
+				group.FirstOrDefault(item => item.DecanOrder == 2),
+				group.FirstOrDefault(item => item.DecanOrder == 3)))
+			.ToList();
+
+	private string OrionNote =>
+		Items.FirstOrDefault(item => item.Name == "Orion")?.Note ?? "";
+
+	private static MarkupString FormatDecan(DecanDTO? decan)
+	{
+		if (decan is null)
+		{
+			return (MarkupString)"";
+		}
+
+		if (decan.Name == "Orion")
+		{
+			return (MarkupString)"Orion<sup><a href=\"constellations#orion-decan-note\">1</a></sup>";
+		}
+
+		var name = System.Net.WebUtility.HtmlEncode(decan.Name);
+		if (string.IsNullOrEmpty(decan.Note))
+		{
+			return (MarkupString)name;
+		}
+
+		return (MarkupString)$"{name} ({System.Net.WebUtility.HtmlEncode(decan.Note)})";
+	}
+
+	private sealed record DecanSignRow(string Sign, DecanDTO? First, DecanDTO? Second, DecanDTO? Third);
+}

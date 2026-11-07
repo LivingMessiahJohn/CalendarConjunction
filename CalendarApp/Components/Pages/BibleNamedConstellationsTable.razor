@@ -1,0 +1,26 @@
+﻿
+@using CalendarApp.Helpers
+
+<div class="table-responsive">
+	<TableTemplate TItem="BibleNamedConstellationsDTO" Items="Items" HeaderCSS="table table-sm table-striped align-middle">
+		<TableHeader>
+      <th>Modern / Common Name</th>
+      <th>Biblical Hebrew Name</th>
+      <th>Notes</th>
+      <th>Key Verses</th>
+		</TableHeader>
+		<RowTemplate>
+      <td>@context.CommonName</td>
+			<td>@context.BiblicalName</td>
+			<td>@context.Note</td>
+			<td>@KeyVerseHelper.GetAnchors(context)</td>
+		</RowTemplate>
+		<TableFooter>
+		</TableFooter>
+	</TableTemplate>
+</div>
+
+
+@code {
+  [Parameter, EditorRequired] public IReadOnlyList<BibleNamedConstellationsDTO> Items { get; set; } = [];
+}
