@@ -1,7 +1,12 @@
 <PageTitle>@Title</PageTitle>
 
-<div class="d-flex align-items-center mt-2 mb-3 @BorderCSS">
-	<div class="page-header-side"></div>
+<div class="page-header d-flex align-items-center mt-2 mb-3 @BorderCSS">
+	<div class="page-header-side">
+		@if (!string.IsNullOrEmpty(LeadingLinkText))
+		{
+			<a class="btn btn-outline-secondary" href="@LeadingLinkHref">@LeadingLinkText</a>
+		}
+	</div>
 	<h1 class="flex-grow-1 fs-2 text-center mb-0"><i class="@Icon"></i>&nbsp;&nbsp;@Title</h1>
 	<div class="page-header-side text-end">
 		@if (!string.IsNullOrEmpty(LinkText))
@@ -15,6 +20,8 @@
 	[Parameter] public string Title { get; set; } = "Conjunction Calendar";
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
 	[Parameter] public string Icon { get; set; } = "far fa-calendar-check";
+	[Parameter] public string? LeadingLinkHref { get; set; }
+	[Parameter] public string? LeadingLinkText { get; set; }
 	[Parameter] public string? LinkHref { get; set; }
 	[Parameter] public string? LinkText { get; set; }
 }

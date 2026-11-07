@@ -1,16 +1,16 @@
-﻿Main constellation names, with their biblical Hebrew names (or traditional Mazzaroth associations) included.
+﻿ Main constellation names, with their biblical Hebrew names (or traditional [Mazzaroth](https://www.blueletterbible.org/lexicon/h4216/kjv/wlc/0-1/) associations) included.
 
 ### Constellations Specifically Named in the Bible
 
 | Modern / Common Name       | Biblical Hebrew Name          | Strong’s / Notes                          | Key Verses                  |
 |----------------------------|-------------------------------|-------------------------------------------|-----------------------------|
-| **Pleiades** (star cluster in Taurus) | **Kimah** (כִּימָה)          | H3598 — “cluster / heap”                 | Job 9:9; 38:31; Amos 5:8   |
-| **Orion**                  | **Kesil** (כְּסִיל)          | H3685 — “fool / insolent one” (also used more generally for bright constellations in Isa 13:10) | Job 9:9; 38:31; Amos 5:8; Isa 13:10 |
-| **The Bear** (Ursa Major / Arcturus in older translations) | **Ash** or **Ayish** (עָשׁ / עַיִשׁ) | H5906 — with its “sons” (the tail stars) | Job 9:9; 38:32             |
-| **The Zodiac / Constellations in general** | **Mazzaroth** (מַזָּרוֹת)   | H4216 — often understood as the 12 signs | Job 38:32                  |
-| **Constellations / Planets** | **Mazzaloth** (מַזָּלוֹת)   | H4208 — related term                     | 2 Kings 23:5               |
-| **Southern constellations** | Chambers of the south (חַדְרֵי תֵמָן) | —                                        | Job 9:9                    |
-| **Draco** (the “crooked serpent”) | **Nachash** (נָחָשׁ)        | Often identified with the constellation Draco | Job 26:13                 |
+| **Pleiades** (star cluster in Taurus) | **Kimah** (כִּימָה)          | H3598 — “cluster / heap”                 | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:31](https://www.blueletterbible.org/kjv/job/38/31/); [Amos 5:8](https://www.blueletterbible.org/kjv/amo/5/8/)   |
+| **Orion**                  | **Kesil** (כְּסִיל)          | H3685 — “fool / insolent one” (also used more generally for bright constellations in [Isa 13:10](https://www.blueletterbible.org/kjv/isa/13/10/)) | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:31](https://www.blueletterbible.org/kjv/job/38/31/); [Amos 5:8](https://www.blueletterbible.org/kjv/amo/5/8/); [Isa 13:10](https://www.blueletterbible.org/kjv/isa/13/10/) |
+| **The Bear** (Ursa Major / Arcturus in older translations) | **Ash** or **Ayish** (עָשׁ / עַיִשׁ) | H5906 — with its “sons” (the tail stars) | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:32](https://www.blueletterbible.org/kjv/job/38/32/)             |
+| **The Zodiac / Constellations in general** | **Mazzaroth** (מַזָּרוֹת)   | H4216 — often understood as the 12 signs | [Job 38:32](https://www.blueletterbible.org/kjv/job/38/32/)                  |
+| **Constellations / Planets** | **Mazzaloth** (מַזָּלוֹת)   | H4208 — related term                     | [2 Kings 23:5](https://www.blueletterbible.org/kjv/2ki/23/5/)               |
+| **Southern constellations** | Chambers of the south (חַדְרֵי תֵמָן) | —                                        | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/)                    |
+| **Draco** (the “crooked serpent”) | **Nachash** (נָחָשׁ)        | Often identified with the constellation Draco | [Job 26:13](https://www.blueletterbible.org/kjv/job/26/13/)                 |
 
 ### The Twelve Signs of the Mazzaroth (Zodiac)
 Traditional Hebrew names used in Jewish sources (corresponding to the Hebrew months):
@@ -30,7 +30,7 @@ Traditional Hebrew names used in Jewish sources (corresponding to the Hebrew mon
 
 **Notes:**
 - Only a handful of specific constellations are named outright in Scripture. Most of the 88 modern IAU constellations do not have biblical names.
-- “Mazzaroth” is the key biblical term for the constellation system / zodiac (Job 38:32). The individual Hebrew names for the 12 signs come from later Jewish tradition (Talmudic and medieval sources) rather than direct biblical vocabulary.
+- “Mazzaroth” is the key biblical term for the constellation system / zodiac ([Job 38:32](https://www.blueletterbible.org/kjv/job/38/32/)). The individual Hebrew names for the 12 signs come from later Jewish tradition (Talmudic and medieval sources) rather than direct biblical vocabulary.
 - Identifications (especially Ash/Ayish) have some variation among scholars and ancient versions.
 
 Would you like this expanded with star names, tribal associations, or the common Christian Mazzaroth (Rolleston/Bullinger/Seiss) readings as well?
@@ -46,13 +46,13 @@ These readings come from the traditional “Gospel in the Stars” school (Franc
 
 | Modern / Common Name | Biblical Hebrew Name | Notes | Key Verses |
 |----------------------|----------------------|-------|------------|
-| **Pleiades** | **Kimah** (כִּימָה) | Cluster in Taurus | Job 9:9; 38:31; Amos 5:8 |
-| **Orion** | **Kesil** (כְּסִיל) | “Fool / insolent one” | Job 9:9; 38:31; Amos 5:8; Isa 13:10 |
-| **The Bear** (Ursa Major) | **Ash / Ayish** (עָשׁ / עַיִשׁ) | With its “sons” (tail stars) | Job 9:9; 38:32 |
-| **Zodiac / Constellations** | **Mazzaroth** (מַזָּרוֹת) | The 12 signs | Job 38:32 |
-| **Constellations / Planets** | **Mazzaloth** (מַזָּלוֹת) | Related term | 2 Kings 23:5 |
-| Southern constellations | Chambers of the south | — | Job 9:9 |
-| **Draco** (“crooked serpent”) | **Nachash** (נָחָשׁ) | Often linked to the serpent | Job 26:13 |
+| **Pleiades** | **Kimah** (כִּימָה) | Cluster in Taurus | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:31](https://www.blueletterbible.org/kjv/job/38/31/); [Amos 5:8](https://www.blueletterbible.org/kjv/amo/5/8/) |
+| **Orion** | **Kesil** (כְּסִיל) | “Fool / insolent one” | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:31](https://www.blueletterbible.org/kjv/job/38/31/); [Amos 5:8](https://www.blueletterbible.org/kjv/amo/5/8/); [Isa 13:10](https://www.blueletterbible.org/kjv/isa/13/10/) |
+| **The Bear** (Ursa Major) | **Ash / Ayish** (עָשׁ / עַיִשׁ) | With its “sons” (tail stars) | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/); [Job 38:32](https://www.blueletterbible.org/kjv/job/38/32/) |
+| **Zodiac / Constellations** | **Mazzaroth** (מַזָּרוֹת) | The 12 signs | [Job 38:32](https://www.blueletterbible.org/kjv/job/38/32/) |
+| **Constellations / Planets** | **Mazzaloth** (מַזָּלוֹת) | Related term | [2 Kings 23:5](https://www.blueletterbible.org/kjv/2ki/23/5/) |
+| Southern constellations | Chambers of the south | — | [Job 9:9](https://www.blueletterbible.org/kjv/job/9/9/) |
+| **Draco** (“crooked serpent”) | **Nachash** (נָחָשׁ) | Often linked to the serpent | [Job 26:13](https://www.blueletterbible.org/kjv/job/26/13/) |
 
 ### The Twelve Signs of the Mazzaroth — Christian Readings
 
@@ -72,13 +72,36 @@ These readings come from the traditional “Gospel in the Stars” school (Franc
 | 12. **Leo** | Aryeh (אריה) | The triumphant King / enemies destroyed | The lion; Regulus = “the little king” |
 
 ### Additional Notes on Common Christian Mazzaroth Teaching
-- **Starting point**: Most of these writers begin the circle with **Virgo** (the Seed of the woman, Gen 3:15) rather than Aries, so the story runs from the promise to the final triumph.
+- **Starting point**: Most of these writers begin the circle with **Virgo** (the Seed of the woman, [Gen 3:15](https://www.blueletterbible.org/kjv/gen/3/15/)) rather than Aries, so the story runs from the promise to the final triumph.
 - **Decans**: Each of the 12 signs has three associated “decan” constellations that expand the theme (e.g., under Virgo: Coma “the desired one,” Centaurus, Boötes “the coming shepherd”).
 - **Orion** is often treated as a major decan of Taurus — “the Coming of the Branch,” with Betelgeuse, Rigel (“the foot that crushes”), and Bellatrix.
-- **Draco** is frequently linked to the serpent of Genesis 3 and Revelation 12.
+- **Draco** is frequently linked to the serpent of [Genesis 3](https://www.blueletterbible.org/kjv/gen/3/1/) and [Revelation 12](https://www.blueletterbible.org/kjv/rev/12/1/).
 - These readings are **interpretive tradition**, not direct biblical statements of the constellation meanings. The Bible itself only names a few of the groups (Kimah, Kesil, Ash/Ayish, Mazzaroth).
 
-Would you like the full set of the 36 decans added, or a version focused on the star names and their Hebrew/Arabic meanings within each sign?
+### 36 decans
+> The 36 decans (three secondary constellations per zodiac sign) in the Mazzaroth / Gospel-in-the-Stars tradition, ordered starting with Virgo as is common in that literature:
+> etymology of [decan](https://www.etymonline.com/search?q=decan). Not to be confused with [deacan](https://www.etymonline.com/search?q=deacan)
+
+| Sign          | 1                        |  2                   | 3                   |
+|---------------|--------------------------|----------------------|---------------------|
+| Virgo         | Coma (Desired/Infant)    | Centaurus            | Boötes              |
+| Libra         | Crux (Southern Cross)    | Lupus / Victima      | Corona              |
+| Scorpio       | Serpens                  | Ophiuchus            | Hercules            |
+| Sagittarius   | Lyra                     | Ara                  | Draco               |
+| Capricorn     | Sagitta                  | Aquila               | Delphinus           |
+| Aquarius      | Piscis Australis         | Pegasus              | Cygnus              |
+| Pisces        | The Band                 | Cepheus              | Andromeda           |
+| Aries         | Cassiopeia               | Cetus                | Perseus             |
+| Taurus        | Orion                    | Eridanus             | Auriga              |
+| Gemini        | Lepus                    | Sirius (Canis Major) | Procyon             |
+| Cancer        | Ursa Major               | Ursa Minor           | Argo                |
+| Leo           | Hydra                    | Crater               | Corvus              |
+
+This is the standard grouping used by writers such as Frances Rolleston, Joseph Seiss, and E.W. Bullinger. 
+The original Egyptian decans were independent star groups used as a star clock; 
+this table reflects the later interpretive association of three constellations with each of the twelve zodiac signs.
+
+
 
 --- 
 

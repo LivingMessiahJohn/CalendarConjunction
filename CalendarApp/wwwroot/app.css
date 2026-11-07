@@ -3,12 +3,124 @@ h1:focus {
 }
 
 .page-header-side {
-    width: 6.5rem;
-    flex: 0 0 6.5rem;
+    flex: 1 1 0;
+    min-width: 6.5rem;
+}
+
+@media (max-width: 576px) {
+    .page-header {
+        width: calc(100vw - 1.5rem);
+        max-width: calc(100vw - 1.5rem);
+        flex-wrap: wrap;
+        row-gap: 0.5rem;
+    }
+
+    .page-header h1 {
+        flex: 1 0 100%;
+        order: -1;
+        min-width: 0;
+    }
+
+    .page-header-side {
+        flex: 1 1 auto;
+        min-width: max-content;
+    }
 }
 
 .about-page {
     max-width: 46rem;
+}
+
+.constellations-page {
+    max-width: 72rem;
+}
+
+.constellations-page table {
+    width: 100%;
+    margin-bottom: 1.25rem;
+    border-collapse: collapse;
+}
+
+.constellations-page th,
+.constellations-page td {
+    border: 1px solid var(--bs-border-color);
+    padding: 0.4rem 0.6rem;
+    vertical-align: top;
+}
+
+.constellations-page th {
+    background: var(--bs-tertiary-bg);
+}
+
+.constellation-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 16rem;
+    background: #1c1c1c;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.constellation-stage > img {
+    display: block;
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+.constellation-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    transform: translateY(-50%);
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 0.5);
+    color: #fff;
+}
+
+.constellation-nav-prev {
+    left: 0.6rem;
+}
+
+.constellation-nav-next {
+    right: 0.6rem;
+}
+
+.constellation-caption {
+    margin-top: 0.6rem;
+}
+
+.constellation-thumbs {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+}
+
+.constellation-thumbs button {
+    flex: 0 0 auto;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 0.25rem;
+    background: transparent;
+    line-height: 0;
+}
+
+.constellation-thumbs button.active {
+    border-color: var(--bs-primary);
+}
+
+.constellation-thumbs img {
+    display: block;
+    width: 6rem;
+    height: 4.25rem;
+    object-fit: cover;
+    border-radius: 0.15rem;
 }
 
 .quickgrid {
