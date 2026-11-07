@@ -9,11 +9,13 @@
 
   <ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" Version="8.2.0" />
+    <PackageReference Include="Markdig" Version="1.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.13" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+    <Content Update="Enums\Constellations.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

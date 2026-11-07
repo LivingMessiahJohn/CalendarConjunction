@@ -1,0 +1,32 @@
+<div class="table-responsive">
+	<TableTemplate TItem="ConstellationDTO" Items="Items" HeaderCSS="table table-sm table-striped align-middle">
+		<TableHeader>
+			<th>CircleOrder</th>
+			<th>MonthOrder</th>
+			<th>Sign</th>
+			<th>Mazzarah</th>
+			<th>HebrewTransliteration</th>
+			<th>HebrewWord</th>
+			<th>Verses</th>
+			<th>Meaning</th>
+			<th>KeyIdea</th>
+			<th>MainStars</th>
+		</TableHeader>
+		<RowTemplate>
+			<td>@context.CircleOrder</td>
+			<td>@context.MonthOrder</td>
+			<td>@context.Sign</td>
+			<td>@context.Mazzarah</td>
+			<td>@context.HebrewTransliteration</td>
+			<td lang="he" dir="rtl">@context.HebrewWord</td>
+			<td>@context.Verses</td>
+			<td>@context.Meaning</td>
+			<td>@context.KeyIdea</td>
+			<td>@context.MainStars</td>
+		</RowTemplate>
+	</TableTemplate>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public IReadOnlyList<ConstellationDTO> Items { get; set; } = [];
+}
