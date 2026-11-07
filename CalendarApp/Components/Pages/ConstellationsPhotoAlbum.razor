@@ -1,0 +1,99 @@
+@inject IWebHostEnvironment Environment
+
+@if (imageNames.Count > 0 && currentImageName is not null)
+{
+	<section class="constellation-album" aria-label="Constellation photo album">
+		<h2 class="h4 mt-4 mb-3">Album</h2>
+		<div class="constellation-stage">
+			<img src="@ImageSrc(currentImageName)" alt="@currentImageName" />
+			<button type="button" class="constellation-nav constellation-nav-prev" @onclick="ShowPrevious" aria-label="Previous image">
+				<i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+			</button>
+			<button type="button" class="constellation-nav constellation-nav-next" @onclick="ShowNext" aria-label="Next image">
+				<i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+			</button>
+		</div>
+		<p class="constellation-caption text-center mb-2" aria-live="polite">
+			@currentImageName
+			<span class="text-body-secondary">(@(imageIndex + 1) of @imageNames.Count)</span>
+		</p>
+		<div class="constellation-thumbs">
+			@for (var i = 0; i < imageNames.Count; i++)
+			{
+				var slideIndex = i;
+				var name = imageNames[slideIndex];
+				<button type="button"
+						class="@(slideIndex == imageIndex ? "active" : null)"
+						aria-label="Show @name"
+						aria-current="@(slideIndex == imageIndex ? "true" : "false")"
+						@onclick="() => ShowImage(slideIndex)">
+					<img src="@ImageSrc(name)" alt="" />
+				</button>
+			}
+		</div>
+	</section>
+}
+
+@code {
+	private static readonly string[] ImageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+
+	private readonly List<string> imageNames = [];
+	private int imageIndex;
+
+	private string? currentImageName => imageNames.Count == 0 ? null : imageNames[imageIndex];
+
+	protected override void OnInitialized()
+	{
+		LoadImages();
+	}
+
+	private void LoadImages()
+	{
+		if (string.IsNullOrEmpty(Environment.WebRootPath))
+		{
+			return;
+		}
+
+		var directory = Path.Combine(Environment.WebRootPath, "images", "constellations");
+		if (!Directory.Exists(directory))
+		{
+			return;
+		}
+
+		imageNames.AddRange(Directory.GetFiles(directory)
+			.Select(Path.GetFileName)
+			.OfType<string>()
+			.Where(name => ImageExtensions.Contains(Path.GetExtension(name), StringComparer.OrdinalIgnoreCase))
+			.OrderBy(name => name, StringComparer.OrdinalIgnoreCase));
+	}
+
+	private void ShowPrevious()
+	{
+		if (imageNames.Count == 0)
+		{
+			return;
+		}
+
+		imageIndex = (imageIndex - 1 + imageNames.Count) % imageNames.Count;
+	}
+
+	private void ShowNext()
+	{
+		if (imageNames.Count == 0)
+		{
+			return;
+		}
+
+		imageIndex = (imageIndex + 1) % imageNames.Count;
+	}
+
+	private void ShowImage(int slideIndex)
+	{
+		if (slideIndex >= 0 && slideIndex < imageNames.Count)
+		{
+			imageIndex = slideIndex;
+		}
+	}
+
+	private static string ImageSrc(string name) => $"images/constellations/{name}";
+}
