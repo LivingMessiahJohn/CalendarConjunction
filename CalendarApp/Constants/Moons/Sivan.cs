@@ -5,10 +5,10 @@ namespace CalendarApp.Constants.Moons;
 public static class Sivan // Month 3
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
-	private static readonly DateOnly Year2 = DateOnly.Parse("2027-06-05");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2028-05-24");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2029-06-12");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2030-06-01");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-06-06");
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-05-25");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-06-13");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-06-02");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2031-05-22"); 
 	private static readonly DateOnly Year7 = DateOnly.Parse("2032-06-09");
 

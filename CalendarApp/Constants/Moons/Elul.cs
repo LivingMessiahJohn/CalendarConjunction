@@ -5,10 +5,10 @@ namespace CalendarApp.Constants.Moons;
 public static class Elul // Month 6
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
-	private static readonly DateOnly Year2 = DateOnly.Parse("2027-09-01");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2028-08-20");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2029-09-08");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2030-08-29");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-09-02"); // updated to Phx TimeZone
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-08-21");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-09-09"); // 08 OR 09 Sept 2029 anomaly
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-08-30");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2031-08-19"); 
 	private static readonly DateOnly Year7 = DateOnly.Parse("2032-09-06");
 

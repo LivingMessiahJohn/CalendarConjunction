@@ -12,7 +12,8 @@ public static class YearHelper
 		5865,
 		5866,
 		5867,
-		5868
+		5868,
+		5869
 	];
 
 	public static int Min => HebrewYears[0];

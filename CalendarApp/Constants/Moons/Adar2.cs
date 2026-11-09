@@ -10,7 +10,7 @@ public static class Adar2 // Month 13
 	private static readonly DateOnly Year4 = DateOnly.MinValue;
 	private static readonly DateOnly Year5 = DateOnly.MinValue;
 	private static readonly DateOnly Year6 = DateOnly.MinValue;
-	private static readonly DateOnly Year7 = DateOnly.Parse("2032-03-16");
+	private static readonly DateOnly Year7 = DateOnly.Parse("2032-03-12");
 
 	public static readonly Dictionary<int, DateOnly> Dates = new()
 	{

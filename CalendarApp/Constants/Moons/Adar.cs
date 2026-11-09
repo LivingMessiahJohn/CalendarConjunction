@@ -4,13 +4,14 @@ namespace CalendarApp.Constants.Moons;
 
 public static class Adar // Month 12
 {
-	private static readonly DateOnly Year1 = DateOnly.Parse("2027-02-07");
-	private static readonly DateOnly Year2 = DateOnly.Parse("2028-02-25");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2029-02-13");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2030-03-04");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2031-02-22");
+	private static readonly DateOnly Year1 = DateOnly.Parse("2027-02-08");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2028-02-26"); // updated to Phx TimeZone
+	private static readonly DateOnly Year3 = DateOnly.Parse("2029-02-14");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2030-03-05");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2031-02-23");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2032-02-12");
 	private static readonly DateOnly Year7 = DateOnly.Parse("2033-03-02");
+	//private static readonly DateOnly Year8 = DateOnly.Parse("2033-03-31");
 
 	public static readonly Dictionary<int, DateOnly> Dates = new()
 	{
