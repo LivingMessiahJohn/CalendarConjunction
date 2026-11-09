@@ -5,10 +5,10 @@ namespace CalendarApp.Constants.Moons;
 public static class Av // Month 5
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
-	private static readonly DateOnly Year2 = DateOnly.Parse("2027-08-02");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2028-07-22");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2029-08-10");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2030-07-30");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-08-03");
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-07-23");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-08-11");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-07-31");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2031-07-20");
 	private static readonly DateOnly Year7 = DateOnly.Parse("2032-08-07");
 

@@ -5,10 +5,10 @@ namespace CalendarApp.Constants.Moons;
 public static class Heshvan // Month 8
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
-	private static readonly DateOnly Year2 = DateOnly.Parse("2027-10-30");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2028-10-18");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2029-11-06");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2030-10-27");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-10-31"); // updated to Phx TimeZone
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-10-19");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-11-07");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-10-28");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2031-10-17");
 	private static readonly DateOnly Year7 = DateOnly.Parse("2032-11-04");
 

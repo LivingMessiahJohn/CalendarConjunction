@@ -5,10 +5,10 @@ namespace CalendarApp.Constants.Moons;
 public static class Tishri // Month 7
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;
-	private static readonly DateOnly Year2 = DateOnly.Parse("2027-09-30");
-	private static readonly DateOnly Year3 = DateOnly.Parse("2028-09-19");
-	private static readonly DateOnly Year4 = DateOnly.Parse("2029-10-08");
-	private static readonly DateOnly Year5 = DateOnly.Parse("2030-09-27");
+	private static readonly DateOnly Year2 = DateOnly.Parse("2027-10-01"); // updated to Phx TimeZone
+	private static readonly DateOnly Year3 = DateOnly.Parse("2028-09-20");
+	private static readonly DateOnly Year4 = DateOnly.Parse("2029-10-09");
+	private static readonly DateOnly Year5 = DateOnly.Parse("2030-09-28");
 	private static readonly DateOnly Year6 = DateOnly.Parse("2031-09-18"); 
 	private static readonly DateOnly Year7 = DateOnly.Parse("2032-10-05");
 

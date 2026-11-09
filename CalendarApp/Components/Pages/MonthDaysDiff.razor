@@ -1,0 +1,94 @@
+@page "/MonthDaysDiff"
+
+<PageHeader Title="Month Days Diff" LinkHref="/" LinkText="Home" />
+
+<div class="card border-secondary mb-3">
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<span><i class="fa-solid fa-filter"></i> Filters</span>
+		<span class="d-flex align-items-center gap-3">
+			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="ShowDateFilter">Date Filter</button>
+			<button type="button"
+							class="btn btn-sm @(outsideRange ? "btn-secondary" : "btn-outline-secondary")"
+							aria-pressed="@(outsideRange ? "true" : "false")"
+							@onclick="ToggleOutsideRange">&lt; 29 or &gt; 30</button>
+			<span class="text-body-secondary">@FilteredRows.Count.ToString("N0") months</span>
+		</span>
+	</div>
+	<div class="card-footer text-center">
+		<span class="small text-black-50">@FilterState</span>
+	</div>
+</div>
+
+<DatePickerFilterModal Visible="dateFilterOpen"
+											 Closed="HideDateFilter"
+											 Selection="dateFilter"
+											 FilterChanged="OnDateFilterChanged" />
+
+@if (dateFilter != 0)
+{
+	<h3 class="text-center text-body-secondary mb-2"><b>@dateFilter - @YearHelper.GetGregorianYear(dateFilter)</b></h3>
+}
+
+<div class="table-responsive">
+	<TableTemplate TItem="MonthSpan" Items="FilteredRows" HeaderCSS="table table-sm table-striped align-middle">
+		<TableHeader>
+			<th>Month Date</th>
+			<th>Next Month Date</th>
+			<th>Days Different</th>
+		</TableHeader>
+		<RowTemplate>
+			<td>@context.MonthDate</td>
+			<td>@context.NextMonthDate</td>
+			<td>@context.DaysDifferent</td>
+		</RowTemplate>
+	</TableTemplate>
+</div>
+
+@code {
+	private int dateFilter;
+	private bool dateFilterOpen;
+	private bool outsideRange;
+	private IReadOnlyList<MonthSpan> rows = [];
+
+	private IReadOnlyList<MonthSpan> FilteredRows =>
+			rows.Where(row =>
+					(dateFilter == 0 || row.Year == dateFilter)
+					&& (!outsideRange || row.DaysDifferent < 29 || row.DaysDifferent > 30))
+			.ToList();
+
+	private string FilterState
+	{
+		get
+		{
+			var parts = new List<string>();
+			if (dateFilter != 0)
+			{
+				parts.Add($"Year {dateFilter} - {YearHelper.GetGregorianYear(dateFilter)}");
+			}
+
+			if (outsideRange)
+			{
+				parts.Add("< 29 or > 30");
+			}
+
+			return parts.Count == 0 ? "All" : string.Join(" · ", parts);
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		rows = ConstantCalendar.MonthSpans();
+	}
+
+	private void ShowDateFilter() => dateFilterOpen = true;
+
+	private void HideDateFilter() => dateFilterOpen = false;
+
+	private void ToggleOutsideRange() => outsideRange = !outsideRange;
+
+	private Task OnDateFilterChanged(int selection)
+	{
+		dateFilter = selection;
+		return Task.CompletedTask;
+	}
+}
