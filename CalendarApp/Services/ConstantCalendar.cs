@@ -63,6 +63,40 @@ public static class ConstantCalendar
 				.ToList();
 	}
 
+	public static IReadOnlyList<MonthSpan> MonthSpans()
+	{
+		var anchors = new List<(int Year, DateOnly Date, Moon Moon)>();
+		foreach (var year in YearHelper.HebrewYears)
+		{
+			foreach (var moon in Moon.List)
+			{
+				var date = MoonDate(moon, year);
+				if (date == DateOnly.MinValue)
+				{
+					continue;
+				}
+
+				anchors.Add((year, date, moon));
+			}
+		}
+
+		anchors.Sort(static (left, right) =>
+		{
+			var byDate = left.Date.CompareTo(right.Date);
+			return byDate != 0 ? byDate : left.Moon.Value.CompareTo(right.Moon.Value);
+		});
+
+		var spans = new List<MonthSpan>(Math.Max(anchors.Count - 1, 0));
+		for (var index = 0; index < anchors.Count - 1; index++)
+		{
+			var current = anchors[index];
+			var next = anchors[index + 1];
+			spans.Add(new MonthSpan(current.Year, current.Moon, current.Date, next.Moon, next.Date));
+		}
+
+		return spans;
+	}
+
 	private static CalendarGridRow ToRow(DateOnly date, DateBucket bucket, List<MonthAnchor> monthAnchors)
 	{
 		var anchor = LatestAnchor(monthAnchors, date);

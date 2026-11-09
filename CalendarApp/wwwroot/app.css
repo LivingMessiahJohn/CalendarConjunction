@@ -7,6 +7,10 @@ h1:focus {
     min-width: 6.5rem;
 }
 
+.page-header-links {
+    min-width: max-content;
+}
+
 @media (max-width: 576px) {
     .page-header {
         width: calc(100vw - 1.5rem);
