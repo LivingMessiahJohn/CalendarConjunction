@@ -1,4 +1,5 @@
 ﻿using Ardalis.SmartEnum;
+using MoonDates = CalendarApp.Constants.Moons;
 
 namespace CalendarApp.Enums;
 
@@ -53,21 +54,20 @@ public abstract class Moon : SmartEnum<Moon>
 	public abstract string BiblicalName { get; }
 	public abstract string BiblicalHebrew { get; }  // http://www.yashanet.com/library/hebrew-days-and-months.html
 	public abstract string Description { get; }
+	public abstract IReadOnlyDictionary<int, DateOnly> Dates { get; }
 	//public abstract CoordinateRecord CoordinateRecord { get; }
 	#endregion
 
-	/*
-	#region Extra Properties
-	public DateTime DateTime2 => Date.ToDateTime(new TimeOnly(12, 0));
+	public DateOnly DateFor(int year)
+	{
+		if (!Dates.TryGetValue(year, out var date) || date == DateOnly.MinValue)
+		{
+			return DateOnly.MinValue;
+		}
 
-	public DateOnly ErevDate => Date == DateOnly.MinValue // Safe DateOnly properties — avoid DateTime underflow when Date == DateTime.MinValue
-	? DateOnly.MinValue
-	: Date.AddDays(-1);
-	public DateOnly DayTimeDate => Date == DateOnly.MinValue
-		? DateOnly.MinValue
-		: Date;
-	#endregion
-	*/
+		return date;
+	}
+
 
 	#region Private Instantiation
 
@@ -79,6 +79,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "הָאָבִיב";
 		public override string FullName => nameof(Id.Nissan);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Nissan.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Nissan;
 	}
 
@@ -90,6 +91,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "זִו";
 		public override string FullName => nameof(Id.Iyar);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Iyar.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Iyar;
 	}
 
@@ -101,6 +103,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Sivan);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Sivan.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Sivan;
 	}
 
@@ -112,6 +115,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Tammuz);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Tammuz.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Tammuz;
 	}
 
@@ -123,6 +127,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Av);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Av.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Av;
 	}
 
@@ -134,6 +139,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Elul);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Elul.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Elul;
 	}
 
@@ -145,6 +151,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "הָאֵתָנִים";
 		public override string FullName => nameof(Id.Tishri);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Tishri.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Tishri;
 	}
 
@@ -158,6 +165,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "בּוּל";
 		public override string FullName => nameof(Id.Heshvan);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Heshvan.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Heshvan;
 	}
 
@@ -169,6 +177,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Kislev);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Kislev.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Kislev;
 	}
 
@@ -180,6 +189,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Tevet);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Tevet.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Tevet;
 	}
 	private sealed class ShevatMonth : Moon
@@ -190,6 +200,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Shevat);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Shevat.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Shevat;
 	}
 
@@ -201,6 +212,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Adar);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Adar.Dates;
 		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Adar;
 	}
 
@@ -212,6 +224,7 @@ public abstract class Moon : SmartEnum<Moon>
 		public override string BiblicalHebrew => "";
 		public override string FullName => nameof(Id.Adar) + Adar2Suffix;
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Adar2.Dates;
 		//public override CoordinateRecord CoordinateRecord => LunarMonthCoordinates.Adar2;
 	}
 

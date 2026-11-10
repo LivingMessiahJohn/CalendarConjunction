@@ -1,5 +1,4 @@
 using System.Globalization;
-using CalendarApp.Constants.Moons;
 using CalendarApp.Enums;
 using CalendarApp.Models;
 
@@ -237,26 +236,7 @@ public static class ConstantCalendar
 
 	private static DateOnly FeastDate(FeastDay feast, int year) => feast.DateFor(year);
 
-	private static DateOnly MoonDate(Moon moon, int year) => moon.Name switch
-	{
-		"Nissan" => DateFor(Nissan.Dates, year),
-		"Iyar" => DateFor(Iyar.Dates, year),
-		"Sivan" => DateFor(Sivan.Dates, year),
-		"Tammuz" => DateFor(Tammuz.Dates, year),
-		"Av" => DateFor(Av.Dates, year),
-		"Elul" => DateFor(Elul.Dates, year),
-		"Tishri" => DateFor(Tishri.Dates, year),
-		"Heshvan" => DateFor(Heshvan.Dates, year),
-		"Kislev" => DateFor(Kislev.Dates, year),
-		"Tevet" => DateFor(Tevet.Dates, year),
-		"Shevat" => DateFor(Shevat.Dates, year),
-		"Adar" => DateFor(Adar.Dates, year),
-		"Adar2" => DateFor(Adar2.Dates, year),
-		_ => throw new InvalidOperationException($"No constant dates for moon {moon.Name}.")
-	};
-
-	private static DateOnly DateFor(IReadOnlyDictionary<int, DateOnly> dates, int year) =>
-			dates.TryGetValue(year, out var date) ? date : DateOnly.MinValue;
+	private static DateOnly MoonDate(Moon moon, int year) => moon.DateFor(year);
 
 	private sealed class DateBucket
 	{

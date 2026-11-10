@@ -87,22 +87,6 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 
 	#region Extra Properties
 
-	/*
-	
-	public override IReadOnlyDictionary<int, DateOnly> AnchorDates => AnchorPurim.Dates;
-
-	public DateOnly DateFor(YearEnum year)
-	{
-		if (!AnchorDates.TryGetValue(year, out var anchor) || anchor == DateOnly.MinValue)
-		{
-			return DateOnly.MinValue;
-		}
-
-		return anchor.AddDays(AddDays);
-	}
-	*/
-
-
 	public DateOnly DateFor(int year)
 	{
 		if (!AnchorDates.TryGetValue(year, out var anchor) || anchor == DateOnly.MinValue)
@@ -113,9 +97,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		return anchor.AddDays(AddDays);
 	}
 
-
 	#endregion
-
 
 	#region Private Instantiation
 
