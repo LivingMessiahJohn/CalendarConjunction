@@ -13,7 +13,14 @@
 						DateSelection="dateFilter"
 						Events="EventFlag.SelectedTitles(eventFilter)"
 						OpenDateFilter="ShowDateFilter"
-						OpenEventFilter="ShowEventFilter" />
+						OpenEventFilter="ShowEventFilter"
+						ShowMonthCalendar="showMonthCalendar"
+						ShowMonthCalendarChanged="OnViewChanged"
+						CalendarMonth="calendarMonth"
+						CalendarMonthChanged="OnCalendarMonthChanged"
+						CalendarYear="ResolvedYear(calendarMonth)"
+						CalendarYearChanged="OnCalendarYearChanged"
+						CalendarYears="CalendarYears" />
 
 
 @if (loadError is not null)
@@ -37,7 +44,14 @@ else
 										Selection="eventFilter"
 										FilterChanged="OnEventFilterChanged" />
 
-	<Table @ref="table" Year="dateFilter" data="FilteredRows().ToList()" />
+	@if (showMonthCalendar)
+	{
+		<MonthCalendar Year="ResolvedYear(calendarMonth)" Month="calendarMonth" Rows="FilteredRows().ToList()" MonthChanged="OnCalendarMonthChanged" />
+	}
+	else
+	{
+		<Table @ref="table" Year="dateFilter" data="FilteredRows().ToList()" />
+	}
 }
 
 @code {
@@ -47,6 +61,9 @@ else
 	private string? loadError;
 	//private DateFilterSelection dateFilter = new(YearEnum.All);
 	private int dateFilter = YearHelper.Default;
+	private bool showMonthCalendar;
+	private int calendarMonth = 1;
+	private int? calendarYear;
 
 	private bool dateFilterOpen;
 	private bool eventFilterOpen;
@@ -54,6 +71,40 @@ else
 	private IReadOnlyList<EventBadge> eventChoices = [];
 
 	private int FilteredCount => FilteredRows().Count();
+
+	private IReadOnlyList<int> CalendarYears => dateFilter == 0
+		? FilteredRows().Select(row => row.GregorianDate.Year).Distinct().OrderBy(year => year).ToList()
+		: [];
+
+	private int ResolvedYear(int month)
+	{
+		var years = FilteredRows()
+			.Select(row => row.GregorianDate)
+			.Where(date => date.Month == month)
+			.Select(date => date.Year)
+			.Distinct()
+			.OrderBy(year => year)
+			.ToList();
+
+		if (dateFilter == 0 && calendarYear is int chosenYear && CalendarYears.Contains(chosenYear))
+		{
+			return chosenYear;
+		}
+
+		if (calendarYear is int chosen && years.Contains(chosen))
+		{
+			return chosen;
+		}
+
+		if (years.Count > 0)
+		{
+			return years[0];
+		}
+
+		return dateFilter == 0
+			? YearHelper.GetGregorianYear(YearHelper.Default)
+			: YearHelper.GetGregorianYear(dateFilter);
+	}
 
 	//(dateFilter.Year == YearEnum.All || row.Year == (int)dateFilter.Year)
 	private IEnumerable<CalendarGridRow> FilteredRows() => (rows ?? []).Where(row =>
@@ -110,7 +161,61 @@ else
 	private Task OnDateFilterChanged(int selection)
 	{
 		dateFilter = selection;
+		if (showMonthCalendar)
+		{
+			SnapMonthToData();
+		}
+
 		return RefreshGrid();
+	}
+
+	private Task OnViewChanged(bool showMonth)
+	{
+		if (showMonth && !showMonthCalendar)
+		{
+			SnapToFirstRow();
+		}
+
+		showMonthCalendar = showMonth;
+		return Task.CompletedTask;
+	}
+
+	private Task OnCalendarMonthChanged(int month)
+	{
+		if (month is >= 1 and <= 12)
+		{
+			calendarMonth = month;
+		}
+
+		return Task.CompletedTask;
+	}
+
+	private Task OnCalendarYearChanged(int year)
+	{
+		calendarYear = year;
+		return Task.CompletedTask;
+	}
+
+	private void SnapToFirstRow()
+	{
+		var first = FilteredRows().Select(row => row.GregorianDate).OrderBy(date => date).FirstOrDefault();
+		if (first == default)
+		{
+			return;
+		}
+
+		calendarMonth = first.Month;
+		calendarYear = first.Year;
+	}
+
+	private void SnapMonthToData()
+	{
+		var year = ResolvedYear(calendarMonth);
+		var hasRow = FilteredRows().Any(row => row.GregorianDate.Year == year && row.GregorianDate.Month == calendarMonth);
+		if (!hasRow)
+		{
+			SnapToFirstRow();
+		}
 	}
 
 	private Task OnEventFilterChanged(int selection)

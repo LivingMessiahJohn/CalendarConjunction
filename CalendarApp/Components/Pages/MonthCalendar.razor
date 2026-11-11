@@ -1,0 +1,129 @@
+@using System.Globalization
+
+<div class="calendar">
+	<div class="calendar-header">
+		<button type="button" @onclick="PreviousMonth" disabled="@(Month <= 1)" aria-label="Previous month">‹</button>
+		<h3>@Header</h3>
+		<button type="button" @onclick="NextMonth" disabled="@(Month >= 12)" aria-label="Next month">›</button>
+	</div>
+
+	<div class="weekdays">
+		@foreach (var day in Weekdays)
+		{
+			<div>@day</div>
+		}
+	</div>
+
+	<div class="days">
+		@foreach (var day in Days)
+		{
+			var row = RowFor(day.Date);
+			<div class="day-cell @(day.IsCurrentMonth ? "" : "other-month") @(day.IsToday ? "today" : "")">
+				<div class="day-number-bg">@day.Date.Day</div>
+				@if (row is not null)
+				{
+					<div class="biblical-overlay">
+						@if (!string.IsNullOrEmpty(HebrewLine(row)))
+						{
+							<div class="hebrew-date">@HebrewLine(row)</div>
+						}
+						@if (row.Events.Count > 0)
+						{
+							<div class="overlay-line">
+								@foreach (var item in row.Events)
+								{
+									<span class="@item.BadgeCss" title="@item.Details">
+										@if (!string.IsNullOrEmpty(item.Icon))
+										{
+											<i class="@item.Icon me-1" aria-hidden="true"></i>
+										}
+										@item.Text
+									</span>
+								}
+							</div>
+						}
+						@if (row.Counts.Count > 0)
+						{
+							<div class="overlay-line">
+								@foreach (var count in row.Counts)
+								{
+									<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
+								}
+							</div>
+						}
+					</div>
+				}
+			</div>
+		}
+	</div>
+</div>
+
+@code {
+	private static readonly string[] Weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+	private readonly List<CalendarDay> Days = [];
+	private Dictionary<DateOnly, CalendarGridRow> rowsByDate = [];
+
+	[Parameter, EditorRequired] public int Year { get; set; }
+	[Parameter, EditorRequired] public int Month { get; set; }
+	[Parameter, EditorRequired] public IReadOnlyList<CalendarGridRow> Rows { get; set; } = [];
+	[Parameter] public EventCallback<int> MonthChanged { get; set; }
+
+	private string Header =>
+		new DateTime(Year, Month, 1).ToString("MMMM yyyy", CultureInfo.InvariantCulture);
+
+	protected override void OnParametersSet()
+	{
+		rowsByDate = [];
+		foreach (var row in Rows)
+		{
+			rowsByDate.TryAdd(row.GregorianDate, row);
+		}
+
+		GenerateDays();
+	}
+
+	private void GenerateDays()
+	{
+		Days.Clear();
+		if (Year < 1 || Month is < 1 or > 12)
+		{
+			return;
+		}
+
+		var first = new DateOnly(Year, Month, 1);
+		var start = first.AddDays(-(int)first.DayOfWeek);
+		var today = DateOnly.FromDateTime(DateTime.Today);
+		for (var i = 0; i < 42; i++)
+		{
+			var date = start.AddDays(i);
+			Days.Add(new CalendarDay(date, date.Month == Month, date == today));
+		}
+	}
+
+	private CalendarGridRow? RowFor(DateOnly date) =>
+		rowsByDate.TryGetValue(date, out var row) ? row : null;
+
+	private static string HebrewLine(CalendarGridRow row)
+	{
+		var month = MonthName(row.Month);
+		if (string.IsNullOrEmpty(month))
+		{
+			return row.Day?.ToString() ?? "";
+		}
+
+		return row.Day is int day ? $"{month} {day}" : month;
+	}
+
+	private static string MonthName(string month)
+	{
+		var split = month.IndexOf(" - ", StringComparison.Ordinal);
+		return split < 0 ? month : month[..split];
+	}
+
+	private Task PreviousMonth() => Month <= 1 ? Task.CompletedTask : MonthChanged.InvokeAsync(Month - 1);
+
+	private Task NextMonth() => Month >= 12 ? Task.CompletedTask : MonthChanged.InvokeAsync(Month + 1);
+
+	private sealed record CalendarDay(DateOnly Date, bool IsCurrentMonth, bool IsToday);
+}
