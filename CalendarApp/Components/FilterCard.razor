@@ -1,9 +1,34 @@
+@using System.Globalization
 @using CalendarApp.Enums
 
 <div class="card border-secondary mb-3">
 	<div class="card-header d-flex justify-content-between align-items-center">
 		<span><i class="fa-solid fa-filter"></i> Filters</span>
-		<span class="d-flex align-items-center gap-3">
+		<span class="d-flex align-items-center gap-3 flex-wrap justify-content-end">
+			<div class="btn-group btn-group-sm" role="group" aria-label="Calendar view">
+				<button type="button" class="@ViewButtonClass(false)" aria-pressed="@(ShowMonthCalendar ? "false" : "true")" @onclick="ShowTable">Table</button>
+				<button type="button" class="@ViewButtonClass(true)" aria-pressed="@(ShowMonthCalendar ? "true" : "false")" @onclick="ShowCalendar">Month</button>
+			</div>
+			@if (ShowMonthCalendar && CalendarYears.Count > 1)
+			{
+				<label class="visually-hidden" for="calendar-year">Gregorian year</label>
+				<select id="calendar-year" class="form-select form-select-sm w-auto" value="@CalendarYear" @onchange="OnYearChanged">
+					@foreach (var year in CalendarYears)
+					{
+						<option value="@year">@year</option>
+					}
+				</select>
+			}
+			@if (ShowMonthCalendar)
+			{
+				<label class="visually-hidden" for="calendar-month">Month</label>
+				<select id="calendar-month" class="form-select form-select-sm w-auto" value="@CalendarMonth" @onchange="OnMonthChanged">
+					@for (var month = 1; month <= 12; month++)
+					{
+						<option value="@month">@MonthName(month)</option>
+					}
+				</select>
+			}
 			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenDate">Date Filter</button>
 			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenEvents">Events Filter</button>
 			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
@@ -20,6 +45,13 @@
 	[Parameter, EditorRequired] public IReadOnlyList<string> Events { get; set; } = [];
 	[Parameter, EditorRequired] public EventCallback OpenDateFilter { get; set; }
 	[Parameter, EditorRequired] public EventCallback OpenEventFilter { get; set; }
+	[Parameter] public bool ShowMonthCalendar { get; set; }
+	[Parameter] public EventCallback<bool> ShowMonthCalendarChanged { get; set; }
+	[Parameter] public int CalendarMonth { get; set; } = 1;
+	[Parameter] public EventCallback<int> CalendarMonthChanged { get; set; }
+	[Parameter] public int CalendarYear { get; set; }
+	[Parameter] public EventCallback<int> CalendarYearChanged { get; set; }
+	[Parameter] public IReadOnlyList<int> CalendarYears { get; set; } = [];
 
 	private string FilterState
 	{
@@ -29,6 +61,11 @@
 			if (DateSelection != 0)
 			{
 				parts.Add($"Year {DateSelection} - {YearHelper.GetGregorianYear((int)DateSelection)}");
+			}
+
+			if (ShowMonthCalendar && CalendarYear > 0 && CalendarMonth is >= 1 and <= 12)
+			{
+				parts.Add(new DateTime(CalendarYear, CalendarMonth, 1).ToString("MMMM yyyy", CultureInfo.InvariantCulture));
 			}
 
 			if (Events.Count > 0)
@@ -43,4 +80,24 @@
 	private Task OpenDate() => OpenDateFilter.InvokeAsync();
 
 	private Task OpenEvents() => OpenEventFilter.InvokeAsync();
+
+	private Task ShowTable() => ShowMonthCalendarChanged.InvokeAsync(false);
+
+	private Task ShowCalendar() => ShowMonthCalendarChanged.InvokeAsync(true);
+
+	private static string MonthName(int month) =>
+		CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(month);
+
+	private string ViewButtonClass(bool month) =>
+		ShowMonthCalendar == month ? "btn btn-secondary" : "btn btn-outline-secondary";
+
+	private Task OnMonthChanged(ChangeEventArgs e) =>
+		int.TryParse(e.Value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var month)
+			? CalendarMonthChanged.InvokeAsync(month)
+			: Task.CompletedTask;
+
+	private Task OnYearChanged(ChangeEventArgs e) =>
+		int.TryParse(e.Value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var year)
+			? CalendarYearChanged.InvokeAsync(year)
+			: Task.CompletedTask;
 }
