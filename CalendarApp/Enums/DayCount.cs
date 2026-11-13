@@ -36,6 +36,9 @@ public abstract class DayCount : SmartEnum<DayCount>
 
 	private DayCount(string name, int value) : base(name, value) { } // Constructor
 
+	public static bool IsAweOrRepentance(string title) =>
+		title == Awe.Title || title == Repentance.Title;
+
 	#region Extra Fields
 	public abstract ParentRecord Parent { get; }
 	public abstract int TotalDays { get; } // every DayCount starts at one, so the unknown is the Total

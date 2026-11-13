@@ -1,13 +1,13 @@
 @using System.Globalization
 @using CalendarApp.Enums
 
-<div class="card border-secondary mb-3">
+<div class="card border-secondary mb-3 @PrintControlClass">
 	<div class="card-header d-flex justify-content-between align-items-center">
 		<span><i class="fa-solid fa-filter"></i> Filters</span>
 		<span class="d-flex align-items-center gap-3 flex-wrap justify-content-end">
 			<div class="btn-group btn-group-sm" role="group" aria-label="Calendar view">
-				<button type="button" class="@ViewButtonClass(false)" aria-pressed="@(ShowMonthCalendar ? "false" : "true")" @onclick="ShowTable">Table</button>
-				<button type="button" class="@ViewButtonClass(true)" aria-pressed="@(ShowMonthCalendar ? "true" : "false")" @onclick="ShowCalendar">Month</button>
+				<button type="button" class="@ViewButtonClass(false) @PrintControlClass" aria-pressed="@(ShowMonthCalendar ? "false" : "true")" @onclick="ShowPlanner">Planner</button>
+				<button type="button" class="@ViewButtonClass(true) @PrintControlClass" aria-pressed="@(ShowMonthCalendar ? "true" : "false")" @onclick="ShowCalendar">Month</button>
 			</div>
 			@if (ShowMonthCalendar && CalendarYears.Count > 1)
 			{
@@ -29,12 +29,12 @@
 					}
 				</select>
 			}
-			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenDate">Date Filter</button>
-			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenEvents">Events Filter</button>
+			<button type="button" class="btn btn-outline-secondary btn-sm @PrintControlClass" @onclick="OpenDate">Year Filter</button>
+			<button type="button" class="btn btn-outline-secondary btn-sm @PrintControlClass" @onclick="OpenEvents">Events Filter</button>
 			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
 		</span>
 	</div>
-	<div class="card-footer text-center">
+	<div class="card-footer text-center @PrintControlClass">
 		<span class="small text-black-50">@FilterState</span>
 	</div>
 </div>
@@ -81,7 +81,7 @@
 
 	private Task OpenEvents() => OpenEventFilter.InvokeAsync();
 
-	private Task ShowTable() => ShowMonthCalendarChanged.InvokeAsync(false);
+	private Task ShowPlanner() => ShowMonthCalendarChanged.InvokeAsync(false);
 
 	private Task ShowCalendar() => ShowMonthCalendarChanged.InvokeAsync(true);
 
@@ -90,6 +90,8 @@
 
 	private string ViewButtonClass(bool month) =>
 		ShowMonthCalendar == month ? "btn btn-secondary" : "btn btn-outline-secondary";
+
+	private string? PrintControlClass => ShowMonthCalendar ? "d-print-none" : null;
 
 	private Task OnMonthChanged(ChangeEventArgs e) =>
 		int.TryParse(e.Value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var month)
