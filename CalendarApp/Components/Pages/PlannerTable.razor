@@ -34,6 +34,11 @@
 			<div class="count-cell">
 				@foreach (var item in context.Events)
 				{
+					if (DayCount.IsAweOrRepentance(item.Text))
+					{
+						continue;
+					}
+
 					<span class="@item.BadgeCss" title="@item.Details">
 						@if (!string.IsNullOrEmpty(item.Icon))
 						{
@@ -48,6 +53,11 @@
 			<div class="count-cell">
 				@foreach (var count in context.Counts)
 				{
+					if (DayCount.IsAweOrRepentance(count.Title))
+					{
+						continue;
+					}
+
 					<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
 				}
 			</div>

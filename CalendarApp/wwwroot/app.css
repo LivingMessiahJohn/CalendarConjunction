@@ -127,6 +127,14 @@ h1:focus {
     border-radius: 0.15rem;
 }
 
+@media print {
+    .calendar,
+    .calendar * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
 .quickgrid {
     width: 100%;
 }

@@ -2,54 +2,77 @@
 
 <div class="calendar">
 	<div class="calendar-header">
-		<button type="button" @onclick="PreviousMonth" disabled="@(Month <= 1)" aria-label="Previous month">‹</button>
-		<h3>@Header</h3>
-		<button type="button" @onclick="NextMonth" disabled="@(Month >= 12)" aria-label="Next month">›</button>
-	</div>
-
-	<div class="weekdays">
-		@foreach (var day in Weekdays)
-		{
-			<div>@day</div>
-		}
+		<div class="header-side">
+			<button type="button" class="d-print-none" @onclick="PreviousMonth" disabled="@(Month <= 1)" aria-label="Previous month">‹</button>
+			@if (earlierMonth is not null)
+			{
+				<span class="badge bg-pink header-month">@earlierMonth</span>
+			}
+		</div>
+		<h3 class="mb-0">@Header</h3>
+		<div class="header-side header-side-end">
+			@if (laterMonth is not null)
+			{
+				<span class="badge bg-purple header-month">@laterMonth</span>
+			}
+			<button type="button" class="d-print-none" @onclick="NextMonth" disabled="@(Month >= 12)" aria-label="Next month">›</button>
+		</div>
 	</div>
 
 	<div class="days">
 		@foreach (var day in Days)
 		{
-			var row = RowFor(day.Date);
+			var besideYom = day.Overlay.Where(BesideYom).ToList();
+			var overlay = day.Overlay.Where(item => !BesideYom(item)).ToList();
 			<div class="day-cell @(day.IsCurrentMonth ? "" : "other-month") @(day.IsToday ? "today" : "")">
+				@if (day.DayOf.Count > 0)
+				{
+					<div class="corner corner-left">
+						@foreach (var item in day.DayOf)
+						{
+							<span class="@item.Css" title="@item.Title">@item.Text</span>
+						}
+					</div>
+				}
+				@if (day.Erev.Count > 0)
+				{
+					<div class="corner corner-right">
+						@foreach (var item in day.Erev)
+						{
+							<span class="@item.Css" title="@item.Title" aria-label="@item.Title">
+								<i class="@item.Icon" aria-hidden="true"></i>
+							</span>
+						}
+					</div>
+				}
 				<div class="day-number-bg">@day.Date.Day</div>
-				@if (row is not null)
+				@if (overlay.Count > 0)
 				{
 					<div class="biblical-overlay">
-						@if (!string.IsNullOrEmpty(HebrewLine(row)))
+						<div class="overlay-line">
+							@foreach (var item in overlay)
+							{
+								<span class="@item.Css" title="@item.Title">
+									@if (!string.IsNullOrEmpty(item.Icon))
+									{
+										<i class="@item.Icon me-1" aria-hidden="true"></i>
+									}
+									@item.Text
+								</span>
+							}
+						</div>
+					</div>
+				}
+				@if (day.Yom is not null || besideYom.Count > 0)
+				{
+					<div class="yom-row">
+						@foreach (var item in besideYom)
 						{
-							<div class="hebrew-date">@HebrewLine(row)</div>
+							<span class="yom-count @item.Css" title="@item.Title">@item.Text</span>
 						}
-						@if (row.Events.Count > 0)
+						@if (day.Yom is int yom)
 						{
-							<div class="overlay-line">
-								@foreach (var item in row.Events)
-								{
-									<span class="@item.BadgeCss" title="@item.Details">
-										@if (!string.IsNullOrEmpty(item.Icon))
-										{
-											<i class="@item.Icon me-1" aria-hidden="true"></i>
-										}
-										@item.Text
-									</span>
-								}
-							</div>
-						}
-						@if (row.Counts.Count > 0)
-						{
-							<div class="overlay-line">
-								@foreach (var count in row.Counts)
-								{
-									<span class="@count.BadgeCss" title="@count.Title">@count.Text</span>
-								}
-							</div>
+							<span class="yom-badge @day.YomClass" title="Hebrew day @yom">@yom</span>
 						}
 					</div>
 				}
@@ -59,14 +82,18 @@
 </div>
 
 @code {
-	private static readonly string[] Weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 	private readonly List<CalendarDay> Days = [];
+	private readonly List<MonthSpan> spans = [];
 	private Dictionary<DateOnly, CalendarGridRow> rowsByDate = [];
+	private string? earlierMonth;
+	private string? laterMonth;
+	private readonly Dictionary<DateOnly, OmerMark> omerByDate = [];
 
 	[Parameter, EditorRequired] public int Year { get; set; }
 	[Parameter, EditorRequired] public int Month { get; set; }
 	[Parameter, EditorRequired] public IReadOnlyList<CalendarGridRow> Rows { get; set; } = [];
+	[Parameter] public IReadOnlyList<CalendarGridRow> YearRows { get; set; } = [];
 	[Parameter] public EventCallback<int> MonthChanged { get; set; }
 
 	private string Header =>
@@ -80,7 +107,82 @@
 			rowsByDate.TryAdd(row.GregorianDate, row);
 		}
 
+		spans.Clear();
+		spans.AddRange(ConstantCalendar.MonthSpans());
+		IndexOmer();
+		ResolveHeading();
 		GenerateDays();
+	}
+
+	private void IndexOmer()
+	{
+		omerByDate.Clear();
+		var source = YearRows.Count > 0 ? YearRows : Rows;
+		foreach (var row in source)
+		{
+			foreach (var count in row.Counts)
+			{
+				if (count.Title != "Omer" || !TryCount(count.Text, out var number, out _))
+				{
+					continue;
+				}
+
+				var match = row.Events.FirstOrDefault(item => item.Text == "Omer");
+				omerByDate[row.GregorianDate] = new OmerMark(
+					match?.BadgeCss ?? count.BadgeCss,
+					string.IsNullOrWhiteSpace(match?.Icon) ? "fa-solid fa-wheat-awn" : match.Icon,
+					$"Omer {number.ToString(CultureInfo.InvariantCulture)}",
+					string.IsNullOrEmpty(match?.Details) ? count.Title : match.Details);
+			}
+		}
+	}
+
+	private void ResolveHeading()
+	{
+		earlierMonth = null;
+		laterMonth = null;
+		if (Year < 1 || Month is < 1 or > 12)
+		{
+			return;
+		}
+
+		var names = new List<string>();
+		var daysInMonth = DateTime.DaysInMonth(Year, Month);
+		for (var day = 1; day <= daysInMonth; day++)
+		{
+			if (HebrewFor(new DateOnly(Year, Month, day)) is not { } hebrew)
+			{
+				continue;
+			}
+
+			if (names.Count == 0 || names[^1] != hebrew.Name)
+			{
+				names.Add(hebrew.Name);
+			}
+		}
+
+		if (names.Count == 0)
+		{
+			return;
+		}
+
+		if (names.Count == 1)
+		{
+			var first = HebrewFor(new DateOnly(Year, Month, 1));
+			if (first is { } open && open.Name == names[0] && open.Day > 1)
+			{
+				earlierMonth = names[0];
+			}
+			else
+			{
+				laterMonth = names[0];
+			}
+
+			return;
+		}
+
+		earlierMonth = names[0];
+		laterMonth = names[^1];
 	}
 
 	private void GenerateDays()
@@ -97,33 +199,250 @@
 		for (var i = 0; i < 42; i++)
 		{
 			var date = start.AddDays(i);
-			Days.Add(new CalendarDay(date, date.Month == Month, date == today));
+			var hebrew = HebrewFor(date);
+			var row = RowFor(date);
+			Days.Add(new CalendarDay(
+				date,
+				date.Month == Month,
+				date == today,
+				hebrew?.Day,
+				hebrew is null ? "" : YomClass(hebrew.Value.Name),
+				DayOfMarks(row, date),
+				ErevMarks(date),
+				OverlayMarks(row)));
 		}
+	}
+
+	private IReadOnlyList<CornerMark> DayOfMarks(CalendarGridRow? row, DateOnly date)
+	{
+		var marks = new List<CornerMark>();
+		if (row is not null)
+		{
+			if (row.Events.Any(item => item.Text == "Rosh Kodesh"))
+			{
+				marks.Add(new CornerMark("badge bg-dark text-white", null, "Rosh Kodesh", "Rosh Kodesh"));
+				if (HebrewFor(row.GregorianDate) is { } hebrew)
+				{
+					marks.Add(new CornerMark(YomClass(hebrew.Name), null, hebrew.Name, hebrew.Name));
+				}
+			}
+
+			foreach (var sabbath in HighSabbaths(row))
+			{
+				marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title));
+			}
+		}
+
+		if (omerByDate.TryGetValue(date, out var omer))
+		{
+			marks.Add(new CornerMark(Readable(omer.Css), null, omer.Text, omer.Title));
+		}
+
+		return marks;
+	}
+
+	private IReadOnlyList<CornerMark> ErevMarks(DateOnly date)
+	{
+		var marks = new List<CornerMark>();
+		var next = RowFor(date.AddDays(1));
+		if (next is not null)
+		{
+			if (next.Events.Any(item => item.Text == "Rosh Kodesh"))
+			{
+				var monthCss = "badge bg-dark text-white";
+				var monthTitle = "1";
+				if (HebrewFor(next.GregorianDate) is { } hebrew)
+				{
+					monthCss = YomClass(hebrew.Name);
+					monthTitle = hebrew.Name;
+				}
+
+				marks.Add(new CornerMark("badge bg-dark text-white", "fa-regular fa-circle", null, "Rosh Kodesh"));
+				marks.Add(new CornerMark(monthCss, "fa-solid fa-1", null, monthTitle));
+			}
+
+			foreach (var sabbath in HighSabbaths(next))
+			{
+				if (string.IsNullOrWhiteSpace(sabbath.Icon))
+				{
+					continue;
+				}
+
+				marks.Add(new CornerMark(sabbath.Css, sabbath.Icon, null, sabbath.Text));
+			}
+		}
+
+		if (omerByDate.TryGetValue(date.AddDays(1), out var omer) && !string.IsNullOrWhiteSpace(omer.Icon))
+		{
+			marks.Add(new CornerMark(Readable(omer.Css), omer.Icon, null, omer.Text));
+		}
+
+		return marks;
+	}
+
+	private static IReadOnlyList<CornerMark> OverlayMarks(CalendarGridRow? row)
+	{
+		if (row is null)
+		{
+			return [];
+		}
+
+		var marks = new List<CornerMark>();
+		foreach (var item in row.Events)
+		{
+			if (IsCornerEvent(item.Text) || DayCount.IsAweOrRepentance(item.Text))
+			{
+				continue;
+			}
+
+			marks.Add(new CornerMark(item.BadgeCss, item.Icon, item.Text, item.Details));
+		}
+
+		foreach (var count in row.Counts)
+		{
+			if (count.Title == "Omer" || DayCount.IsAweOrRepentance(count.Title))
+			{
+				continue;
+			}
+
+			if (!IsSplitCount(count.Title))
+			{
+				marks.Add(new CornerMark(count.BadgeCss, null, count.Text, count.Title));
+				continue;
+			}
+
+			if (TryCount(count.Text, out var number, out var total) && !IsEdge(number, total))
+			{
+				marks.Add(new CornerMark(Solid(count.BadgeCss), null, number.ToString(CultureInfo.InvariantCulture), count.Title));
+			}
+		}
+
+		return marks;
+	}
+
+	private static List<HighSabbath> HighSabbaths(CalendarGridRow row)
+	{
+		var list = new List<HighSabbath>();
+		foreach (var count in row.Counts)
+		{
+			if (!IsSplitCount(count.Title) || !TryCount(count.Text, out var number, out var total) || !IsEdge(number, total))
+			{
+				continue;
+			}
+
+			var match = row.Events.FirstOrDefault(item => item.Text == count.Title);
+			list.Add(new HighSabbath(
+				Solid(match?.BadgeCss ?? count.BadgeCss),
+				match?.Icon,
+				$"{count.Title} {number}",
+				string.IsNullOrEmpty(match?.Details) ? count.Title : match.Details));
+		}
+
+		foreach (var item in row.Events)
+		{
+			if (item.Text is "Shavuot" or "Yom Teruah" or "Yom Kippur")
+			{
+				list.Add(new HighSabbath(item.BadgeCss, item.Icon, item.Text, item.Details));
+			}
+		}
+
+		return list;
+	}
+
+	private (string Name, int Day)? HebrewFor(DateOnly date)
+	{
+		foreach (var span in spans)
+		{
+			if (date >= span.Date && date < span.NextDate)
+			{
+				return (span.Month.Name, date.DayNumber - span.Date.DayNumber + 1);
+			}
+		}
+
+		if (spans.Count == 0)
+		{
+			return null;
+		}
+
+		var last = spans[^1];
+		var offset = date.DayNumber - last.NextDate.DayNumber;
+		if (offset >= 0 && offset < 30)
+		{
+			return (last.NextMonth.Name, offset + 1);
+		}
+
+		return null;
+	}
+
+	private string YomClass(string name)
+	{
+		if (name == earlierMonth)
+		{
+			return "badge bg-pink";
+		}
+
+		if (name == laterMonth)
+		{
+			return "badge bg-purple";
+		}
+
+		return "badge bg-secondary";
 	}
 
 	private CalendarGridRow? RowFor(DateOnly date) =>
 		rowsByDate.TryGetValue(date, out var row) ? row : null;
 
-	private static string HebrewLine(CalendarGridRow row)
+	private static bool IsCornerEvent(string title) =>
+		title is "Rosh Kodesh" or "Shavuot" or "Yom Teruah" or "Yom Kippur" or "Matzot" or "Sukkot" or "Hanukkah" or "Omer";
+
+	private static bool IsSplitCount(string title) =>
+		title is "Matzot" or "Sukkot" or "Hanukkah";
+
+	private static bool BesideYom(CornerMark item) =>
+		item.Title is "Matzot" or "Sukkot";
+
+	private static bool IsEdge(int number, int total) =>
+		number == 1 || number == total;
+
+	private static bool TryCount(string text, out int number, out int total)
 	{
-		var month = MonthName(row.Month);
-		if (string.IsNullOrEmpty(month))
+		number = 0;
+		total = 0;
+		var slash = text.IndexOf('/');
+		if (slash <= 0 || slash >= text.Length - 1)
 		{
-			return row.Day?.ToString() ?? "";
+			return false;
 		}
 
-		return row.Day is int day ? $"{month} {day}" : month;
+		return int.TryParse(text[..slash], NumberStyles.None, CultureInfo.InvariantCulture, out number)
+			&& int.TryParse(text[(slash + 1)..], NumberStyles.None, CultureInfo.InvariantCulture, out total)
+			&& total > 0;
 	}
 
-	private static string MonthName(string month)
-	{
-		var split = month.IndexOf(" - ", StringComparison.Ordinal);
-		return split < 0 ? month : month[..split];
-	}
+	private static string Solid(string css) =>
+		css.Replace("-subtle", "", StringComparison.Ordinal)
+			.Replace("text-black-50", "text-black", StringComparison.Ordinal);
+
+	private static string Readable(string css) =>
+		css.Replace("text-black-50", "text-black", StringComparison.Ordinal);
 
 	private Task PreviousMonth() => Month <= 1 ? Task.CompletedTask : MonthChanged.InvokeAsync(Month - 1);
 
 	private Task NextMonth() => Month >= 12 ? Task.CompletedTask : MonthChanged.InvokeAsync(Month + 1);
 
-	private sealed record CalendarDay(DateOnly Date, bool IsCurrentMonth, bool IsToday);
+	private sealed record CalendarDay(
+		DateOnly Date,
+		bool IsCurrentMonth,
+		bool IsToday,
+		int? Yom,
+		string YomClass,
+		IReadOnlyList<CornerMark> DayOf,
+		IReadOnlyList<CornerMark> Erev,
+		IReadOnlyList<CornerMark> Overlay);
+
+	private sealed record CornerMark(string Css, string? Icon, string? Text, string Title);
+
+	private sealed record HighSabbath(string Css, string? Icon, string Text, string Title);
+
+	private sealed record OmerMark(string Css, string? Icon, string Text, string Title);
 }
