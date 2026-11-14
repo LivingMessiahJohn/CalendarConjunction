@@ -30,7 +30,10 @@
 				</select>
 			}
 			<button type="button" class="btn btn-outline-secondary btn-sm @PrintControlClass" @onclick="OpenDate">Year Filter</button>
-			<button type="button" class="btn btn-outline-secondary btn-sm @PrintControlClass" @onclick="OpenEvents">Events Filter</button>
+			@if (!ShowMonthCalendar)
+			{
+				<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenEvents">Events Filter</button>
+			}
 			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
 		</span>
 	</div>
