@@ -3,10 +3,6 @@
 
 <label class="form-label" for="@Id">
 	@LabelText
-	@if (!string.IsNullOrEmpty(Superscript))
-	{
-		<sup>@Superscript</sup>
-	}
 </label>
 <select id="@Id" class="form-select" value="@SelectedOption" @onchange="OnSelectionChanged">
 	@if (!string.IsNullOrEmpty(LeadingText))

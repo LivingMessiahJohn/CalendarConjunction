@@ -1,4 +1,4 @@
-namespace CalendarApp.Models;
+namespace CalendarApp.Features.Constellations;
 
 public sealed class ConstellationDTO
 {

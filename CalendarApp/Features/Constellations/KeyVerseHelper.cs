@@ -1,9 +1,8 @@
 using System.Net;
 using System.Text.RegularExpressions;
-using CalendarApp.Models;
 using Microsoft.AspNetCore.Components;
 
-namespace CalendarApp.Helpers;
+namespace CalendarApp.Features.Constellations;
 
 public static class KeyVerseHelper
 {

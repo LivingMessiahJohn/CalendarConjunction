@@ -18,4 +18,8 @@
     <Content Update="Enums\Constellations.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RCL\RCL.csproj" />
+  </ItemGroup>
+
 </Project>
