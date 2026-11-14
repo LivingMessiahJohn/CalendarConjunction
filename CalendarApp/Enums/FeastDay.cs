@@ -17,13 +17,13 @@ public static class FeastGroupBadgeColor  // GroupColor
 	public const string PassoverSeason = "badge bg-warning text-black"; 
 	public const string UnleavenedBreadCount = "badge bg-warning-subtle text-black";
 
-	public const string Shavuot = "badge bg-primary text-black";
+	public const string Shavuot = "badge bg-primary text-white";
 	public const string Omer = "badge bg-primary-subtle text-black-50";
 
 	// Fall Season
 	public const string YomTeruah = "badge bg-info text-black";
-	public const string YomKippur = "badge bg-danger text-black";
-	public const string Sukkot = "badge bg-success text-black";
+	public const string YomKippur = "badge bg-danger text-white";
+	public const string Sukkot = "badge bg-success text-white";
 	public const string SukkotCount = "badge bg-success-subtle text-black-50";
 
 	// DaysOf

@@ -26,10 +26,23 @@
 	font-size: 1rem;
 }
 
+.weekdays,
 .days {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	column-gap: 2px;
+}
+
+.weekday {
+	text-align: center;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #424242;
+	padding: 0.15rem 0 0.2rem;
+}
+
+.days {
 	row-gap: 0;
 }
 
@@ -94,20 +107,20 @@
 }
 
 .corner-left {
-	left: 3px;
+	left: 1px;
 	align-items: flex-start;
 	max-width: calc(100% - 2rem);
 }
 
 .corner-right {
-	right: 3px;
+	right: 1px;
 	align-items: flex-end;
 }
 
 	.corner .badge {
 		font-size: 0.8rem;
 		line-height: 1.15;
-		padding: 0.2em 0.35em;
+		padding: 0.2em 0.15em;
 		white-space: normal;
 		text-align: left;
 	}
@@ -126,6 +139,7 @@
 .yom-badge,
 .yom-count {
 	font-size: 0.75rem;
+	padding: 0.2em 0.15em;
 }
 
 .biblical-overlay {
@@ -149,4 +163,14 @@
 
 .biblical-overlay .badge {
 	white-space: normal;
+}
+
+@media (max-width: 576px) {
+	.day-number-bg {
+		font-size: 1.75rem;
+	}
+
+	.corner {
+		top: calc(1.75rem / 2);
+	}
 }

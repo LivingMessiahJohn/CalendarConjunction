@@ -11,7 +11,7 @@
 
 <FilterCard FilteredCount="FilteredCount"
 						DateSelection="dateFilter"
-						Events="EventFlag.SelectedTitles(eventFilter)"
+						Events="EventFlag.SelectedTitles(ActiveEventMask)"
 						OpenDateFilter="ShowDateFilter"
 						OpenEventFilter="ShowEventFilter"
 						ShowMonthCalendar="showMonthCalendar"
@@ -46,7 +46,7 @@ else
 
 	@if (showMonthCalendar)
 	{
-		<MonthCalendar Year="ResolvedYear(calendarMonth)" Month="calendarMonth" Rows="FilteredRows().ToList()" YearRows="YearRows().ToList()" MonthChanged="OnCalendarMonthChanged" />
+		<MonthCalendar Year="ResolvedYear(calendarMonth)" Month="calendarMonth" Rows="FilteredRows().ToList()" YearRows="YearRows().ToList()" MonthChanged="OnCalendarMonthChanged" YearMonthChanged="OnCalendarYearMonthChanged" />
 	}
 	else
 	{
@@ -67,13 +67,31 @@ else
 	private bool dateFilterOpen;
 	private bool eventFilterOpen;
 	private int eventFilter = EventFlag.DefaultMask;
+
+	private int ActiveEventMask => showMonthCalendar ? EventFlag.AllMask : eventFilter;
 	private IReadOnlyList<EventBadge> eventChoices = [];
 
 	private int FilteredCount => FilteredRows().Count();
 
-	private IReadOnlyList<int> CalendarYears => dateFilter == 0
-		? FilteredRows().Select(row => row.GregorianDate.Year).Distinct().OrderBy(year => year).ToList()
-		: [];
+	private IReadOnlyList<int> CalendarYears
+	{
+		get
+		{
+			if (dateFilter != 0)
+			{
+				return [];
+			}
+
+			var years = FilteredRows().Select(row => row.GregorianDate.Year).Distinct().ToList();
+			if (calendarYear is int chosen && years.Count > 0 && (chosen < years.Min() || chosen > years.Max()))
+			{
+				years.Add(chosen);
+			}
+
+			years.Sort();
+			return years;
+		}
+	}
 
 	private int ResolvedYear(int month)
 	{
@@ -100,6 +118,11 @@ else
 			return years[0];
 		}
 
+		if (calendarYear is int picked)
+		{
+			return picked;
+		}
+
 		return dateFilter == 0
 			? YearHelper.GetGregorianYear(YearHelper.Default)
 			: YearHelper.GetGregorianYear(dateFilter);
@@ -115,7 +138,7 @@ else
 			.Select(item => item.Text)
 			.Where(title => !DayCount.IsAweOrRepentance(title))
 			.ToList();
-		return titles.Count > 0 && EventFlag.Matches(eventFilter, titles);
+		return titles.Count > 0 && EventFlag.Matches(ActiveEventMask, titles);
 	});
 
 	protected override void OnInitialized()
@@ -183,12 +206,15 @@ else
 
 	private Task OnViewChanged(bool showMonth)
 	{
-		if (showMonth && !showMonthCalendar)
+		var enteringMonth = showMonth && !showMonthCalendar;
+		showMonthCalendar = showMonth;
+		if (!enteringMonth)
 		{
-			SnapToFirstRow();
+			return Task.CompletedTask;
 		}
 
-		showMonthCalendar = showMonth;
+		eventFilterOpen = false;
+		SnapToFirstRow();
 		return Task.CompletedTask;
 	}
 
@@ -197,6 +223,17 @@ else
 		if (month is >= 1 and <= 12)
 		{
 			calendarMonth = month;
+		}
+
+		return Task.CompletedTask;
+	}
+
+	private Task OnCalendarYearMonthChanged((int Year, int Month) move)
+	{
+		if (move.Month is >= 1 and <= 12)
+		{
+			calendarYear = move.Year;
+			calendarMonth = move.Month;
 		}
 
 		return Task.CompletedTask;
