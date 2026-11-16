@@ -119,14 +119,14 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	{
 		public LambSelectedSE() : base($"{nameof(Id.LambSelected)}", Id.LambSelected) { }
 		public override string Hebrew => "פֶּסַח";
-		public override string Details => "Select on the 10th of Aviv (Nissan)";
+		public override string Details => "Select on the 10th of Aviv (Nisan)";
 		public override string Title => "Lamb selected";
 		public override string Icon => "fa-regular fa-hand-point-right"; // fa-solid fa-sheep
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.LambSelected; // 10;
-		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nissan.Dates;
+		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
 	private class PassoverSeasonAddDays
@@ -149,7 +149,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.PassoverMeal; 
-		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nissan.Dates;
+		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
 	private sealed class MatzotSE : FeastDay
@@ -163,7 +163,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.MatzotFirstDay; 
-		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nissan.Dates;
+		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
 	private sealed class OmerSE : FeastDay
@@ -177,7 +177,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
 		public override int AddDays => PassoverSeasonAddDays.OmerCountStart;
-		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nissan.Dates;
+		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
 	private sealed class ShavuotSE : FeastDay
@@ -192,7 +192,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
 
 		public override int AddDays => PassoverSeasonAddDays.Shavuot;  // 14 (Matzot) + 2 + 49
-		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nissan.Dates;
+		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
 	private sealed class YomTeruahSE : FeastDay
@@ -228,7 +228,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public SukkotSE() : base($"{nameof(Id.Sukkot)}", Id.Sukkot) { }
 		public override string Hebrew => "סֻּכּוֹת";
 		public override string Details => "Feast of tabernacles; days 1 and 8 are high sabbaths";  // Preparation Day, High Sabbath begins at sunset
-		public override string Title => "Sukkot";
+		public override string Title => nameof(Id.Sukkot);
 		public override string Icon => "fas fa-campground";
 		public override string BadgeCss => FeastGroupBadgeColor.Sukkot;
 		public override bool HasCounting => true;

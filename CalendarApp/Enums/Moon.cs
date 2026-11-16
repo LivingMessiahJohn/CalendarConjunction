@@ -13,7 +13,7 @@ public abstract class Moon : SmartEnum<Moon>
 	#region Id's
 	private static class Id
 	{
-		internal const int Nissan = 1; // biblical: Aviv
+		internal const int Nisan = 1; // biblical: Aviv
 		internal const int Iyar = 2;   // biblical: Ziv
 		internal const int Sivan = 3;
 		internal const int Tammuz = 4;
@@ -30,7 +30,7 @@ public abstract class Moon : SmartEnum<Moon>
 	#endregion
 
 	#region Declared Public Instances
-	public static readonly Moon Nissan = new NissanMonth();
+	public static readonly Moon Nisan = new NisanMonth();
 	public static readonly Moon Iyar = new IyarMonth();
 	public static readonly Moon Sivan = new SivanMonth();
 	public static readonly Moon Tammuz = new TammuzMonth();
@@ -71,16 +71,16 @@ public abstract class Moon : SmartEnum<Moon>
 
 	#region Private Instantiation
 
-	private sealed class NissanMonth : Moon
+	private sealed class NisanMonth : Moon
 	{
-		public NissanMonth() : base($"{nameof(Id.Nissan)}", Id.Nissan) { }
+		public NisanMonth() : base($"{nameof(Id.Nisan)}", Id.Nisan) { }
 		public override string Hebrew => "ניסן";
 		public override string BiblicalName => "Abib";
 		public override string BiblicalHebrew => "הָאָבִיב";
-		public override string FullName => nameof(Id.Nissan);
+		public override string FullName => nameof(Id.Nisan);
 		public override string Description => String.IsNullOrEmpty(BiblicalHebrew) ? $"{BiblicalName}" : $"{BiblicalName} {BiblicalHebrew}";
-		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Nissan.Dates;
-		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Nissan;
+		public override IReadOnlyDictionary<int, DateOnly> Dates => MoonDates.Nisan.Dates;
+		//public override CoordinateRecord CoordinateRecord => MoonCoordinates.Nisan;
 	}
 
 	private sealed class IyarMonth : Moon
@@ -231,4 +231,4 @@ public abstract class Moon : SmartEnum<Moon>
 	#endregion
 }
 
-// Ignore Spelling: Nissan, Iyar, Sivan, Tammuz, Av, Elul, Tishri, Shevat, Adar, Heshvan, Kislev, Tevet, Adar2
+// Ignore Spelling: Nisan, Iyar, Sivan, Tammuz, Av, Elul, Tishri, Shevat, Adar, Heshvan, Kislev, Tevet, Adar2

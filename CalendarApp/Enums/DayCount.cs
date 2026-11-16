@@ -59,7 +59,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override ParentRecord Parent => new(ParentTypeEnum.FeastDay,FeastDay.Matzot.Value); 
 		public override int TotalDays => 7;
 		public override string Details => "Days of Chag Hamatzot"; //
-		public override string Title => "Matzot";
+		public override string Title => FeastDay.Matzot.Title;
 		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.UnleavenedBreadCount;
 		public override bool LastDayIsHighSabbath => true;
@@ -72,8 +72,8 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public OmerSE() : base($"{nameof(Id.Omer)}", Id.Omer) { }
 		public override ParentRecord Parent => new(ParentTypeEnum.FeastDay, FeastDay.Omer.Value);
 		public override int TotalDays => 50;
-		public override string Details => "Omer"; //
-		public override string Title => "Omer";
+		public override string Details => FeastDay.Omer.Title;
+		public override string Title => FeastDay.Omer.Title;
 		public override string DayCountIcon => "fa-solid fa-wheat-awn"; 
 		public override string BadgeCss => FeastGroupBadgeColor.Omer;
 		public override bool LastDayIsHighSabbath => false;
@@ -113,7 +113,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override ParentRecord Parent => new(ParentTypeEnum.FeastDay, FeastDay.Sukkot.Value);
 		public override int TotalDays => 8;
 		public override string Details => "Days of Sukkot"; // 8th day is Shemini Atzeret (8th day of Assembly)
-		public override string Title => "Sukkot";
+		public override string Title => FeastDay.Sukkot.Title;
 		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.SukkotCount;
 		public override bool LastDayIsHighSabbath => true;
@@ -126,7 +126,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 		public override ParentRecord Parent => new(ParentTypeEnum.FeastDay, FeastDay.Hanukkah.Value);
 		public override int TotalDays => 8;
 		public override string Details => "Nights for lighting the hanukiah"; //
-		public override string Title => "Hanukkah";
+		public override string Title => FeastDay.Hanukkah.Title;
 		public override string DayCountIcon => "";
 		public override string BadgeCss => FeastGroupBadgeColor.MenorahCount; // "fa-solid fa-hanukiah"
 		public override bool LastDayIsHighSabbath => false;

@@ -2,7 +2,7 @@
 
 namespace CalendarApp.Constants.Moons;
 
-public static class Nissan // Month 1
+public static class Nisan // Month 1
 {
 	private static readonly DateOnly Year1 = DateOnly.MinValue;            // Day of...
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-04-08"); // updated to Phx TimeZone

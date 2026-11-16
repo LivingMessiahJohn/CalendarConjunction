@@ -216,7 +216,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	private sealed class RoshKodeshSE : EventFlag
 	{
 		public RoshKodeshSE() : base(nameof(BitwiseId.RoshKodesh), BitwiseId.RoshKodesh) { }
-		public override string Title => "Rosh Kodesh";
+		public override string Title => "New Moon"; //If Xs "New Moon"; Else "Rosh Kodesh"
 		public override FeastGroup? Group => null;
 	}
 
