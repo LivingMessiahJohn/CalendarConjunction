@@ -142,9 +142,9 @@ public static class ConstantCalendar
 			}
 		}
 
-		if (bucket.IsNewMoon && seen.Add("Rosh Kodesh"))
+		if (bucket.IsNewMoon && seen.Add(EventFlag.RoshKodesh.Title))
 		{
-			events.Add(new EventBadge("Rosh Kodesh", FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle"));
+			events.Add(new EventBadge(EventFlag.RoshKodesh.Title, FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle"));
 		}
 
 		return events
@@ -154,7 +154,7 @@ public static class ConstantCalendar
 
 	private static int EventRank(string title)
 	{
-		if (title == "Rosh Kodesh")
+		if (title == EventFlag.RoshKodesh.Title)
 		{
 			return 2;
 		}

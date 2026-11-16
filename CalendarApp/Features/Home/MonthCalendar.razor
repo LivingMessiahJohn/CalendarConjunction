@@ -133,12 +133,12 @@
 		{
 			foreach (var count in row.Counts)
 			{
-				if (count.Title != "Omer" || !TryCount(count.Text, out var number, out _))
+				if (count.Title != DayCount.Omer.Title || !TryCount(count.Text, out var number, out _))
 				{
 					continue;
 				}
 
-				var match = row.Events.FirstOrDefault(item => item.Text == "Omer");
+				var match = row.Events.FirstOrDefault(item => item.Text == EventFlag.Omer.Title);
 				omerByDate[row.GregorianDate] = new CornerMark(
 					Readable(match?.BadgeCss ?? count.BadgeCss),
 					null,
@@ -224,28 +224,31 @@
 				date == today,
 				hebrew?.Day,
 				hebrew is null ? "" : YomClass(hebrew.Value.Name),
-				DayOfMarks(row),
+				DayOfMarks(row, date),
 				ErevMarks(date),
 				overlay));
 		}
 	}
 
-	private static IReadOnlyList<CornerMark> DayOfMarks(CalendarGridRow? row)
+	private List<CornerMark> DayOfMarks(CalendarGridRow? row, DateOnly date)
 	{
 		var marks = new List<CornerMark>();
-		if (row is null)
+		if (row is not null)
 		{
-			return marks;
+			if (row.Events.Any(item => item.Text == EventFlag.RoshKodesh.Title))
+			{
+				marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, null, EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.Title));
+			}
+
+			foreach (var sabbath in HighSabbaths(row))
+			{
+				marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title));
+			}
 		}
 
-		if (row.Events.Any(item => item.Text == "Rosh Kodesh"))
+		if (OmerEdge(date) is { } omer)
 		{
-			marks.Add(new CornerMark("badge bg-dark text-white", null, "Rosh Kodesh", "Rosh Kodesh"));
-		}
-
-		foreach (var sabbath in HighSabbaths(row))
-		{
-			marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title));
+			marks.Add(new CornerMark(omer.Css, null, DayCount.Omer.Title, FeastDay.Omer.Details));
 		}
 
 		return marks;
@@ -257,9 +260,9 @@
 		var next = RowFor(date.AddDays(1));
 		if (next is not null)
 		{
-			if (next.Events.Any(item => item.Text == "Rosh Kodesh"))
+			if (next.Events.Any(item => item.Text == EventFlag.RoshKodesh.Title))
 			{
-				marks.Add(new CornerMark("badge bg-dark text-white", "fa-regular fa-circle", null, "Rosh Kodesh"));
+				marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle", null, EventFlag.RoshKodesh.Title));
 			}
 
 			foreach (var sabbath in HighSabbaths(next))
@@ -273,7 +276,24 @@
 			}
 		}
 
+		if (OmerEdge(date.AddDays(1)) is { } omer)
+		{
+			marks.Add(new CornerMark(omer.Css, FeastDay.Omer.Icon, null, DayCount.Omer.Title));
+		}
+
 		return marks;
+	}
+
+	private CornerMark? OmerEdge(DateOnly date)
+	{
+		if (!omerByDate.TryGetValue(date, out var omer)
+			|| !int.TryParse(omer.Text, NumberStyles.None, CultureInfo.InvariantCulture, out var number)
+			|| (number != 1 && number != DayCount.Omer.TotalDays))
+		{
+			return null;
+		}
+
+		return omer;
 	}
 
 	private static IReadOnlyList<CornerMark> OverlayMarks(CalendarGridRow? row)
@@ -296,7 +316,7 @@
 
 		foreach (var count in row.Counts)
 		{
-			if (count.Title == "Omer" || DayCount.IsAweOrRepentance(count.Title))
+			if (count.Title == DayCount.Omer.Title || DayCount.IsAweOrRepentance(count.Title))
 			{
 				continue;
 			}
@@ -336,7 +356,9 @@
 
 		foreach (var item in row.Events)
 		{
-			if (item.Text is "Shavuot" or "Yom Teruah" or "Yom Kippur")
+			if (item.Text == EventFlag.Shavuot.Title
+				|| item.Text == EventFlag.YomTeruah.Title
+				|| item.Text == EventFlag.YomKippur.Title)
 			{
 				list.Add(new HighSabbath(item.BadgeCss, item.Icon, item.Text, item.Details));
 			}
@@ -389,14 +411,25 @@
 		rowsByDate.TryGetValue(date, out var row) ? row : null;
 
 	private static bool IsCornerEvent(string title) =>
-		title is "Rosh Kodesh" or "Shavuot" or "Yom Teruah" or "Yom Kippur" or "Matzot" or "Sukkot" or "Hanukkah" or "Omer";
+		title == EventFlag.RoshKodesh.Title
+		|| title == EventFlag.Shavuot.Title
+		|| title == EventFlag.YomTeruah.Title
+		|| title == EventFlag.YomKippur.Title
+		|| title == EventFlag.Matzot.Title
+		|| title == EventFlag.Sukkot.Title
+		|| title == EventFlag.Hanukkah.Title
+		|| title == EventFlag.Omer.Title;
 
 	private static bool IsSplitCount(string title) =>
-		title is "Matzot" or "Sukkot" or "Hanukkah";
+		title == DayCount.UnleavenedBread.Title
+		|| title == DayCount.Sukkot.Title
+		|| title == DayCount.MenorahCount.Title;
 
 	private static bool BesideYom(CornerMark item)
 	{
-		if (item.Title is "Matzot" or "Sukkot" or "Omer")
+		if (item.Title == DayCount.UnleavenedBread.Title
+			|| item.Title == DayCount.Sukkot.Title
+			|| item.Title == DayCount.Omer.Title)
 		{
 			return true;
 		}

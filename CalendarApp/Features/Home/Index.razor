@@ -60,7 +60,7 @@ else
 	private IReadOnlyList<CalendarGridRow>? rows;
 	private string? loadError;
 	private int dateFilter = YearHelper.Default;
-	private bool showMonthCalendar;
+	private bool showMonthCalendar = true;
 	private int calendarMonth = 1;
 	private int? calendarYear;
 
@@ -147,6 +147,7 @@ else
 		{
 			rows = ConstantCalendar.Build();
 			eventChoices = DistinctEvents(rows);
+			SnapToFirstRow();
 		}
 		catch (Exception ex)
 		{

@@ -1,3 +1,5 @@
+using CalendarApp.Enums;
+
 namespace CalendarApp.Features.Constellations;
 
 public sealed class ConstellationDTO
@@ -20,7 +22,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 1,
 			MonthOrder = 6,
-			Month = "Nisan",
+			Month = Moon.Nisan.Name,
 			Sign = "Virgo",
 			//Mazzarah = "Bethulah",
 			HebrewTransliteration = "Betulah",
@@ -34,7 +36,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 2,
 			MonthOrder = 7,
-			Month = "Iyar",
+			Month = Moon.Iyar.Name,
 			Sign = "Libra",
 			//Mazzarah = "Moznayim",
 			HebrewTransliteration = "Moznayim",
@@ -47,7 +49,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 3,
 			MonthOrder = 8,
-			Month = "Sivan",
+			Month = Moon.Sivan.Name,
 			Sign = "Scorpio",
 			//Mazzarah = "Akrav",
 			HebrewTransliteration = "Akrav",
@@ -60,7 +62,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 4,
 			MonthOrder = 9,
-			Month = "Tammuz",
+			Month = Moon.Tammuz.Name,
 			Sign = "Sagittarius",
 			//Mazzarah = "Keshet",
 			HebrewTransliteration = "Keshet",
@@ -72,7 +74,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 5,
 			MonthOrder = 10,
-			Month = "Tevet",
+			Month = Moon.Tevet.Name,
 			Sign = "Capricorn",
 			//Mazzarah = "Gedi",
 			HebrewTransliteration = "Gedi",
@@ -85,7 +87,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 6,
 			MonthOrder = 11,
-			Month = "Shevat",
+			Month = Moon.Shevat.Name,
 			Sign = "Aquarius",
 			//Mazzarah = "Deli",
 			HebrewTransliteration = "Deli / D'li",
@@ -98,7 +100,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 7,
 			MonthOrder = 12,
-			Month = "Adar",
+			Month = Moon.Adar.Name,
 			Sign = "Pisces",
 			//Mazzarah = "Dagim",
 			HebrewTransliteration = "Dagim",
@@ -110,7 +112,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 8,
 			MonthOrder = 1,
-			Month = "Nissan ",
+			Month = Moon.Nisan.Name,
 			Sign = "Aries",
 			//Mazzarah = "Taleh",
 			HebrewTransliteration = "Taleh / Ṭ'leh",
@@ -123,7 +125,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 9,
 			MonthOrder = 2,
-			Month = "Iyar ",
+			Month = Moon.Iyar.Name,
 			Sign = "Taurus",
 			//Mazzarah = "Shor",
 			HebrewTransliteration = "Shor",
@@ -136,7 +138,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 10,
 			MonthOrder = 3,
-			Month = "Sivan ",
+			Month = Moon.Sivan.Name,
 			Sign = "Gemini",
 			//Mazzarah = "Teomim",
 			HebrewTransliteration = "Teomim",
@@ -148,7 +150,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 11,
 			MonthOrder = 4,
-			Month = "Tammuz",
+			Month = Moon.Tammuz.Name,
 			Sign = "Cancer",
 			//Mazzarah = "Sartan",
 			HebrewTransliteration = "Sartan",
@@ -160,7 +162,7 @@ public sealed class ConstellationDTO
 		{
 			CircleOrder = 12,
 			MonthOrder = 5,
-			Month = "Av",
+			Month = Moon.Av.Name,
 			Sign = "Leo",
 			//Mazzarah = "Aryeh",
 			HebrewTransliteration = "Aryeh / Ari",

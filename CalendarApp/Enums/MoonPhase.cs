@@ -45,7 +45,7 @@ public abstract class MoonPhase : SmartEnum<MoonPhase>
         public NewSE() : base($"{nameof(Id.New)}", Id.New) { }
         public override string Title => "New Moon";
         public override string Image => "new.jpg";
-        public override string Description => "Occurs at Erev Rosh Kodesh";
+        public override string Description => $"Occurs at Erev {EventFlag.RoshKodesh.Title}";
     }
 
     private sealed class WaxingSE : MoonPhase
