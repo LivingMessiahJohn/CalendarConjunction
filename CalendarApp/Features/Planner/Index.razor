@@ -1,0 +1,267 @@
+@page "/planner"
+
+<PageHeader PageEnum="Nav.Planner" />
+
+<FilterCard FilteredCount="FilteredCount"
+						DateSelection="dateFilter"
+						Events="EventFlag.SelectedTitles(ActiveEventMask)"
+						OpenDateFilter="ShowDateFilter"
+						OpenEventFilter="ShowEventFilter"
+						CalendarYearChanged="OnCalendarYearChanged"
+						CalendarYears="CalendarYears" />
+
+
+@if (loadError is not null)
+{
+	<div class="alert alert-danger" role="alert">@loadError</div>
+}
+else if (rows is null)
+{
+	<p>Loading planner…</p>
+}
+else
+{
+	<DatePickerFilterModal Visible="dateFilterOpen"
+												 Closed="HideDateFilter"
+												 Selection="dateFilter"
+												 FilterChanged="OnDateFilterChanged" />
+
+	<EventFilterModal Visible="eventFilterOpen"
+										Closed="HideEventFilter"
+										Choices="eventChoices"
+										Selection="eventFilter"
+										FilterChanged="OnEventFilterChanged" />
+
+	<PlannerTable @ref="table" Year="dateFilter" data="FilteredRows().ToList()" />
+}
+
+
+@code {
+	private PlannerTable? table;
+
+	private IReadOnlyList<CalendarGridRow>? rows;
+	private string? loadError;
+	private int dateFilter = YearHelper.Default;
+	//private int calendarMonth = 1;
+	private int? calendarYear;
+
+	private bool dateFilterOpen;
+	private bool eventFilterOpen;
+	private int eventFilter = EventFlag.DefaultMask;
+
+	//private int ActiveEventMask => showMonthCalendar ? EventFlag.AllMask : eventFilter;
+	private int ActiveEventMask => eventFilter;
+	private IReadOnlyList<EventBadge> eventChoices = [];
+
+	private int FilteredCount => FilteredRows().Count();
+
+	private IReadOnlyList<int> CalendarYears
+	{
+		get
+		{
+			if (dateFilter != 0)
+			{
+				return [];
+			}
+
+			var years = FilteredRows().Select(row => row.GregorianDate.Year).Distinct().ToList();
+			if (calendarYear is int chosen && years.Count > 0 && (chosen < years.Min() || chosen > years.Max()))
+			{
+				years.Add(chosen);
+			}
+
+			years.Sort();
+			return years;
+		}
+	}
+
+	private int ResolvedYear() // int month
+	{
+		var years = FilteredRows()
+			.Select(row => row.GregorianDate)
+			//.Where(date => date.Month == month)
+			.Select(date => date.Year)
+			.Distinct()
+			.OrderBy(year => year)
+			.ToList();
+
+		if (dateFilter == 0 && calendarYear is int chosenYear && CalendarYears.Contains(chosenYear))
+		{
+			return chosenYear;
+		}
+
+		if (calendarYear is int chosen && years.Contains(chosen))
+		{
+			return chosen;
+		}
+
+		if (years.Count > 0)
+		{
+			return years[0];
+		}
+
+		if (calendarYear is int picked)
+		{
+			return picked;
+		}
+
+		return dateFilter == 0
+			? YearHelper.GetGregorianYear(YearHelper.Default)
+			: YearHelper.GetGregorianYear(dateFilter);
+	}
+
+	//(dateFilter.Year == YearEnum.All || row.Year == (int)dateFilter.Year)
+	private IEnumerable<CalendarGridRow> YearRows() => (rows ?? []).Where(row =>
+			dateFilter == 0 || row.Year == dateFilter);
+
+	private IEnumerable<CalendarGridRow> FilteredRows() => YearRows().Where(row =>
+	{
+		var titles = row.Events
+			.Select(item => item.Text)
+			.Where(title => !DayCount.IsAweOrRepentance(title))
+			.ToList();
+		return titles.Count > 0 && EventFlag.Matches(ActiveEventMask, titles);
+	});
+
+	protected override void OnInitialized()
+	{
+		try
+		{
+			rows = ConstantCalendar.Build();
+			eventChoices = DistinctEvents(rows);
+			SnapToFirstRow();
+		}
+		catch (Exception ex)
+		{
+			loadError = ex.Message;
+		}
+	}
+
+	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
+	{
+		var order = new List<string>();
+		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
+		var details = new Dictionary<string, string>(StringComparer.Ordinal);
+		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
+		foreach (var row in source)
+		{
+			foreach (var item in row.Events)
+			{
+				if (DayCount.IsAweOrRepentance(item.Text))
+				{
+					continue;
+				}
+
+				if (!cssCounts.TryGetValue(item.Text, out var counts))
+				{
+					counts = new Dictionary<string, int>(StringComparer.Ordinal);
+					cssCounts[item.Text] = counts;
+					icons[item.Text] = item.Icon;
+					details[item.Text] = item.Details;
+					order.Add(item.Text);
+				}
+
+				counts[item.BadgeCss] = counts.TryGetValue(item.BadgeCss, out var count) ? count + 1 : 1;
+			}
+		}
+
+		return order
+				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text], details[text]))
+				.ToList();
+	}
+
+	private void ShowDateFilter() => dateFilterOpen = true;
+	private void HideDateFilter() => dateFilterOpen = false;
+	private void ShowEventFilter() => eventFilterOpen = true;
+	private void HideEventFilter() => eventFilterOpen = false;
+
+
+	private Task OnDateFilterChanged(int selection)
+	{
+		dateFilter = selection;
+		// if (showMonthCalendar)
+		// {
+		// 	SnapMonthToData();
+		// }
+
+		return RefreshGrid();
+	}
+
+	private Task OnViewChanged()
+	{
+		eventFilterOpen = false;
+		SnapToFirstRow();
+		return Task.CompletedTask;
+	}
+
+	/*
+	private Task OnViewChanged(bool showMonth)
+	{
+		var enteringMonth = showMonth && !showMonthCalendar;
+		showMonthCalendar = showMonth;
+		if (!enteringMonth)
+		{
+			return Task.CompletedTask;
+		}
+
+		eventFilterOpen = false;
+		SnapToFirstRow();
+		return Task.CompletedTask;
+	}
+	*/
+
+	private Task OnCalendarYearMonthChanged((int Year, int Month) move)
+	{
+		if (move.Month is >= 1 and <= 12)
+		{
+			calendarYear = move.Year;
+			//calendarMonth = move.Month;
+		}
+
+		return Task.CompletedTask;
+	}
+
+	private Task OnCalendarYearChanged(int year)
+	{
+		calendarYear = year;
+		return Task.CompletedTask;
+	}
+
+	private void SnapToFirstRow()
+	{
+		var first = FilteredRows().Select(row => row.GregorianDate).OrderBy(date => date).FirstOrDefault();
+		if (first == default)
+		{
+			return;
+		}
+
+		//calendarMonth = first.Month;
+		calendarYear = first.Year;
+	}
+
+	/*
+	private void SnapMonthToData()
+	{
+		var year = ResolvedYear(calendarMonth);
+		var hasRow = FilteredRows().Any(row => row.GregorianDate.Year == year && row.GregorianDate.Month == calendarMonth);
+		if (!hasRow)
+		{
+			SnapToFirstRow();
+		}
+	}
+	*/
+
+	private Task OnEventFilterChanged(int selection)
+	{
+		eventFilter = selection;
+		return RefreshGrid();
+	}
+
+	private async Task RefreshGrid()
+	{
+		if (table is not null)
+		{
+			await table.RefreshAsync();
+		}
+	}
+}

@@ -22,4 +22,9 @@
     <ProjectReference Include="..\RCL\RCL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Home\Navigation\" />
+    <Folder Include="wwwroot\images\icons\" />
+  </ItemGroup>
+
 </Project>

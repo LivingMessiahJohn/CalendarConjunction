@@ -1,4 +1,4 @@
-<PageTitle>
+﻿<PageTitle>
 	@if (String.IsNullOrEmpty(PageTitle))
 	{
 		@PageEnum.Title
@@ -9,46 +9,26 @@
 	}
 </PageTitle>
 
-<div class="page-header d-flex align-items-center mt-2 mb-3 @BorderCSS">
-	<div class="page-header-side d-flex align-items-center flex-nowrap gap-2 @(string.IsNullOrEmpty(SecondLeadingLinkText) ? null : "page-header-links")">
-		@if (!string.IsNullOrEmpty(LeadingLinkText))
-		{
-			<a class="btn btn-outline-secondary @PrintLinkClass" href="@LeadingLinkHref">@LeadingLinkText</a>
-		}
-		@if (!string.IsNullOrEmpty(SecondLeadingLinkText))
-		{
-			<a class="btn btn-outline-secondary @PrintLinkClass" href="@SecondLeadingLinkHref">
-				@if (!string.IsNullOrEmpty(SecondLeadingLinkIcon))
-				{
-					<i class="@SecondLeadingLinkIcon me-1" aria-hidden="true"></i>
-				}
-				@SecondLeadingLinkText
-			</a>
-		}
+@if (ChildContent is null)
+{
+	<div class="pb-n1 mt-2 mb-3 @BorderCSS">
+		<div class="title-xs">
+			<h3 class="text-center"><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h3>
+		</div>
+		<div class="title-sm-up">
+			<h1 class=""><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
+		</div>
 	</div>
-	<h1 class="flex-grow-1 fs-2 text-center mb-0"><i class="@PageEnum.Icon"></i>&nbsp;&nbsp;@PageEnum.Title</h1>
-	<div class="page-header-side text-end">
-		@if (!string.IsNullOrEmpty(LinkText))
-		{
-			<a class="btn btn-outline-secondary @PrintLinkClass" href="@LinkHref">@LinkText</a>
-		}
-	</div>
-</div>
+}
+else
+{
+	@ChildContent
+}
 
 @code {
 	[Parameter, EditorRequired] public Nav PageEnum { get; set; } = Nav.Home;
-	//[Parameter] public RenderFragment? ChildContent { get; set; }
+	[Parameter] public RenderFragment? ChildContent { get; set; }
 	[Parameter] public string? PageTitle { get; set; }
 	[Parameter] public string? BorderCSS { get; set; } = "border-bottom border-info";
 
-	[Parameter] public string? LeadingLinkHref { get; set; }
-	[Parameter] public string? LeadingLinkText { get; set; }
-	[Parameter] public string? SecondLeadingLinkHref { get; set; }
-	[Parameter] public string? SecondLeadingLinkText { get; set; }
-	[Parameter] public string? SecondLeadingLinkIcon { get; set; }
-	[Parameter] public string? LinkHref { get; set; }
-	[Parameter] public string? LinkText { get; set; }
-	[Parameter] public bool HideLinksOnPrint { get; set; }
-
-	private string? PrintLinkClass => HideLinksOnPrint ? "d-print-none" : null;
 }

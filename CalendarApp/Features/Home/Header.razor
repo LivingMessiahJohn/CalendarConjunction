@@ -1,0 +1,75 @@
+﻿<h3>Header</h3>
+
+@code {
+	[Parameter, EditorRequired] public int Year { get; set; }		// ToDo: do I need this?
+	[Parameter, EditorRequired] public int Month { get; set; }  // ToDo: do I need this?
+
+	protected override void OnParametersSet()
+	{
+		//rowsByDate = [];
+		//foreach (var row in Rows)
+		//{
+		//	rowsByDate.TryAdd(row.GregorianDate, row);
+		//}
+
+		//spans.Clear();
+		//spans.AddRange(ConstantCalendar.MonthSpans());
+		//IndexOmer();
+		ResolveHeading();
+		//GenerateDays();
+	}
+
+	private string? earlierMonth;
+	private string? laterMonth;
+
+	private void ResolveHeading()
+	{
+/*
+		earlierMonth = null;
+		laterMonth = null;
+		if (Year < 1 || Month is < 1 or > 12)
+		{
+			return;
+		}
+
+		var names = new List<string>();
+		var daysInMonth = DateTime.DaysInMonth(Year, Month);
+		for (var day = 1; day <= daysInMonth; day++)
+		{
+			if (HebrewFor(new DateOnly(Year, Month, day)) is not { } hebrew)
+			{
+				continue;
+			}
+
+			if (names.Count == 0 || names[^1] != hebrew.Name)
+			{
+				names.Add(hebrew.Name);
+			}
+		}
+
+		if (names.Count == 0)
+		{
+			return;
+		}
+
+		if (names.Count == 1)
+		{
+			var first = HebrewFor(new DateOnly(Year, Month, 1));
+			if (first is { } open && open.Name == names[0] && open.Day > 1)
+			{
+				earlierMonth = names[0];
+			}
+			else
+			{
+				laterMonth = names[0];
+			}
+
+			return;
+		}
+
+		earlierMonth = names[0];
+		laterMonth = names[^1];
+			*/
+		}
+
+}

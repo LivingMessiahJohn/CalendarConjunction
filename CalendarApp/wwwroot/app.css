@@ -206,3 +206,22 @@ button.event-filter.event-filter-active {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.btn-group-xs > .btn, .btn-xs {
+  padding: .25rem .4rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
+
+.btn-group-xs > .btn, .btn-xxs {
+  padding: .1rem .2rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}
+
+.skinny-offcanvas {
+  background-color: aqua; /* Set your desired background color */
+  max-width: 300px;
+}

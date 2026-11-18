@@ -1,77 +1,103 @@
 @page "/"
 
-<PageHeader PageEnum="Nav.Home" LeadingLinkHref="/constellations"
-					 LeadingLinkText="Constellations"
-					 SecondLeadingLinkHref="/MonthDaysDiff"
-					 SecondLeadingLinkText="Date"
-					 SecondLeadingLinkIcon="fa-solid fa-check"
-					 LinkHref="/about"
-					 LinkText="About"
-					 HideLinksOnPrint="showMonthCalendar" />
+@using System.Globalization
 
-<FilterCard FilteredCount="FilteredCount"
-						DateSelection="dateFilter"
-						Events="EventFlag.SelectedTitles(ActiveEventMask)"
-						OpenDateFilter="ShowDateFilter"
-						OpenEventFilter="ShowEventFilter"
-						ShowMonthCalendar="showMonthCalendar"
-						ShowMonthCalendarChanged="OnViewChanged"
-						CalendarMonth="calendarMonth"
-						CalendarMonthChanged="OnCalendarMonthChanged"
-						CalendarYear="ResolvedYear(calendarMonth)"
-						CalendarYearChanged="OnCalendarYearChanged"
-						CalendarYears="CalendarYears" />
+<PageHeader PageEnum="Nav.Home" />
 
+@* card border-secondary my-2 d-print-none *@
+<div class="card mx-3 my-2 ">
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<span class="badge bg-pink">Previous</span>
 
-@if (loadError is not null)
-{
-	<div class="alert alert-danger" role="alert">@loadError</div>
-}
-else if (rows is null)
-{
-	<p>Loading calendar…</p>
-}
-else
-{
-	<DatePickerFilterModal Visible="dateFilterOpen"
-												 Closed="HideDateFilter"
-												 Selection="dateFilter"
-												 FilterChanged="OnDateFilterChanged" />
+		<MonthSelector CalendarMonth="calendarMonth" CalendarMonthChanged="OnCalendarMonthChanged" />
 
-	<EventFilterModal Visible="eventFilterOpen"
-										Closed="HideEventFilter"
-										Choices="eventChoices"
-										Selection="eventFilter"
-										FilterChanged="OnEventFilterChanged" />
+		<span class="badge bg-purple">Next</span>
+	</div>
+</div>
+@* 
+<div class="card border-secondary my-2 d-print-none">
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<span><i class="fa-solid fa-filter"></i> Filters</span>
 
-	@if (showMonthCalendar)
-	{
-		<MonthCalendar Year="ResolvedYear(calendarMonth)" Month="calendarMonth" Rows="FilteredRows().ToList()" YearRows="YearRows().ToList()" MonthChanged="OnCalendarMonthChanged" YearMonthChanged="OnCalendarYearMonthChanged" />
-	}
-	else
-	{
-		<PlannerTable @ref="table" Year="dateFilter" data="FilteredRows().ToList()" />
-	}
-}
+		<MonthSelector CalendarMonth="calendarMonth" CalendarMonthChanged="OnCalendarMonthChanged" />
+
+	</div>
+</div> *@
+
+<MonthCalendar Year="ResolvedYear(calendarMonth)"
+							 Month="calendarMonth"
+							 Rows="FilteredRows().ToList()"
+							 YearRows="YearRows().ToList()" />
 
 @code {
-	private PlannerTable? table;
 
-	private IReadOnlyList<CalendarGridRow>? rows;
-	private string? loadError;
-	private int dateFilter = YearHelper.Default;
-	private bool showMonthCalendar = true;
 	private int calendarMonth = 1;
 	private int? calendarYear;
+	private string? loadError;
 
-	private bool dateFilterOpen;
-	private bool eventFilterOpen;
-	private int eventFilter = EventFlag.DefaultMask;
+	private int dateFilter = YearHelper.Default;
+	private IEnumerable<CalendarGridRow> YearRows() => (rows ?? []).Where(row =>
+		dateFilter == 0 || row.Year == dateFilter);
 
-	private int ActiveEventMask => showMonthCalendar ? EventFlag.AllMask : eventFilter;
+	private IEnumerable<CalendarGridRow> FilteredRows() => YearRows().Where(row =>
+{
+	var titles = row.Events
+		.Select(item => item.Text)
+		.Where(title => !DayCount.IsAweOrRepentance(title))
+		.ToList();
+	return titles.Count > 0 && EventFlag.Matches(EventFlag.AllMask, titles);
+});
+
 	private IReadOnlyList<EventBadge> eventChoices = [];
+	private IReadOnlyList<CalendarGridRow>? rows;
 
-	private int FilteredCount => FilteredRows().Count();
+	protected override void OnInitialized()
+	{
+		try
+		{
+			rows = ConstantCalendar.Build();
+			eventChoices = DistinctEvents(rows);
+			SnapToFirstRow();
+		}
+		catch (Exception ex)
+		{
+			loadError = ex.Message;
+		}
+	}
+
+	
+	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
+	{
+		var order = new List<string>();
+		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
+		var details = new Dictionary<string, string>(StringComparer.Ordinal);
+		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
+		foreach (var row in source)
+		{
+			foreach (var item in row.Events)
+			{
+				if (DayCount.IsAweOrRepentance(item.Text))
+				{
+					continue;
+				}
+
+				if (!cssCounts.TryGetValue(item.Text, out var counts))
+				{
+					counts = new Dictionary<string, int>(StringComparer.Ordinal);
+					cssCounts[item.Text] = counts;
+					icons[item.Text] = item.Icon;
+					details[item.Text] = item.Details;
+					order.Add(item.Text);
+				}
+
+				counts[item.BadgeCss] = counts.TryGetValue(item.BadgeCss, out var count) ? count + 1 : 1;
+			}
+		}
+
+		return order
+				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text], details[text]))
+				.ToList();
+	}
 
 	private IReadOnlyList<int> CalendarYears
 	{
@@ -128,95 +154,16 @@ else
 			: YearHelper.GetGregorianYear(dateFilter);
 	}
 
-	//(dateFilter.Year == YearEnum.All || row.Year == (int)dateFilter.Year)
-	private IEnumerable<CalendarGridRow> YearRows() => (rows ?? []).Where(row =>
-			dateFilter == 0 || row.Year == dateFilter);
-
-	private IEnumerable<CalendarGridRow> FilteredRows() => YearRows().Where(row =>
+	private void SnapToFirstRow()
 	{
-		var titles = row.Events
-			.Select(item => item.Text)
-			.Where(title => !DayCount.IsAweOrRepentance(title))
-			.ToList();
-		return titles.Count > 0 && EventFlag.Matches(ActiveEventMask, titles);
-	});
-
-	protected override void OnInitialized()
-	{
-		try
+		var first = FilteredRows().Select(row => row.GregorianDate).OrderBy(date => date).FirstOrDefault();
+		if (first == default)
 		{
-			rows = ConstantCalendar.Build();
-			eventChoices = DistinctEvents(rows);
-			SnapToFirstRow();
-		}
-		catch (Exception ex)
-		{
-			loadError = ex.Message;
-		}
-	}
-
-	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
-	{
-		var order = new List<string>();
-		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
-		var details = new Dictionary<string, string>(StringComparer.Ordinal);
-		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
-		foreach (var row in source)
-		{
-			foreach (var item in row.Events)
-			{
-				if (DayCount.IsAweOrRepentance(item.Text))
-				{
-					continue;
-				}
-
-				if (!cssCounts.TryGetValue(item.Text, out var counts))
-				{
-					counts = new Dictionary<string, int>(StringComparer.Ordinal);
-					cssCounts[item.Text] = counts;
-					icons[item.Text] = item.Icon;
-					details[item.Text] = item.Details;
-					order.Add(item.Text);
-				}
-
-				counts[item.BadgeCss] = counts.TryGetValue(item.BadgeCss, out var count) ? count + 1 : 1;
-			}
+			return;
 		}
 
-		return order
-				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text], details[text]))
-				.ToList();
-	}
-
-	private void ShowDateFilter() => dateFilterOpen = true;
-	private void HideDateFilter() => dateFilterOpen = false;
-	private void ShowEventFilter() => eventFilterOpen = true;
-	private void HideEventFilter() => eventFilterOpen = false;
-
-
-	private Task OnDateFilterChanged(int selection)
-	{
-		dateFilter = selection;
-		if (showMonthCalendar)
-		{
-			SnapMonthToData();
-		}
-
-		return RefreshGrid();
-	}
-
-	private Task OnViewChanged(bool showMonth)
-	{
-		var enteringMonth = showMonth && !showMonthCalendar;
-		showMonthCalendar = showMonth;
-		if (!enteringMonth)
-		{
-			return Task.CompletedTask;
-		}
-
-		eventFilterOpen = false;
-		SnapToFirstRow();
-		return Task.CompletedTask;
+		calendarMonth = first.Month;
+		calendarYear = first.Year;
 	}
 
 	private Task OnCalendarMonthChanged(int month)
@@ -238,47 +185,5 @@ else
 		}
 
 		return Task.CompletedTask;
-	}
-
-	private Task OnCalendarYearChanged(int year)
-	{
-		calendarYear = year;
-		return Task.CompletedTask;
-	}
-
-	private void SnapToFirstRow()
-	{
-		var first = FilteredRows().Select(row => row.GregorianDate).OrderBy(date => date).FirstOrDefault();
-		if (first == default)
-		{
-			return;
-		}
-
-		calendarMonth = first.Month;
-		calendarYear = first.Year;
-	}
-
-	private void SnapMonthToData()
-	{
-		var year = ResolvedYear(calendarMonth);
-		var hasRow = FilteredRows().Any(row => row.GregorianDate.Year == year && row.GregorianDate.Month == calendarMonth);
-		if (!hasRow)
-		{
-			SnapToFirstRow();
-		}
-	}
-
-	private Task OnEventFilterChanged(int selection)
-	{
-		eventFilter = selection;
-		return RefreshGrid();
-	}
-
-	private async Task RefreshGrid()
-	{
-		if (table is not null)
-		{
-			await table.RefreshAsync();
-		}
 	}
 }

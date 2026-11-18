@@ -1,0 +1,70 @@
+@using System.Globalization
+@using CalendarApp.Enums
+
+<div class="card border-secondary mb-3">
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<span><i class="fa-solid fa-filter"></i> Filters</span>
+		<span class="d-flex align-items-center gap-3 flex-wrap justify-content-end">
+
+			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenDate">Year Filter</button>
+			<button type="button" class="btn btn-outline-secondary btn-sm" @onclick="OpenEvents">Events Filter</button>
+			<span class="text-body-secondary">@FilteredCount.ToString("N0") days</span>
+		</span>
+	</div>
+	<div class="card-footer text-center">
+		<span class="small text-black-50">@FilterState</span>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public int FilteredCount { get; set; }
+	[Parameter, EditorRequired] public int DateSelection { get; set; } // Defaults to zero
+	[Parameter, EditorRequired] public IReadOnlyList<string> Events { get; set; } = [];
+	[Parameter, EditorRequired] public EventCallback OpenDateFilter { get; set; }
+	[Parameter, EditorRequired] public EventCallback OpenEventFilter { get; set; }
+	[Parameter] public int CalendarYear { get; set; }
+	[Parameter] public EventCallback<int> CalendarYearChanged { get; set; }
+	[Parameter] public IReadOnlyList<int> CalendarYears { get; set; } = [];
+
+	private string FilterState
+	{
+		get
+		{
+			var parts = new List<string>();
+			if (DateSelection != 0)
+			{
+				parts.Add($"Year {DateSelection} - {YearHelper.GetGregorianYear((int)DateSelection)}");
+			}
+
+			// if (ShowMonthCalendar && CalendarYear > 0 && CalendarMonth is >= 1 and <= 12)
+			// {
+			// 	parts.Add(new DateTime(CalendarYear, CalendarMonth, 1).ToString("MMMM yyyy", CultureInfo.InvariantCulture));
+			// }
+
+			if (Events.Count > 0)
+			{
+				parts.Add(string.Join(", ", Events));
+			}
+
+			return parts.Count == 0 ? "Every day" : string.Join(" · ", parts);
+		}
+	}
+
+	private Task OpenDate() => OpenDateFilter.InvokeAsync();
+
+	private Task OpenEvents() => OpenEventFilter.InvokeAsync();
+
+	// private Task ShowPlanner() => ShowMonthCalendarChanged.InvokeAsync(false);
+	// private Task ShowCalendar() => ShowMonthCalendarChanged.InvokeAsync(true);
+
+	private static string MonthName(int month) =>
+		CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(month);
+
+	//private string ViewButtonClass(bool month) => ShowMonthCalendar == month ? "btn btn-secondary" : "btn btn-outline-secondary";
+	//private string? PrintControlClass => ShowMonthCalendar ? "d-print-none" : null;
+
+	private Task OnYearChanged(ChangeEventArgs e) =>
+		int.TryParse(e.Value?.ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var year)
+			? CalendarYearChanged.InvokeAsync(year)
+			: Task.CompletedTask;
+}

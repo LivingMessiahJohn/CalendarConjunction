@@ -1,0 +1,20 @@
+@inject IJSRuntime JS
+@inject ILogger<DomIdsInitializer> Logger
+
+@code {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			try
+			{
+				await JS.InvokeVoidAsync("window.initializeDomIds", "off-canvas-menu");
+			}
+			catch (Exception ex)
+			{
+				// site.js may be missing after a bad service-worker cache; menu still works without this.
+				Logger.LogWarning(ex, "initializeDomIds failed");
+			}
+		}
+	}
+}

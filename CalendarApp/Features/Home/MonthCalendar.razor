@@ -1,23 +1,6 @@
-@using System.Globalization
+﻿@using System.Globalization
 
 <div class="calendar">
-	<div class="calendar-header">
-		<div class="header-side">
-			<button type="button" class="d-print-none" @onclick="PreviousMonth" aria-label="Previous month">‹</button>
-			@if (earlierMonth is not null)
-			{
-				<span class="badge bg-pink header-month">@earlierMonth</span>
-			}
-		</div>
-		<h3 class="mb-0">@Header</h3>
-		<div class="header-side header-side-end">
-			@if (laterMonth is not null)
-			{
-				<span class="badge bg-purple header-month">@laterMonth</span>
-			}
-			<button type="button" class="d-print-none" @onclick="NextMonth" aria-label="Next month">›</button>
-		</div>
-	</div>
 
 	<div class="weekdays">
 		@foreach (var name in WeekdayNames)
@@ -88,7 +71,13 @@
 	</div>
 </div>
 
+
 @code {
+	[Parameter, EditorRequired] public int Year { get; set; }
+	[Parameter, EditorRequired] public int Month { get; set; }
+	[Parameter, EditorRequired] public IReadOnlyList<CalendarGridRow> Rows { get; set; } = [];
+	[Parameter] public IReadOnlyList<CalendarGridRow> YearRows { get; set; } = [];
+
 
 	private readonly List<CalendarDay> Days = [];
 	private readonly List<MonthSpan> spans = [];
@@ -97,18 +86,8 @@
 	private string? laterMonth;
 	private readonly Dictionary<DateOnly, CornerMark> omerByDate = [];
 
-	[Parameter, EditorRequired] public int Year { get; set; }
-	[Parameter, EditorRequired] public int Month { get; set; }
-	[Parameter, EditorRequired] public IReadOnlyList<CalendarGridRow> Rows { get; set; } = [];
-	[Parameter] public IReadOnlyList<CalendarGridRow> YearRows { get; set; } = [];
-	[Parameter] public EventCallback<int> MonthChanged { get; set; }
-	[Parameter] public EventCallback<(int Year, int Month)> YearMonthChanged { get; set; }
-
 	private static readonly string[] WeekdayNames =
 		CultureInfo.InvariantCulture.DateTimeFormat.AbbreviatedDayNames;
-
-	private string Header =>
-		new DateTime(Year, Month, 1).ToString("MMMM yyyy", CultureInfo.InvariantCulture);
 
 	protected override void OnParametersSet()
 	{
@@ -367,6 +346,7 @@
 		return list;
 	}
 
+	// Tuple 
 	private (string Name, int Day)? HebrewFor(DateOnly date)
 	{
 		foreach (var span in spans)
@@ -463,16 +443,8 @@
 
 	private static string Readable(string css) =>
 		css.Replace("text-black-50", "text-black", StringComparison.Ordinal);
-
-	private Task PreviousMonth() => Month > 1
-		? MonthChanged.InvokeAsync(Month - 1)
-		: YearMonthChanged.InvokeAsync((Year - 1, 12));
-
-	private Task NextMonth() => Month < 12
-		? MonthChanged.InvokeAsync(Month + 1)
-		: YearMonthChanged.InvokeAsync((Year + 1, 1));
-
-	private sealed record CalendarDay(
+	
+private sealed record CalendarDay(
 		DateOnly Date,
 		bool IsCurrentMonth,
 		bool IsToday,
@@ -485,4 +457,5 @@
 	private sealed record CornerMark(string Css, string? Icon, string? Text, string Title);
 
 	private sealed record HighSabbath(string Css, string? Icon, string Text, string Title);
+
 }
