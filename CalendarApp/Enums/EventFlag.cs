@@ -43,7 +43,23 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	private EventFlag(string name, int value) : base(name, value) { }
 
 	public abstract string Title { get; }
+	public virtual string TitleXs => Title;
+
 	public abstract FeastGroup? Group { get; }
+
+	public static IReadOnlyList<EventFlag> XsLegend =>
+	[
+		Hanukkah,
+		LambSelected,
+		PassoverMeal,
+		Matzot,
+		Omer,
+		Shavuot,
+		YomTeruah,
+		YomKippur,
+		Sukkot,
+		RoshKodesh,
+	];
 
 	public static int AllMask => List.Aggregate(0, (mask, flag) => mask | flag.Value);
 
@@ -133,6 +149,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public HanukkahSE() : base(nameof(BitwiseId.Hanukkah), BitwiseId.Hanukkah) { }
 		public override string Title => FeastDay.Hanukkah.Title;
+		public override string TitleXs => "Han";
 		public override FeastGroup? Group => FeastGroup.Winter;
 	}
 
@@ -147,6 +164,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public LambSelectedSE() : base(nameof(BitwiseId.LambSelected), BitwiseId.LambSelected) { }
 		public override string Title => FeastDay.LambSelected.Title;
+		public override string TitleXs => "LS";
 		public override FeastGroup? Group => FeastGroup.PassoverSeason;
 	}
 
@@ -154,6 +172,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public PassoverMealSE() : base(nameof(BitwiseId.PassoverMeal), BitwiseId.PassoverMeal) { }
 		public override string Title => FeastDay.PassoverMeal.Title;
+		public override string TitleXs => "PM";
 		public override FeastGroup? Group => FeastGroup.PassoverSeason;
 	}
 
@@ -161,6 +180,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public MatzotSE() : base(nameof(BitwiseId.Matzot), BitwiseId.Matzot) { }
 		public override string Title => FeastDay.Matzot.Title;
+		public override string TitleXs => "Mtz";
 		public override FeastGroup? Group => FeastGroup.PassoverSeason;
 	}
 
@@ -168,6 +188,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public OmerSE() : base(nameof(BitwiseId.Omer), BitwiseId.Omer) { }
 		public override string Title => FeastDay.Omer.Title;
+		public override string TitleXs => "Om";
 		public override FeastGroup? Group => FeastGroup.OmerAndShavuot;
 	}
 
@@ -175,6 +196,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public ShavuotSE() : base(nameof(BitwiseId.Shavuot), BitwiseId.Shavuot) { }
 		public override string Title => FeastDay.Shavuot.Title;
+		public override string TitleXs => "Shv";
 		public override FeastGroup? Group => FeastGroup.OmerAndShavuot;
 	}
 
@@ -196,6 +218,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public YomTeruahSE() : base(nameof(BitwiseId.YomTeruah), BitwiseId.YomTeruah) { }
 		public override string Title => FeastDay.YomTeruah.Title;
+		public override string TitleXs => "YT";
 		public override FeastGroup? Group => FeastGroup.Fall;
 	}
 
@@ -203,6 +226,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public YomKippurSE() : base(nameof(BitwiseId.YomKippur), BitwiseId.YomKippur) { }
 		public override string Title => FeastDay.YomKippur.Title;
+		public override string TitleXs => "YK";
 		public override FeastGroup? Group => FeastGroup.Fall;
 	}
 
@@ -210,13 +234,15 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	{
 		public SukkotSE() : base(nameof(BitwiseId.Sukkot), BitwiseId.Sukkot) { }
 		public override string Title => FeastDay.Sukkot.Title;
+		public override string TitleXs => "Skt";
 		public override FeastGroup? Group => FeastGroup.Fall;
 	}
 
 	private sealed class RoshKodeshSE : EventFlag
 	{
 		public RoshKodeshSE() : base(nameof(BitwiseId.RoshKodesh), BitwiseId.RoshKodesh) { }
-		public override string Title => "New Moon"; //If Xs "New Moon"; Else "Rosh Kodesh"
+		public override string Title => "Rosh Kodesh";
+		public override string TitleXs => "RK";
 		public override FeastGroup? Group => null;
 	}
 

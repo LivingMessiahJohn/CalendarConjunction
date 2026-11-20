@@ -1,0 +1,28 @@
+﻿@using CalendarApp.Enums
+
+<div class="xs-legend ms-3">
+	<TableTemplate TItem="EventFlag" Items="EventFlag.XsLegend" Caption="Abbreviation Legend" HeaderCSS="table table-sm table-striped align-middle caption-top">
+		<TableHeader>
+			<th scope="col">Abbr.</th>
+			<th scope="col">Event</th>
+		</TableHeader>
+		<RowTemplate>
+			<td><span class="@LegendBadge(context)">@context.TitleXs</span></td>
+			<td>@context.Title</td>
+		</RowTemplate>
+	</TableTemplate>
+</div>
+
+
+@code {
+	private static string LegendBadge(EventFlag flag)
+	{
+		if (flag == EventFlag.RoshKodesh)
+		{
+			return FeastGroupBadgeColor.RoshKodesh;
+		}
+
+		var feast = FeastDay.List.FirstOrDefault(item => item.Title == flag.Title);
+		return feast?.BadgeCss ?? "badge bg-secondary";
+	}
+}
