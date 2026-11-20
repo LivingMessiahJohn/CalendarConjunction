@@ -21,7 +21,7 @@ Before creating a feature, read [references/slice-template.md](references/slice-
 
 ## Services
 
-When a feature owns a service, add `Add<Feature>()` in `<Feature>/Data/ServiceCollectionExtensions.cs` and call it from `Program.cs`. Do not add an extension that registers nothing. `ConstantCalendar` stays in `Services` because Home and MonthDaysDiff both use it.
+When a feature owns a service, add `Add<Feature>()` in `<Feature>/Data/ServiceCollectionExtensions.cs` and call it from `Program.cs`. Do not add an extension that registers nothing. `ConstantCalendar` stays in `Services` because the Planner, Month Days Diff, and `Features/Home/Data/HebrewCalendar` use it. Home's month grid calls `HebrewCalendar`.
 
 ## Leave the PWA host behind
 

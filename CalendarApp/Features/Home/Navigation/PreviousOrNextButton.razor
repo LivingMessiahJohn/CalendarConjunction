@@ -1,0 +1,101 @@
+﻿@using System.Linq
+@using Microsoft.Extensions.Logging
+@using CalendarApp.Features.Home.Data
+
+@inject ILogger<PreviousOrNextButton>? Logger
+
+@if (!IsEdge)
+{
+	@if (Direction == Enums.Direction.Previous)
+	{
+		<button type="button" class="btn btn-outline-primary btn-md  @Direction.Margin" title="@Direction.Name"
+						@onclick="@(() => ButtonClick())">
+			<i class="@Direction.Icon"></i>
+			@if (!string.IsNullOrEmpty(MonthName))
+			{
+				<span class="@Direction.BadgeCss">@MonthName</span>
+			}
+		</button>
+	}
+	else
+	{
+		<button type="button" class="btn btn-outline-primary btn-md @Direction.Margin" title="@Direction.Name"
+						@onclick="@(() => ButtonClick())">
+			
+			@if (!string.IsNullOrEmpty(MonthName))
+			{
+				<span class="@Direction.BadgeCss">@MonthName</span>
+			}
+			<i class="@Direction.Icon"></i>
+		</button>
+	}
+}
+else
+{
+	<button class="btn btn-light btn-md disabled">
+		<span class="text-black-50"><i class="fas fa-ban"></i></span>
+	</button>
+}
+
+@code {
+
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+	[Parameter, EditorRequired] public Enums.Direction Direction { get; set; }
+	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateSelected { get; set; }
+
+	private bool IsEdge;
+
+	private string? MonthName;
+
+	private DateRange? DateRange;
+
+	private static int YearMonthKey(DateOnly d) => d.Year * 100 + d.Month;
+	int currentKey;
+	int startKey;
+	int endKey;
+
+	protected override void OnParametersSet()
+	{
+		//Logger!.LogInformation("{Method}, Direction: {Direction}", nameof(OnParametersSet), Direction.Name);
+
+		var range = new DateRange(YearHelper.MinDate, YearHelper.MaxDate);
+		DateRange = range;
+		IsEdge = false;
+
+		currentKey = YearMonthKey(CurrentDate);
+		startKey = YearMonthKey(range.Start);
+		endKey = YearMonthKey(range.End);
+
+		if (Direction == Enums.Direction.Previous && currentKey <= startKey)
+		{
+			IsEdge = true;
+		}
+		else if (Direction == Enums.Direction.Next && currentKey >= endKey)
+		{
+			IsEdge = true;
+		}
+
+		var labels = HebrewCalendar.LabelsFor(CurrentDate);
+		MonthName = Direction == Enums.Direction.Previous ? labels.Earlier : labels.Later;
+	}
+
+	protected void ButtonClick()
+	{
+		//Logger!.LogInformation("{Method}, Direction: {Direction}", nameof(ButtonClick), Direction.Name);
+		ExecuteMove();
+	}
+
+	private void ExecuteMove()
+	{
+		//Logger!.LogInformation("{Method}", nameof(ExecuteMove));
+
+		if (DateRange is null) { return; }
+
+		DateOnly adjustedDateOnly = Direction == Enums.Direction.Previous
+			? CurrentDate.AddMonths(-1)
+			: CurrentDate.AddMonths(+1);
+
+		OnDateSelected.InvokeAsync(adjustedDateOnly);
+	}
+}
+

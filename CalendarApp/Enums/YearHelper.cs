@@ -21,6 +21,8 @@ public static class YearHelper
 	public static string Range => $"{Min}-{Max}";
 
 	private const int Offset = 3836;
-	public static int GetGregorianYear(int hebrewYear) { return hebrewYear - Offset; }
 
+	public static int GetGregorianYear(int hebrewYear) { return hebrewYear - Offset; }
+	public static readonly DateOnly MinDate = DateOnly.Parse($"{GetGregorianYear(Min)}-01-01");
+	public static readonly DateOnly MaxDate = DateOnly.Parse($"{GetGregorianYear(Max)}-12-31");
 }

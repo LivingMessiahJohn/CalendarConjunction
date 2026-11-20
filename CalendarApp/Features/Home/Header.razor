@@ -1,0 +1,35 @@
+﻿@using CalendarApp.Features.Home.Navigation
+@using NavEnums = CalendarApp.Features.Home.Navigation.Enums
+
+@inject ILogger<Index> Logger
+
+<div class="card border-secondary mb-3">
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<PreviousOrNextButton CurrentDate="CurrentDate"
+													Direction=NavEnums.Direction.Previous
+													OnDateSelected="ReturnedDateSelected" />
+
+		<div class="d-flex align-items-center">
+			<Title CurrentDate="CurrentDate" OnDateChanged="ReturnedDateSelected" />
+		</div>
+
+		<PreviousOrNextButton CurrentDate="CurrentDate"
+													Direction=NavEnums.Direction.Next
+													OnDateSelected="ReturnedDateSelected" />
+	</div>
+
+	
+
+</div>
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateChanged { get; set; }
+
+	private void ReturnedDateSelected(DateOnly date)
+	{
+		Logger!.LogDebug("{Method} {Message}", nameof(ReturnedDateSelected), date.ToShortDateString());
+		OnDateChanged.InvokeAsync(date);
+	}
+
+}

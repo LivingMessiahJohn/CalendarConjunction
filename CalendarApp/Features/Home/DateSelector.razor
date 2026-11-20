@@ -1,0 +1,34 @@
+﻿@using CalendarApp
+
+<label for="@inputId" class="form-label">@Label</label>
+<input type="date" title="@Value?.ToString("MMM dd yyyy")"
+			 id="@inputId"
+			 class="form-control"
+			 value="@Value?.ToString("yyyy-MM-dd")"
+			 @onchange="OnDateChanged"
+			 min="@Min?.ToString("yyyy-MM-dd")"
+			 max="@Max?.ToString("yyyy-MM-dd")" />
+
+@code {
+
+	[Parameter] public DateOnly? Value { get; set; }
+	[Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
+	[Parameter] public string Label { get; set; } = "Select a date";
+	[Parameter] public DateOnly? Min { get; set; } = @YearHelper.MinDate;
+	[Parameter] public DateOnly? Max { get; set; } = @YearHelper.MaxDate;
+
+	private async Task OnDateChanged(ChangeEventArgs e)
+	{
+		if (DateOnly.TryParse(e.Value?.ToString(), out var date))
+		{
+			await ValueChanged.InvokeAsync(date);
+		}
+		else
+		{
+			await ValueChanged.InvokeAsync(null);
+		}
+	}
+
+	private string inputId = $"date-{Guid.NewGuid():N}";
+}
+

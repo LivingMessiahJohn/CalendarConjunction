@@ -1,0 +1,17 @@
+.title-xs {
+	display: block;
+}
+
+.title-sm-up {
+	display: none;
+}
+
+@media (min-width: 576px) {
+	.title-xs {
+		display: none;
+	}
+
+	.title-sm-up {
+		display: block;
+	}
+}

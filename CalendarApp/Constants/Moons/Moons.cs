@@ -4,7 +4,7 @@ namespace CalendarApp.Constants.Moons;
 
 public static class Nisan // Month 1
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;            // Day of...
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-03-20");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-04-08"); // updated to Phx TimeZone
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-03-27");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-04-15");
@@ -28,7 +28,7 @@ public static class Nisan // Month 1
 
 public static class Iyar // Month 2
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-04-18");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-05-07");
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-04-26");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-05-14");
@@ -52,7 +52,7 @@ public static class Iyar // Month 2
 
 public static class Sivan // Month 3
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-05-18");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-06-06");
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-05-25");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-06-13");
@@ -74,7 +74,7 @@ public static class Sivan // Month 3
 
 public static class Tammuz // Month 4
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-06-16");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-07-05");
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-06-24");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-07-13");
@@ -96,7 +96,7 @@ public static class Tammuz // Month 4
 
 public static class Av // Month 5
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-07-15");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-08-03");
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-07-23");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-08-11");
@@ -118,7 +118,7 @@ public static class Av // Month 5
 
 public static class Elul // Month 6
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-08-14");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-09-02"); // updated to Phx TimeZone
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-08-21");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-09-09"); // 08 OR 09 Sept 2029 anomaly
@@ -140,7 +140,7 @@ public static class Elul // Month 6
 
 public static class Tishri // Month 7
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-09-12");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-10-01"); // updated to Phx TimeZone
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-09-20");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-10-09");
@@ -162,7 +162,7 @@ public static class Tishri // Month 7
 
 public static class Heshvan // Month 8
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-10-12");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-10-31"); // updated to Phx TimeZone
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-10-19");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-11-07");
@@ -184,7 +184,7 @@ public static class Heshvan // Month 8
 
 public static class Kislev // Month 9
 {
-	private static readonly DateOnly Year1 = DateOnly.MinValue;
+	private static readonly DateOnly Year1 = DateOnly.Parse("2026-11-10");
 	private static readonly DateOnly Year2 = DateOnly.Parse("2027-11-29"); // updated to Phx TimeZone
 	private static readonly DateOnly Year3 = DateOnly.Parse("2028-11-18");
 	private static readonly DateOnly Year4 = DateOnly.Parse("2029-12-07");

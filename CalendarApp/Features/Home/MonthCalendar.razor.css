@@ -117,13 +117,13 @@
 	align-items: flex-end;
 }
 
-	.corner .badge {
-		font-size: 0.8rem;
-		line-height: 1.15;
-		padding: 0.2em 0.15em;
-		white-space: normal;
-		text-align: left;
-	}
+.corner .badge {
+	font-size: 0.8rem;
+	line-height: 1.15;
+	padding: 0.2em 0.15em;
+	white-space: normal;
+	text-align: left;
+}
 
 .yom-row {
 	position: absolute;

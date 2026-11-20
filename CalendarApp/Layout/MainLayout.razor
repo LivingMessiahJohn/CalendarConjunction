@@ -1,0 +1,72 @@
+﻿@using CalendarApp.Layout.MenuNavBar
+
+@using Microsoft.AspNetCore.Components.Web
+
+@inherits LayoutComponentBase
+
+<DomIdsInitializer />
+
+<header>
+	<div class="d-print-none">
+		<div class="container-fluid px-0">
+			<div class="d-flex align-items-center justify-content-between bg-primary text-white p-2 navbar navbar-dark">
+				<div class="d-flex align-items-center gap-2">
+					<HomeImgButton />
+					@*	<SearchButton /> *@
+				</div>
+				<Title />
+				<div class="d-flex align-items-center gap-2">
+					<ThemeToggle />
+					<OffcanvasToggler />
+				</div>
+			</div>
+		</div>
+
+		<div class="offcanvas offcanvas-end" tabindex="-1" id="off-canvas-menu"
+				 aria-labelledby="off-canvas-label-menu" style="width: 260px;">
+
+			<div class="offcanvas-header">
+				<h5 class="offcanvas-title" id="off-canvas-label-menu">Menu</h5>
+				<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+			</div>
+
+			<div class="offcanvas-body px-0">
+				<nav class="nav flex-column">
+					@foreach (var item in Enums.Nav.List.ToList().OrderBy(o => o.Value))
+					{
+						<a class="nav-link px-3" href="@item.Index"><i class="@item.Icon"></i> @item.Title</a>
+					}
+				</nav>
+			</div>
+		</div>
+
+		@* <SearchModal /> *@
+
+	</div>
+
+</header>
+
+<div class="container-fluid px-0 px-sm-2">
+	<ErrorBoundary @ref="_errorBoundary">
+		<ChildContent>
+			@Body
+		</ChildContent>
+		<ErrorContent Context="ex">
+			<div class="blazor-error-boundary" role="alert">
+				<div class="error-title">Something went wrong on this page</div>
+				<div class="error-detail">@ex.GetType().Name: @ex.Message</div>
+				<button type="button" class="btn btn-light btn-sm mt-2" @onclick="Recover">Try again</button>
+			</div>
+		</ErrorContent>
+	</ErrorBoundary>
+</div>
+
+<footer class="text-muted bg-primary-subtle mt-2">
+	<Footer />
+</footer>
+
+@code {
+	private ErrorBoundary? _errorBoundary;
+
+	private void Recover() => _errorBoundary?.Recover();
+}
