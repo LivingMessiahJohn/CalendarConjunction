@@ -25,6 +25,8 @@ public abstract class Direction : SmartEnum<Direction>
 	public abstract string Icon { get; }
 	public abstract string KeyboardKey { get; }
 	public abstract string Margin { get; }
+	public abstract string BadgeCss { get; }
+	//public abstract string ButtonCss { get; }
 
 	#endregion
 
@@ -34,6 +36,8 @@ public abstract class Direction : SmartEnum<Direction>
 		public override string Icon => " fas fa-arrow-left";
 		public override string KeyboardKey => "ArrowLeft";
 		public override string Margin => " ms-1";
+		public override string BadgeCss => "badge bg-pink";
+		//public override string ButtonCss => "badge bg-pink";
 	}
 
 
@@ -43,6 +47,7 @@ public abstract class Direction : SmartEnum<Direction>
 		public override string Icon => " fas fa-arrow-right";
 		public override string KeyboardKey => "ArrowRight";
 		public override string Margin => " me-1";
+		public override string BadgeCss => "badge bg-purple";
 	}
 
 }

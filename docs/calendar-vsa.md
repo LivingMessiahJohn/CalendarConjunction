@@ -44,6 +44,7 @@ CalendarApp/
     Pages/NotFound.razor
   Features/
     Home/Index.razor             /
+    Home/Data/HebrewCalendar.cs  month grid for YearHelper.MinDate through MaxDate
     About/Index.razor            /about
     Constellations/Index.razor   /constellations
     MonthDaysDiff/Index.razor    /MonthDaysDiff
@@ -67,7 +68,7 @@ CalendarApp/
 | (new) | `Enums/Nav.cs` | SmartEnum of every `@page` route. `PageHeader` reads its title and icon. |
 | `Components/DatePickerFilterModal.razor` | unchanged | Home and Month Days Diff both open it, and it uses `YearHelper` |
 | `Components/Pages/Error.razor`, `NotFound.razor`, `Layout/`, `App.razor`, `Routes.razor` | unchanged | Host shell. `Routes.razor` still binds `Pages.NotFound`. |
-| `Enums/`, `Constants/`, `Models/CalendarGridRow.cs`, `Models/MonthSpan.cs`, `Services/ConstantCalendar.cs` | unchanged | Home and Month Days Diff both depend on this calendar data |
+| `Enums/`, `Constants/`, `Models/CalendarGridRow.cs`, `Models/MonthSpan.cs`, `Services/ConstantCalendar.cs` | unchanged | Planner and Month Days Diff use this calendar data. Home's month grid reads it through `Features/Home/Data/HebrewCalendar.cs` |
 
 Route URLs were left as they were.
 

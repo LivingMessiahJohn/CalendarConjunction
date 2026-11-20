@@ -1,189 +1,29 @@
-@page "/"
-
-@using System.Globalization
+﻿@page "/"
 
 <PageHeader PageEnum="Nav.Home" />
 
-@* card border-secondary my-2 d-print-none *@
-<div class="card mx-3 my-2 ">
-	<div class="card-header d-flex justify-content-between align-items-center">
-		<span class="badge bg-pink">Previous</span>
+@if (IsCurrentDateInRange())
+{
+	<Header CurrentDate="CurrentDate" OnDateChanged="ReturnedDate" />
 
-		<MonthSelector CalendarMonth="calendarMonth" CalendarMonthChanged="OnCalendarMonthChanged" />
-
-		<span class="badge bg-purple">Next</span>
-	</div>
-</div>
-@* 
-<div class="card border-secondary my-2 d-print-none">
-	<div class="card-header d-flex justify-content-between align-items-center">
-		<span><i class="fa-solid fa-filter"></i> Filters</span>
-
-		<MonthSelector CalendarMonth="calendarMonth" CalendarMonthChanged="OnCalendarMonthChanged" />
-
-	</div>
-</div> *@
-
-<MonthCalendar Year="ResolvedYear(calendarMonth)"
-							 Month="calendarMonth"
-							 Rows="FilteredRows().ToList()"
-							 YearRows="YearRows().ToList()" />
+	<MonthCalendar CurrentDate="CurrentDate" />
+}
+else
+{
+	<Alert AlertType="alert-danger">Current date is out of range</Alert>
+	@* ToDo: show the current date, and the range in the alert message *@
+}
 
 @code {
 
-	private int calendarMonth = 1;
-	private int? calendarYear;
-	private string? loadError;
+	protected DateOnly CurrentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+	//protected DateOnly CurrentDate { get; set; } = new DateOnly(1924, 1, 1); // Test out of range date
 
-	private int dateFilter = YearHelper.Default;
-	private IEnumerable<CalendarGridRow> YearRows() => (rows ?? []).Where(row =>
-		dateFilter == 0 || row.Year == dateFilter);
+	private bool IsCurrentDateInRange() =>
+		CurrentDate >= YearHelper.MinDate && CurrentDate <= YearHelper.MaxDate;
 
-	private IEnumerable<CalendarGridRow> FilteredRows() => YearRows().Where(row =>
-{
-	var titles = row.Events
-		.Select(item => item.Text)
-		.Where(title => !DayCount.IsAweOrRepentance(title))
-		.ToList();
-	return titles.Count > 0 && EventFlag.Matches(EventFlag.AllMask, titles);
-});
-
-	private IReadOnlyList<EventBadge> eventChoices = [];
-	private IReadOnlyList<CalendarGridRow>? rows;
-
-	protected override void OnInitialized()
+	private void ReturnedDate(DateOnly date)
 	{
-		try
-		{
-			rows = ConstantCalendar.Build();
-			eventChoices = DistinctEvents(rows);
-			SnapToFirstRow();
-		}
-		catch (Exception ex)
-		{
-			loadError = ex.Message;
-		}
-	}
-
-	
-	private static IReadOnlyList<EventBadge> DistinctEvents(IReadOnlyList<CalendarGridRow> source)
-	{
-		var order = new List<string>();
-		var icons = new Dictionary<string, string?>(StringComparer.Ordinal);
-		var details = new Dictionary<string, string>(StringComparer.Ordinal);
-		var cssCounts = new Dictionary<string, Dictionary<string, int>>(StringComparer.Ordinal);
-		foreach (var row in source)
-		{
-			foreach (var item in row.Events)
-			{
-				if (DayCount.IsAweOrRepentance(item.Text))
-				{
-					continue;
-				}
-
-				if (!cssCounts.TryGetValue(item.Text, out var counts))
-				{
-					counts = new Dictionary<string, int>(StringComparer.Ordinal);
-					cssCounts[item.Text] = counts;
-					icons[item.Text] = item.Icon;
-					details[item.Text] = item.Details;
-					order.Add(item.Text);
-				}
-
-				counts[item.BadgeCss] = counts.TryGetValue(item.BadgeCss, out var count) ? count + 1 : 1;
-			}
-		}
-
-		return order
-				.Select(text => new EventBadge(text, cssCounts[text].MaxBy(pair => pair.Value).Key, icons[text], details[text]))
-				.ToList();
-	}
-
-	private IReadOnlyList<int> CalendarYears
-	{
-		get
-		{
-			if (dateFilter != 0)
-			{
-				return [];
-			}
-
-			var years = FilteredRows().Select(row => row.GregorianDate.Year).Distinct().ToList();
-			if (calendarYear is int chosen && years.Count > 0 && (chosen < years.Min() || chosen > years.Max()))
-			{
-				years.Add(chosen);
-			}
-
-			years.Sort();
-			return years;
-		}
-	}
-
-	private int ResolvedYear(int month)
-	{
-		var years = FilteredRows()
-			.Select(row => row.GregorianDate)
-			.Where(date => date.Month == month)
-			.Select(date => date.Year)
-			.Distinct()
-			.OrderBy(year => year)
-			.ToList();
-
-		if (dateFilter == 0 && calendarYear is int chosenYear && CalendarYears.Contains(chosenYear))
-		{
-			return chosenYear;
-		}
-
-		if (calendarYear is int chosen && years.Contains(chosen))
-		{
-			return chosen;
-		}
-
-		if (years.Count > 0)
-		{
-			return years[0];
-		}
-
-		if (calendarYear is int picked)
-		{
-			return picked;
-		}
-
-		return dateFilter == 0
-			? YearHelper.GetGregorianYear(YearHelper.Default)
-			: YearHelper.GetGregorianYear(dateFilter);
-	}
-
-	private void SnapToFirstRow()
-	{
-		var first = FilteredRows().Select(row => row.GregorianDate).OrderBy(date => date).FirstOrDefault();
-		if (first == default)
-		{
-			return;
-		}
-
-		calendarMonth = first.Month;
-		calendarYear = first.Year;
-	}
-
-	private Task OnCalendarMonthChanged(int month)
-	{
-		if (month is >= 1 and <= 12)
-		{
-			calendarMonth = month;
-		}
-
-		return Task.CompletedTask;
-	}
-
-	private Task OnCalendarYearMonthChanged((int Year, int Month) move)
-	{
-		if (move.Month is >= 1 and <= 12)
-		{
-			calendarYear = move.Year;
-			calendarMonth = move.Month;
-		}
-
-		return Task.CompletedTask;
+		CurrentDate = date;
 	}
 }

@@ -1,0 +1,43 @@
+﻿@* @inject ILogger<Index> Logger *@
+
+@if (ShowDateSelector)
+{
+	<DateSelector @bind-Value="selectedDate"
+								@bind-Value:after="OnDateSelectorChanged"
+								Label="" />
+}
+else
+{
+	<button class="btn btn-outline-primary btn-lg fw-bold text-decoration-underline"
+					onclick="@OnDateClicked"
+					title="@selectedDate?.ToString("yyyy-MM-dd")">
+		@selectedDate?.ToString("MMM yyyy")
+	</button>
+}
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+	[Parameter, EditorRequired] public EventCallback<DateOnly> OnDateChanged { get; set; }
+
+	private DateOnly? selectedDate;
+	protected override void OnParametersSet()
+	{
+		selectedDate = CurrentDate;
+	}
+
+	bool ShowDateSelector;
+	private void OnDateClicked()
+	{
+		//Logger!.LogWarning("{Method} {Message}", nameof(OnDateClicked), $"ShowingDetails: {ShowDateSelector}");
+		ShowDateSelector = !ShowDateSelector;
+	}
+
+	private void OnDateSelectorChanged()
+	{
+		ShowDateSelector = false;
+		if (selectedDate is not null) 
+		{
+			OnDateChanged.InvokeAsync((DateOnly)selectedDate);
+		}
+	}
+}

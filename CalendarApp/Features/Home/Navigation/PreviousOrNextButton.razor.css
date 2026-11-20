@@ -1,0 +1,10 @@
+/* CSS for PreviousOrNextButton component */
+.bg-purple {
+	background-color: #6f42c1 !important;
+	color: #fff !important;
+}
+
+.bg-pink {
+	background-color: #d63384 !important;
+	color: #fff !important;
+}
