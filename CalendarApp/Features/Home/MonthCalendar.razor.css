@@ -165,12 +165,32 @@
 	white-space: normal;
 }
 
+.label-xs {
+	display: none;
+}
+
+.label-sm {
+	display: inline;
+}
+
 @media (max-width: 576px) {
+	.day-cell {
+		min-height: 72px;
+	}
+
 	.day-number-bg {
 		font-size: 1.75rem;
 	}
 
 	.corner {
 		top: calc(1.75rem / 2);
+	}
+
+	.label-xs {
+		display: inline;
+	}
+
+	.label-sm {
+		display: none;
 	}
 }

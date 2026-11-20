@@ -7,6 +7,10 @@
 else
 {
 	<table class="@HeaderCSS">
+		@if (!string.IsNullOrEmpty(Caption))
+		{
+			<caption class="fs-4">@Caption</caption>
+		}
 		<thead class="@TheadCSS">
 			<tr>@TableHeader</tr>
 		</thead>
@@ -18,14 +22,18 @@ else
 				</tr>
 			}
 		</tbody>
-		<tfoot>
-			<tr class="@TableFooterColor">@TableFooter</tr>
-		</tfoot>
+		@if (TableFooter is not null)
+		{
+			<tfoot>
+				<tr class="@TableFooterColor">@TableFooter</tr>
+			</tfoot>
+		}
 	</table>
 }
 
 @code	{
 	[Parameter] public RenderFragment? TableHeader { get; set; }
+	[Parameter] public string? Caption { get; set; }
 	[Parameter] public RenderFragment<TItem>? RowTemplate { get; set; }
 	[Parameter] public IReadOnlyList<TItem>? Items { get; set; }
 	[Parameter] public string HeaderCSS { get; set; } = "table ";

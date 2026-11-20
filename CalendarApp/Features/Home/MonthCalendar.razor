@@ -23,7 +23,17 @@
 					<div class="corner corner-left">
 						@foreach (var item in day.DayOf)
 						{
-							<span class="@item.Css" title="@item.Title">@item.Text</span>
+							<span class="@item.Css" title="@item.Title" aria-label="@AccessibleName(item)">
+								@if (string.IsNullOrEmpty(item.TextXs))
+								{
+									@item.Text
+								}
+								else
+								{
+									<span class="label-xs">@item.TextXs</span>
+									<span class="label-sm">@item.Text</span>
+								}
+							</span>
 						}
 					</div>
 				}
@@ -45,12 +55,20 @@
 						<div class="overlay-line">
 							@foreach (var item in overlay)
 							{
-								<span class="@item.Css" title="@item.Title">
+								<span class="@item.Css" title="@item.Title" aria-label="@AccessibleName(item)">
 									@if (!string.IsNullOrEmpty(item.Icon))
 									{
 										<i class="@item.Icon me-1" aria-hidden="true"></i>
 									}
-									@item.Text
+									@if (string.IsNullOrEmpty(item.TextXs))
+									{
+										@item.Text
+									}
+									else
+									{
+										<span class="label-xs">@item.TextXs</span>
+										<span class="label-sm">@item.Text</span>
+									}
 								</span>
 							}
 						</div>
@@ -72,7 +90,12 @@
 			</div>
 		}
 	</div>
+	<AbbreviationTable />
+
 </div>
+
+
+
 
 
 @code {
@@ -158,17 +181,17 @@
 		var marks = new List<CornerMark>();
 		if (day.Events.Any(item => item.Text == EventFlag.RoshKodesh.Title))
 		{
-			marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, null, EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.Title));
+			marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, null, EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.Title, ShortTitle(EventFlag.RoshKodesh.Title)));
 		}
 
 		foreach (var sabbath in HighSabbaths(day))
 		{
-			marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title));
+			marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title, sabbath.TitleXs));
 		}
 
 		if (OmerEdge(date) is { } omer)
 		{
-			marks.Add(new CornerMark(omer.Css, null, DayCount.Omer.Title, FeastDay.Omer.Details));
+			marks.Add(new CornerMark(omer.Css, null, DayCount.Omer.Title, FeastDay.Omer.Details, ShortTitle(DayCount.Omer.Title)));
 		}
 
 		return marks;
@@ -223,7 +246,7 @@
 				continue;
 			}
 
-			marks.Add(new CornerMark(item.BadgeCss, item.Icon, item.Text, item.Details));
+			marks.Add(new CornerMark(item.BadgeCss, item.Icon, item.Text, item.Details, ShortTitle(item.Text)));
 		}
 
 		foreach (var count in day.Counts)
@@ -263,7 +286,8 @@
 				Solid(match?.BadgeCss ?? count.BadgeCss),
 				match?.Icon,
 				count.Title,
-				string.IsNullOrEmpty(match?.Details) ? count.Title : match.Details));
+				string.IsNullOrEmpty(match?.Details) ? count.Title : match.Details,
+				ShortTitle(count.Title)));
 		}
 
 		foreach (var item in day.Events)
@@ -272,7 +296,7 @@
 				|| item.Text == EventFlag.YomTeruah.Title
 				|| item.Text == EventFlag.YomKippur.Title)
 			{
-				list.Add(new HighSabbath(item.BadgeCss, item.Icon, item.Text, item.Details));
+				list.Add(new HighSabbath(item.BadgeCss, item.Icon, item.Text, item.Details, ShortTitle(item.Text)));
 			}
 		}
 
@@ -347,8 +371,22 @@
 
 	private static string Readable(string css) =>
 		css.Replace("text-black-50", "text-black", StringComparison.Ordinal);
-	
-private sealed record CalendarDay(
+
+	private static string? ShortTitle(string title)
+	{
+		if (!EventFlag.TryFromTitle(title, out var flag)
+			|| string.Equals(flag.TitleXs, flag.Title, StringComparison.Ordinal))
+		{
+			return null;
+		}
+
+		return flag.TitleXs;
+	}
+
+	private static string? AccessibleName(CornerMark item) =>
+		string.IsNullOrEmpty(item.TextXs) ? null : item.Text;
+
+	private sealed record CalendarDay(
 		DateOnly Date,
 		bool IsCurrentMonth,
 		bool IsToday,
@@ -358,8 +396,8 @@ private sealed record CalendarDay(
 		IReadOnlyList<CornerMark> Erev,
 		IReadOnlyList<CornerMark> Overlay);
 
-	private sealed record CornerMark(string Css, string? Icon, string? Text, string Title);
+	private sealed record CornerMark(string Css, string? Icon, string? Text, string Title, string? TextXs = null);
 
-	private sealed record HighSabbath(string Css, string? Icon, string Text, string Title);
+	private sealed record HighSabbath(string Css, string? Icon, string Text, string Title, string? TitleXs);
 
 }
