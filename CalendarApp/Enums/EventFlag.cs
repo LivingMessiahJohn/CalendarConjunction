@@ -11,7 +11,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 		internal const int Hanukkah = 1;
 		internal const int Purim = 2;
 		internal const int LambSelected = 4;
-		internal const int PassoverMeal = 8;
+		internal const int Seder = 8;
 		internal const int Matzot = 16;
 		internal const int Omer = 32;
 		internal const int Shavuot = 64;
@@ -28,7 +28,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	public static readonly EventFlag Hanukkah = new HanukkahSE();
 	public static readonly EventFlag Purim = new PurimSE();
 	public static readonly EventFlag LambSelected = new LambSelectedSE();
-	public static readonly EventFlag PassoverMeal = new PassoverMealSE();
+	public static readonly EventFlag Seder = new SederSE();
 	public static readonly EventFlag Matzot = new MatzotSE();
 	public static readonly EventFlag Omer = new OmerSE();
 	public static readonly EventFlag Shavuot = new ShavuotSE();
@@ -51,7 +51,7 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 	[
 		Hanukkah,
 		LambSelected,
-		PassoverMeal,
+		Seder,
 		Matzot,
 		Omer,
 		Shavuot,
@@ -167,12 +167,12 @@ public abstract class EventFlag : SmartEnum<EventFlag>
 		public override string TitleXs => "LS";
 		public override FeastGroup? Group => FeastGroup.PassoverSeason;
 	}
-
-	private sealed class PassoverMealSE : EventFlag
+		
+	private sealed class SederSE : EventFlag
 	{
-		public PassoverMealSE() : base(nameof(BitwiseId.PassoverMeal), BitwiseId.PassoverMeal) { }
-		public override string Title => FeastDay.PassoverMeal.Title;
-		public override string TitleXs => "PM";
+		public SederSE() : base(nameof(BitwiseId.Seder), BitwiseId.Seder) { }
+		public override string Title => FeastDay.Seder.Title;
+		public override string TitleXs => "SM";
 		public override FeastGroup? Group => FeastGroup.PassoverSeason;
 	}
 
