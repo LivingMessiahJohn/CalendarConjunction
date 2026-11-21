@@ -1,11 +1,14 @@
 ﻿@page "/"
+@page "/{Year:int}"
+@page "/{Year:int}/{Month:int}"
+@page "/{Year:int}/{Month:int}/{Day:int}"
 
-<PageHeader PageEnum="Nav.Home" />
+@* <PageHeader PageEnum="Nav.Home" /> *@
+<div class="mt-2">
 
 @if (IsCurrentDateInRange())
 {
 	<Header CurrentDate="CurrentDate" OnDateChanged="ReturnedDate" />
-
 	<MonthCalendar CurrentDate="CurrentDate" />
 }
 else
@@ -13,11 +16,52 @@ else
 	<Alert AlertType="alert-danger">Current date is out of range</Alert>
 	@* ToDo: show the current date, and the range in the alert message *@
 }
+</div>
 
 @code {
 
+	[Parameter] public int? Year { get; set; }
+	[Parameter] public int? Month { get; set; }
+	[Parameter] public int? Day { get; set; }
+
 	protected DateOnly CurrentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
 	//protected DateOnly CurrentDate { get; set; } = new DateOnly(1924, 1, 1); // Test out of range date
+
+	protected override void OnParametersSet()
+	{
+		CurrentDate = ResolveCurrentDate();
+	}
+
+	private DateOnly ResolveCurrentDate()
+	{
+		if (Year is not int year)
+		{
+			return DateOnly.FromDateTime(DateTime.Today);
+		}
+
+		if (Month is not int month)
+		{
+			return DateOrOutOfRange(year, 1, 1);
+		}
+
+		if (Day is not int day)
+		{
+			return DateOrOutOfRange(year, month, 1);
+		}
+
+		return DateOrOutOfRange(year, month, day);
+	}
+
+	// A date DateOnly cannot represent is outside the calendar range, so the alert shows.
+	private static DateOnly DateOrOutOfRange(int year, int month, int day)
+	{
+		if (year is < 1 or > 9999 || month is < 1 or > 12 || day < 1 || day > DateTime.DaysInMonth(year, month))
+		{
+			return default;
+		}
+
+		return new DateOnly(year, month, day);
+	}
 
 	private bool IsCurrentDateInRange() =>
 		CurrentDate >= YearHelper.MinDate && CurrentDate <= YearHelper.MaxDate;

@@ -151,12 +151,14 @@
 		}
 
 		var first = new DateOnly(year, month, 1);
+		var lastOfMonth = first.AddMonths(1).AddDays(-1);
 		var start = first.AddDays(-(int)first.DayOfWeek);
+		// Saturday of the week that still holds a day of this month. A later week is only the next month.
+		var end = lastOfMonth.AddDays(6 - (int)lastOfMonth.DayOfWeek);
 		var today = DateOnly.FromDateTime(DateTime.Today);
-		IndexOmer(start, start.AddDays(42));
-		for (var i = 0; i < 42; i++)
+		IndexOmer(start, end.AddDays(1));
+		for (var date = start; date <= end; date = date.AddDays(1))
 		{
-			var date = start.AddDays(i);
 			var hebrew = HomeCalendar.For(date);
 			var overlay = new List<CornerMark>(OverlayMarks(hebrew));
 			if (omerByDate.TryGetValue(date, out var omer))

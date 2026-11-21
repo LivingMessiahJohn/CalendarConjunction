@@ -45,7 +45,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		internal const int Hanukkah = 1;
 		internal const int Purim = 2;
 		internal const int LambSelected = 3;
-		internal const int PassoverMeal = 4;
+		internal const int Seder = 4; 
 		internal const int Matzot = 5;
 		internal const int Omer = 6;
 		internal const int Shavuot = 7;
@@ -58,7 +58,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	#region Declared Public Instances
 	public static readonly FeastDay Purim = new PurimSE();
 	public static readonly FeastDay LambSelected = new LambSelectedSE();
-	public static readonly FeastDay PassoverMeal = new PassoverMealSE();
+	public static readonly FeastDay Seder = new SederSE();
 	public static readonly FeastDay Matzot = new MatzotSE();
 	public static readonly FeastDay Omer = new OmerSE();
 	public static readonly FeastDay Shavuot = new ShavuotSE();
@@ -132,23 +132,23 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 	private class PassoverSeasonAddDays
 	{
 		public const int LambSelected = 10;
-		public const int PassoverMeal = 13;
+		public const int Seder = 13;
 		public const int MatzotFirstDay = 14;
 		public const int OmerCountStart = 15;
 		public const int Shavuot = OmerCountStart + 49;
 	}
 
-	private sealed class PassoverMealSE : FeastDay
+	private sealed class SederSE : FeastDay
 	{
-		public PassoverMealSE() : base($"{nameof(Id.PassoverMeal)}", Id.PassoverMeal) { }
+		public SederSE() : base($"{nameof(Id.Seder)}", Id.Seder) { }
 		public override string Hebrew => "פֶּסַח";
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten"; //. Also, this becomes the first day of Unleavened bread
-		public override string Title => "The Seder meal";
+		public override string Title => "Seder meal";
 		public override string Icon => "fa-solid fa-utensils ";
 		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
-		public override int AddDays => PassoverSeasonAddDays.PassoverMeal; 
+		public override int AddDays => PassoverSeasonAddDays.Seder; 
 		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Nisan.Dates;
 	}
 
