@@ -183,12 +183,12 @@
 		var marks = new List<CornerMark>();
 		if (day.Events.Any(item => item.Text == EventFlag.RoshKodesh.Title))
 		{
-			marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, null, EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.Title, ShortTitle(EventFlag.RoshKodesh.Title)));
+			marks.Add(new CornerMark(CornerBadge(EventFlag.RoshKodesh.Title, icon: false), null, EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.Title, ShortTitle(EventFlag.RoshKodesh.Title)));
 		}
 
 		foreach (var sabbath in HighSabbaths(day))
 		{
-			marks.Add(new CornerMark(sabbath.Css, null, sabbath.Text, sabbath.Title, sabbath.TitleXs));
+			marks.Add(new CornerMark(CornerBadge(sabbath.Text, icon: false, sabbath.Css), null, sabbath.Text, sabbath.Title, sabbath.TitleXs));
 		}
 
 		if (OmerEdge(date) is { } omer)
@@ -205,7 +205,7 @@
 		var next = HomeCalendar.For(date.AddDays(1));
 		if (next.Events.Any(item => item.Text == EventFlag.RoshKodesh.Title))
 		{
-			marks.Add(new CornerMark(FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle", null, EventFlag.RoshKodesh.Title));
+			marks.Add(new CornerMark(CornerBadge(EventFlag.RoshKodesh.Title, icon: true), "fa-regular fa-circle", null, EventFlag.RoshKodesh.Title));
 		}
 
 		foreach (var sabbath in HighSabbaths(next))
@@ -215,7 +215,7 @@
 				continue;
 			}
 
-			marks.Add(new CornerMark(sabbath.Css, sabbath.Icon, null, sabbath.Text));
+			marks.Add(new CornerMark(CornerBadge(sabbath.Text, icon: true, sabbath.Css), sabbath.Icon, null, sabbath.Text));
 		}
 
 		if (OmerEdge(date.AddDays(1)) is { } omer)
@@ -331,13 +331,13 @@
 		|| title == EventFlag.Omer.Title;
 
 	private static bool IsSplitCount(string title) =>
-		title == DayCount.UnleavenedBread.Title
+		title == DayCount.Matzot.Title
 		|| title == DayCount.Sukkot.Title
 		|| title == DayCount.MenorahCount.Title;
 
 	private static bool BesideYom(CornerMark item)
 	{
-		if (item.Title == DayCount.UnleavenedBread.Title
+		if (item.Title == DayCount.Matzot.Title
 			|| item.Title == DayCount.Sukkot.Title
 			|| item.Title == DayCount.Omer.Title)
 		{
@@ -365,6 +365,47 @@
 		return int.TryParse(text[..slash], NumberStyles.None, CultureInfo.InvariantCulture, out number)
 			&& int.TryParse(text[(slash + 1)..], NumberStyles.None, CultureInfo.InvariantCulture, out total)
 			&& total > 0;
+	}
+
+	// Title badges use the bordered transparent const. The evening icon uses the matching *Icon const.
+	private static string CornerBadge(string title, bool icon, string? fallback = null)
+	{
+		if (title == EventFlag.Hanukkah.Title)
+		{
+			return icon ? FeastGroupBadgeColor.HanukkahIcon : FeastGroupBadgeColor.Hanukkah;
+		}
+
+		if (title == EventFlag.Matzot.Title)
+		{
+			return icon ? FeastGroupBadgeColor.MatzotIcon : FeastGroupBadgeColor.MatzotSeason;
+		}
+
+		if (title == EventFlag.Shavuot.Title)
+		{
+			return icon ? FeastGroupBadgeColor.ShavuotIcon : FeastGroupBadgeColor.Shavuot;
+		}
+
+		if (title == EventFlag.YomTeruah.Title)
+		{
+			return icon ? FeastGroupBadgeColor.YomTeruahIcon : FeastGroupBadgeColor.YomTeruah;
+		}
+
+		if (title == EventFlag.YomKippur.Title)
+		{
+			return icon ? FeastGroupBadgeColor.YomKippurIcon : FeastGroupBadgeColor.YomKippur;
+		}
+
+		if (title == EventFlag.Sukkot.Title)
+		{
+			return icon ? FeastGroupBadgeColor.SukkotIcon : FeastGroupBadgeColor.Sukkot;
+		}
+
+		if (title == EventFlag.RoshKodesh.Title)
+		{
+			return icon ? FeastGroupBadgeColor.RoshKodeshIcon : FeastGroupBadgeColor.RoshKodesh;
+		}
+
+		return fallback ?? "";
 	}
 
 	private static string Solid(string css) =>

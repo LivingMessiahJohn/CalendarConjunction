@@ -8,22 +8,31 @@ namespace CalendarApp.Enums;
 
 public static class FeastGroupBadgeColor  // GroupColor
 {
+
 	// Winter Season
-	public const string Hanukkah = "badge bg-info text-black";
+	public const string HanukkahIcon = "badge bg-info text-black";
+	public const string Hanukkah = "border border-info border-4 badge bg-info bg-transparent text-black";
 	public const string MenorahCount = "badge bg-info-subtle text-black-50";
 	public const string Purim = "badge bg-danger";
 
 	// Passover Season
-	public const string PassoverSeason = "badge bg-warning text-black"; 
+	public const string MatzotIcon = "badge bg-warning text-black";
+	public const string MatzotSeason = "border border-warning border-4 badge bg-warning bg-transparent text-black";
 	public const string UnleavenedBreadCount = "badge bg-warning-subtle text-black";
 
-	public const string Shavuot = "badge bg-primary text-white";
+	public const string ShavuotIcon = "badge bg-primary text-white";
+	public const string Shavuot = "border border-primary border-4 badge bg-primary bg-transparent text-dark";
 	public const string Omer = "badge bg-primary-subtle text-black-50";
 
 	// Fall Season
-	public const string YomTeruah = "badge bg-info text-black";
-	public const string YomKippur = "badge bg-danger text-white";
-	public const string Sukkot = "badge bg-success text-white";
+	public const string YomTeruahIcon = "badge bg-info text-black";
+	public const string YomTeruah = "border border-info border-4 badge bg-info bg-transparent text-black";
+
+	public const string YomKippurIcon = "badge bg-danger text-white";
+	public const string YomKippur = "border border-danger border-4 badge bg-danger bg-transparent text-black";
+
+	public const string SukkotIcon = "badge bg-success text-white";
+	public const string Sukkot = "border border-success border-4 badge bg-success bg-transparent text-black";
 	public const string SukkotCount = "badge bg-success-subtle text-black-50";
 
 	// DaysOf
@@ -31,7 +40,9 @@ public static class FeastGroupBadgeColor  // GroupColor
 	public const string Awe = "badge bg-primary-subtle text-black-50";
 
 	// Moon Season
-	public const string RoshKodesh = "badge bg-dark text-white"; // fa-regular fa-circle
+	//public const string RoshKodesh = "badge bg-dark text-white"; // fa-regular fa-circle
+	public const string RoshKodeshIcon = "badge bg-dark text-white";
+	public const string RoshKodesh = "border border-black border-4 badge bg-dark bg-transparent text-black"; // fa-regular fa-circle
 
 
 }
@@ -122,7 +133,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Select on the 10th of Aviv (Nisan)";
 		public override string Title => "Lamb selected";
 		public override string Icon => "fa-regular fa-hand-point-right"; // fa-solid fa-sheep
-		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.LambSelected; // 10;
@@ -145,7 +156,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten"; //. Also, this becomes the first day of Unleavened bread
 		public override string Title => "Seder meal";
 		public override string Icon => "fa-solid fa-utensils ";
-		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.Seder; 
@@ -159,7 +170,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Feast of leavened bread; days 1 and 7 are high sabbaths";
 		public override string Title => nameof(Id.Matzot);
 		public override string Icon => "fa-solid fa-bread-slice";  // fas fa-door-openfa-times-circle 
-		public override string BadgeCss => FeastGroupBadgeColor.PassoverSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.MatzotFirstDay; 

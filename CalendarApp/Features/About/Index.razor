@@ -11,15 +11,71 @@
 		Some new-moon sightings are on the cusp. Halfway around the globe, the illumination of the moon and the sun may not be visible at dawn or dusk.
 	</p>
 
-	<h3 class="h5">Dates show the day of the observance</h3>
-	<p>
+	@*
+		show the day of the observance 
+		Because the Hebrew days starts and ends at dusk an overlap of occurs on the Gregorian calendar
+		Because a Hebrew day starts and ends at dusk an overlap of occurs on the Gregorian calendar
+		A Hebrew day starts a few hours (~6 hours) before the Gregorian day (which starts at midnight) as a consequence an ends 
+		A Gregorian day starts at midnight but a Hebrew day starts before, a few hours (at dusk, ~6 hours)
+
+							<div class="corner corner-right">
+						@foreach (var item in day.Erev)
+						{
+							<span class="@item.Css" title="@item.Title" aria-label="@item.Title">
+								<i class="@item.Icon" aria-hidden="true"></i>
+							</span>
+						}
+					</div>
+
+							<span class="@item.Css" title="@item.Title" aria-label="@AccessibleName(item)">
+								@if (string.IsNullOrEmpty(item.TextXs))
+								{
+									@item.Text
+								}
+								else
+								{
+									<span class="label-xs">@item.TextXs</span>
+									<span class="label-sm">@item.Text</span>
+								}
+							</span>
+
+								<span class="me-0"></span>
+
+								px-5 
+
+		<p>
+		at dusk an overlap of occurs on the Gregorian calendar
+		To express that on the Gregorian calendar 
 		Each date is the day of the observance. In Torah reckoning the date starts at sundown (erev).
-		@EventFlag.RoshKodesh.Title is the exception: those dates show the erev. The aim is to show every date the same way.
+		Rosh Kodesh is the exception: those dates show the erev. The aim is to show every date the same way.
+	</p>
+
+	*@
+
+	<h3 class="h5">Hebrew dates expressed</h3>
+	<p>
+		A Gregorian day starts at midnight but a Hebrew day starts at dusk the evening before (~6 hours),
+		therefore expressing a Hebrew day on a Gregorian calendar becomes complicated.
+		This calendar resolved this by pairing each Hebrew day with an Icon + a Label (see <i>Yom Kippur</i> example below).
+	</p>
+	<div class="mt-1 mb-4 ms-3">
+		<span class="@FeastGroupBadgeColor.YomKippur mx-0"><i class="@FeastDay.YomKippur.Icon"></i></span>
+		<span class="mx-0 px-0 text-black-50"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+		<span class="@FeastGroupBadgeColor.YomKippur">@FeastDay.YomKippur.Title</span>
+	</div>
+	<p>
+		The icon <span class="@FeastGroupBadgeColor.YomKippur mx-0"><i class="@FeastDay.YomKippur.Icon"></i></span>
+		represents the evening before (<b><i>erev</i></b>) and the label
+		<span class="@FeastGroupBadgeColor.YomKippur">@FeastDay.YomKippur.Title</span>
+		represents the <b>day of</b>.
+		You could say that the 
+		<span class="mx-0 px-0 text-black-50"><i class="fa-solid fa-grip-lines-vertical"></i></span>
+		represents mid-night
 	</p>
 
 	<h3 class="h5">The new moon (<i>Rosh Kodesh</i>) drives the other dates</h3>
 	<p>
-		@EventFlag.Purim.Title and @EventFlag.Hanukkah.Title follow rabbinic sources. Every other date is driven by the new-moon dates.
+		Purim and Hanukkah follow rabbinic sources. Every other date is driven by the new-moon dates.
 		Adding a year, or dates for another time zone, is the work required to extend the calendar.
 	</p>
 
@@ -46,7 +102,7 @@
 	<p class="mb-0">
 		<a href="https://github.com/LivingMessiahJohn/CalendarConjunction">CalendarConjunction on GitHub</a>
 	</p>
-@* 
+	@* 
 	“give me a date and location and show the sky,” these are more practical:
 
 	| Option | Type | Notes |

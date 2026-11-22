@@ -15,7 +15,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 	#region Id's
 	private static class Id
 	{
-		internal const int UnleavenedBread = 1; // 1-7
+		internal const int Matzot = 1; // 1-7
 		internal const int Omer = 2;						// 1-50
 		internal const int Repentance = 3;			// 1-40 Elul (6),     Repentance starts 1/40 
 		internal const int Awe = 4;							// 1-10 Tishrei (7 ), Awe starts 1/10        
@@ -25,7 +25,7 @@ public abstract class DayCount : SmartEnum<DayCount>
 	#endregion
 
 	#region  Declared Public Instances
-	public static readonly DayCount UnleavenedBread = new UnleavenedBreadSE();
+	public static readonly DayCount Matzot = new MatzotSE();
 	public static readonly DayCount Omer = new OmerSE();
 	public static readonly DayCount Repentance = new RepentanceSE();
 	public static readonly DayCount Awe = new AweSE();
@@ -53,9 +53,9 @@ public abstract class DayCount : SmartEnum<DayCount>
 
 	#region Private Instantiation
 
-	private sealed class UnleavenedBreadSE : DayCount
+	private sealed class MatzotSE : DayCount
 	{
-		public UnleavenedBreadSE() : base($"{nameof(Id.UnleavenedBread)}", Id.UnleavenedBread) { }
+		public MatzotSE() : base($"{nameof(Id.Matzot)}", Id.Matzot) { }
 		public override ParentRecord Parent => new(ParentTypeEnum.FeastDay,FeastDay.Matzot.Value); 
 		public override int TotalDays => 7;
 		public override string Details => "Days of Chag Hamatzot"; //
