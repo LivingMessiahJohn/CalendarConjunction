@@ -173,6 +173,18 @@
 	display: inline;
 }
 
+@media (max-width: 991.98px) {
+	.day-cell {
+		min-height: 108px;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.day-cell {
+		min-height: 88px;
+	}
+}
+
 @media (max-width: 576px) {
 	.day-cell {
 		min-height: 72px;
