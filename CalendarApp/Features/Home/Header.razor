@@ -3,23 +3,19 @@
 
 @inject ILogger<Index> Logger
 
-<div class="card border-secondary mb-3">
-	<div class="card-header d-flex justify-content-between align-items-center">
-		<PreviousOrNextButton CurrentDate="CurrentDate"
-													Direction=NavEnums.Direction.Previous
-													OnDateSelected="ReturnedDateSelected" />
 
-		<div class="d-flex align-items-center">
-			<Title CurrentDate="CurrentDate" OnDateChanged="ReturnedDateSelected" />
-		</div>
+<div class="d-flex justify-content-between align-items-center px-0 mb-3">
+	<PreviousOrNextButton CurrentDate="CurrentDate"
+												Direction=NavEnums.Direction.Previous
+												OnDateSelected="ReturnedDateSelected" />
 
-		<PreviousOrNextButton CurrentDate="CurrentDate"
-													Direction=NavEnums.Direction.Next
-													OnDateSelected="ReturnedDateSelected" />
+	<div class="d-flex align-items-center">
+		<Title CurrentDate="CurrentDate" OnDateChanged="ReturnedDateSelected" />
 	</div>
 
-	
-
+	<PreviousOrNextButton CurrentDate="CurrentDate"
+												Direction=NavEnums.Direction.Next
+												OnDateSelected="ReturnedDateSelected" />
 </div>
 
 @code {

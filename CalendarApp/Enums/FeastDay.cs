@@ -8,43 +8,58 @@ namespace CalendarApp.Enums;
 
 public static class FeastGroupBadgeColor  // GroupColor
 {
+	public sealed record BadgePair(string Icon, string Title);
+
+	private static readonly Lazy<Dictionary<string, BadgePair>> ByTitle = new(BuildTitles);
+
+	public static BadgePair? ForTitle(string title) =>
+		ByTitle.Value.TryGetValue(title, out var pair) ? pair : null;
+
+	private static Dictionary<string, BadgePair> BuildTitles() =>
+		new(StringComparer.Ordinal)
+		{
+			[FeastDay.Hanukkah.Title] = Hanukkah,
+			[FeastDay.Matzot.Title] = Matzot,
+			[FeastDay.Shavuot.Title] = Shavuot,
+			[FeastDay.YomTeruah.Title] = YomTeruah,
+			[FeastDay.YomKippur.Title] = YomKippur,
+			[FeastDay.Sukkot.Title] = Sukkot,
+			[EventFlag.RoshKodesh.Title] = RoshKodesh,
+		};
+
+	private static string Filled(string background, string? ink = null) =>
+		ink is null ? $"badge bg-{background}" : $"badge bg-{background} {ink}";
+
+	private static string Outline(string background, string ink, string? border = null) =>
+		$"border border-{border ?? background} border-2 border-sm-4 badge bg-{background} bg-transparent {ink}";
+
+	private static string Subtle(string background, string ink = "text-black-50") =>
+		$"badge bg-{background}-subtle {ink}";
 
 	// Winter Season
-	public const string HanukkahIcon = "badge bg-info text-black";
-	public const string Hanukkah = "border border-info border-4 badge bg-info bg-transparent text-black";
-	public const string MenorahCount = "badge bg-info-subtle text-black-50";
-	public const string Purim = "badge bg-danger";
+	public static readonly BadgePair Hanukkah = new(Filled("info", "text-black"), Outline("info", "text-black"));
+	public static readonly string MenorahCount = Subtle("info");
+	public static readonly string Purim = Filled("danger");
 
 	// Passover Season
-	public const string MatzotIcon = "badge bg-warning text-black";
-	public const string MatzotSeason = "border border-warning border-4 badge bg-warning bg-transparent text-black";
-	public const string UnleavenedBreadCount = "badge bg-warning-subtle text-black";
+	public static readonly BadgePair Matzot = new(Filled("warning", "text-black"), Outline("warning", "text-black"));
+	public static readonly string UnleavenedBreadCount = Subtle("warning", "text-black");
 
-	public const string ShavuotIcon = "badge bg-primary text-white";
-	public const string Shavuot = "border border-primary border-4 badge bg-primary bg-transparent text-dark";
-	public const string Omer = "badge bg-primary-subtle text-black-50";
+	public static readonly BadgePair Shavuot = new(Filled("primary", "text-white"), Outline("primary", "text-dark"));
+	public static readonly string Omer = Subtle("primary");
 
 	// Fall Season
-	public const string YomTeruahIcon = "badge bg-info text-black";
-	public const string YomTeruah = "border border-info border-4 badge bg-info bg-transparent text-black";
-
-	public const string YomKippurIcon = "badge bg-danger text-white";
-	public const string YomKippur = "border border-danger border-4 badge bg-danger bg-transparent text-black";
-
-	public const string SukkotIcon = "badge bg-success text-white";
-	public const string Sukkot = "border border-success border-4 badge bg-success bg-transparent text-black";
-	public const string SukkotCount = "badge bg-success-subtle text-black-50";
+	public static readonly BadgePair YomTeruah = new(Filled("info", "text-black"), Outline("info", "text-black"));
+	public static readonly BadgePair YomKippur = new(Filled("danger", "text-white"), Outline("danger", "text-black"));
+	public static readonly BadgePair Sukkot = new(Filled("success", "text-white"), Outline("success", "text-black"));
+	public static readonly string SukkotCount = Subtle("success");
 
 	// DaysOf
-	public const string Repentance = "badge bg-info-subtle text-black-50";
-	public const string Awe = "badge bg-primary-subtle text-black-50";
+	public static readonly string Repentance = Subtle("info");
+	public static readonly string Awe = Subtle("primary");
 
 	// Moon Season
-	//public const string RoshKodesh = "badge bg-dark text-white"; // fa-regular fa-circle
-	public const string RoshKodeshIcon = "badge bg-dark text-white";
-	public const string RoshKodesh = "border border-black border-4 badge bg-dark bg-transparent text-black"; // fa-regular fa-circle
-
-
+	public static readonly BadgePair RoshKodesh = new(Filled("dark", "text-white"), Outline("dark", "text-black", "black"));
 }
 
 
@@ -133,7 +148,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Select on the 10th of Aviv (Nisan)";
 		public override string Title => "Lamb selected";
 		public override string Icon => "fa-regular fa-hand-point-right"; // fa-solid fa-sheep
-		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.Matzot.Title;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.LambSelected; // 10;
@@ -156,7 +171,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The Seder Meal is prepared on the 14th of Aviv. As evening starts, the meal is eaten"; //. Also, this becomes the first day of Unleavened bread
 		public override string Title => "Seder meal";
 		public override string Icon => "fa-solid fa-utensils ";
-		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.Matzot.Title;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.Seder; 
@@ -170,7 +185,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Feast of leavened bread; days 1 and 7 are high sabbaths";
 		public override string Title => nameof(Id.Matzot);
 		public override string Icon => "fa-solid fa-bread-slice";  // fas fa-door-openfa-times-circle 
-		public override string BadgeCss => FeastGroupBadgeColor.MatzotSeason;
+		public override string BadgeCss => FeastGroupBadgeColor.Matzot.Title;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.PassoverSeason;
 		public override int AddDays => PassoverSeasonAddDays.MatzotFirstDay; 
@@ -198,7 +213,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "The high sabbath begins the evening before; This is also called Pentecost";
 		public override string Title => nameof(Id.Shavuot);
 		public override string Icon => "fab fa-creative-commons-zero";
-		public override string BadgeCss => FeastGroupBadgeColor.Shavuot;
+		public override string BadgeCss => FeastGroupBadgeColor.Shavuot.Title;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.OmerAndShavuot;
 
@@ -213,10 +228,10 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Day of Trumpets, a high sabbath";
 		public override string Title => "Yom Teruah"; 
 		public override string Icon => "fas fa-bullhorn";
-		public override string BadgeCss => FeastGroupBadgeColor.YomTeruah;
+		public override string BadgeCss => FeastGroupBadgeColor.YomTeruah.Title;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.Fall;
-		public override int AddDays => 1;
+		public override int AddDays => 0;
 		public override IReadOnlyDictionary<int, DateOnly> AnchorDates => Tishri.Dates;
 	}
 
@@ -227,7 +242,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Day of Atonements; a high sabbath";  // In the afternoon we have our Yom Kippur service and break the fast after the sun sets
 		public override string Title => "Yom Kippur";
 		public override string Icon => "fas fa-hands-helping";
-		public override string BadgeCss => FeastGroupBadgeColor.YomKippur;
+		public override string BadgeCss => FeastGroupBadgeColor.YomKippur.Title;
 		public override bool HasCounting => false;
 		public override FeastGroup Group => FeastGroup.Fall;
 		public override int AddDays => 10;
@@ -241,7 +256,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "Feast of tabernacles; days 1 and 8 are high sabbaths";  // Preparation Day, High Sabbath begins at sunset
 		public override string Title => nameof(Id.Sukkot);
 		public override string Icon => "fas fa-campground";
-		public override string BadgeCss => FeastGroupBadgeColor.Sukkot;
+		public override string BadgeCss => FeastGroupBadgeColor.Sukkot.Title;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.Fall;
 		public override int AddDays => 15;
@@ -255,7 +270,7 @@ public abstract class FeastDay : SmartEnum<FeastDay>
 		public override string Details => "First day of Hanukkah; Date determined by Rabbinic sources";
 		public override string Title => nameof(Id.Hanukkah);
 		public override string Icon => "fas fa-hanukiah";
-		public override string BadgeCss => FeastGroupBadgeColor.Hanukkah;
+		public override string BadgeCss => FeastGroupBadgeColor.Hanukkah.Title;
 		public override bool HasCounting => true;
 		public override FeastGroup Group => FeastGroup.Winter;
 		public override int AddDays => 0;

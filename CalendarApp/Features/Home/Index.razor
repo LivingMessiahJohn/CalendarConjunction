@@ -6,16 +6,23 @@
 @* <PageHeader PageEnum="Nav.Home" /> *@
 <div class="mt-2">
 
-@if (IsCurrentDateInRange())
-{
-	<Header CurrentDate="CurrentDate" OnDateChanged="ReturnedDate" />
-	<MonthCalendar CurrentDate="CurrentDate" />
-}
-else
-{
-	<Alert AlertType="alert-danger">Current date is out of range</Alert>
-	@* ToDo: show the current date, and the range in the alert message *@
-}
+	@if (IsCurrentDateInRange())
+	{
+		<div class="d-print-none">
+			<Header CurrentDate="CurrentDate" OnDateChanged="ReturnedDate" />
+		</div>
+
+		<div class="d-none d-print-block">
+			<HeaderPrintPreview CurrentDate="CurrentDate" />
+		</div>
+
+		<MonthCalendar CurrentDate="CurrentDate" />
+	}
+	else
+	{
+		<Alert AlertType="alert-danger">Current date is out of range</Alert>
+		@* ToDo: show the current date, and the range in the alert message *@
+	}
 </div>
 
 @code {

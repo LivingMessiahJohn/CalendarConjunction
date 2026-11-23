@@ -108,8 +108,13 @@
 
 .corner-left {
 	left: 1px;
+	right: 1px;
 	align-items: flex-start;
-	max-width: calc(100% - 2rem);
+	max-width: none;
+}
+
+.corner-left .badge {
+	max-width: 100%;
 }
 
 .corner-right {
@@ -182,6 +187,12 @@
 @media (max-width: 767.98px) {
 	.day-cell {
 		min-height: 88px;
+	}
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+	.corner-left .badge {
+		font-size: 0.6rem;
 	}
 }
 
