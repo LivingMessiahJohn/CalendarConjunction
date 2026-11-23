@@ -144,7 +144,7 @@ public static class ConstantCalendar
 
 		if (bucket.IsNewMoon && seen.Add(EventFlag.RoshKodesh.Title))
 		{
-			events.Add(new EventBadge(EventFlag.RoshKodesh.Title, FeastGroupBadgeColor.RoshKodesh, "fa-regular fa-circle"));
+			events.Add(new EventBadge(EventFlag.RoshKodesh.Title, EventFlag.RoshKodesh.BadgeCss, EventFlag.RoshKodesh.Icon));
 		}
 
 		return events

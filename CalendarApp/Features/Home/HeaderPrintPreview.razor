@@ -1,0 +1,34 @@
+﻿@using CalendarApp.Features.Home.Data
+
+<div class="print-months">
+	<div class="print-side">
+		@if (!string.IsNullOrEmpty(PrevMonthName))
+		{
+			<span class="fs-4 badge bg-pink">@PrevMonthName</span>
+		}
+	</div>
+
+	<span class="fs-3">@CurrentDate.ToString("MMMM yyyy")</span>
+
+	<div class="print-side print-side-end">
+		@if (!string.IsNullOrEmpty(NextMonthName))
+		{
+			<span class="fs-4 badge bg-purple">@NextMonthName</span>
+		}
+	</div>
+</div>
+
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+
+	private string? PrevMonthName;
+	private string? NextMonthName;
+
+	protected override void OnParametersSet()
+	{
+		var labels = HebrewCalendar.LabelsFor(CurrentDate);
+		PrevMonthName = labels.Earlier;
+		NextMonthName = labels.Later;
+	}
+}

@@ -1,0 +1,28 @@
+.print-months {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	align-items: center;
+	margin-bottom: 1rem;
+}
+
+.print-side {
+	min-width: 0;
+}
+
+.print-side-end {
+	justify-self: end;
+}
+
+.bg-purple {
+	background-color: #6f42c1 !important;
+	color: #fff !important;
+	-webkit-print-color-adjust: exact !important;
+	print-color-adjust: exact !important;
+}
+
+.bg-pink {
+	background-color: #d63384 !important;
+	color: #fff !important;
+	-webkit-print-color-adjust: exact !important;
+	print-color-adjust: exact !important;
+}
