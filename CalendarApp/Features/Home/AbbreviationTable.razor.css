@@ -11,20 +11,21 @@
 }
 
 .xs-legend ::deep table {
-	width: 100%;
+	width: auto;
 	margin-bottom: 0;
-	font-size: 0.8rem;
+	font-size: 0.65rem;
 }
 
 .xs-legend ::deep th,
 .xs-legend ::deep td {
+	padding: 0.1rem 0.2rem;
 	text-align: left;
 	vertical-align: middle;
+	white-space: nowrap;
 }
 
 @media (max-width: 576px) {
 	.xs-legend {
 		display: block;
-		margin-top: 0.75rem;
 	}
 }

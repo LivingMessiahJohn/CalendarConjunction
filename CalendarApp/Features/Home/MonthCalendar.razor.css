@@ -1,6 +1,32 @@
-.calendar {
+.month-view {
 	max-width: 900px;
 	margin: 0 auto;
+}
+
+@media (max-width: 575.98px) {
+	.month-foot {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.5rem;
+		margin-top: 0.5rem;
+	}
+
+	.month-foot ::deep .xs-legend {
+		flex: 0 0 auto;
+		width: auto;
+		max-width: 42%;
+		min-width: 0;
+		margin: 0;
+	}
+
+	.month-foot ::deep .parasha-align {
+		flex: 1 1 auto;
+		width: auto;
+		max-width: none;
+		min-width: 0;
+		margin: 0;
+	}
 }
 
 .calendar-header {
@@ -215,5 +241,13 @@
 
 	.label-sm {
 		display: none;
+	}
+
+	.corner .badge {
+		font-size: 0.5rem;
+	}
+
+	.biblical-overlay {
+		font-size: 0.475rem;
 	}
 }

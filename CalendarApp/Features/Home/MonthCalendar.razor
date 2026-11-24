@@ -3,6 +3,7 @@
 @using HebrewDay = CalendarApp.Features.Home.Data.HebrewDay
 @* HomeCalendar avoids the clash with System.Globalization.HebrewCalendar. *@
 
+<div class="month-view">
 <div class="calendar">
 
 	<div class="weekdays">
@@ -94,7 +95,11 @@
 			</div>
 		}
 	</div>
+</div>
+<div class="month-foot">
 	<AbbreviationTable Items="LegendItems" />
+	@ChildContent
+</div>
 
 </div>
 
@@ -105,8 +110,10 @@
 @code {
 	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
 
+	[Parameter] public RenderFragment? ChildContent { get; set; }
+
 	private readonly List<CalendarDay> Days = [];
-	private IReadOnlyList<EventFlag> LegendItems = [];
+	private IReadOnlyList<AbbreviationTable.LegendRow> LegendItems = [];
 	private string? earlierMonth;
 	private string? laterMonth;
 	private readonly Dictionary<DateOnly, CornerMark> omerByDate = [];
@@ -188,25 +195,56 @@
 		LegendItems = LegendFor(Days);
 	}
 
-	private static IReadOnlyList<EventFlag> LegendFor(IReadOnlyList<CalendarDay> days)
+	private static IReadOnlyList<AbbreviationTable.LegendRow> LegendFor(IReadOnlyList<CalendarDay> days)
 	{
 		var titles = new HashSet<string>(StringComparer.Ordinal);
+		var omerIcons = new List<string>();
 		foreach (var day in days)
 		{
-			CollectLegendTitles(day.DayOf, titles);
-			CollectLegendTitles(day.Overlay, titles);
+			CollectLegendTitles(day.DayOf, titles, omerIcons);
+			CollectLegendTitles(day.Overlay, titles, omerIcons);
 		}
 
-		return EventFlag.XsLegend.Where(flag => titles.Contains(flag.Title)).ToList();
+		var rows = new List<AbbreviationTable.LegendRow>();
+		foreach (var flag in EventFlag.XsLegend)
+		{
+			if (!titles.Contains(flag.Title))
+			{
+				continue;
+			}
+
+			if (flag == EventFlag.Omer)
+			{
+				foreach (var icon in omerIcons)
+				{
+					var edge = icon == OmerBeginsIcon ? "start" : "finish";
+					rows.Add(new AbbreviationTable.LegendRow(flag.BadgeCss, flag.TitleXs, $"{flag.Title} {edge}", [icon]));
+				}
+
+				continue;
+			}
+
+			rows.Add(new AbbreviationTable.LegendRow(flag.BadgeCss, flag.TitleXs, flag.Title, []));
+		}
+
+		return rows;
 	}
 
-	private static void CollectLegendTitles(IReadOnlyList<CornerMark> marks, HashSet<string> titles)
+	private static void CollectLegendTitles(IReadOnlyList<CornerMark> marks, HashSet<string> titles, List<string> omerIcons)
 	{
 		foreach (var mark in marks)
 		{
-			if (!string.IsNullOrEmpty(mark.TextXs) && mark.Text is not null)
+			if (string.IsNullOrEmpty(mark.TextXs) || mark.Text is null)
 			{
-				titles.Add(mark.Text);
+				continue;
+			}
+
+			titles.Add(mark.Text);
+			if (mark.Text == DayCount.Omer.Title
+				&& !string.IsNullOrEmpty(mark.Icon)
+				&& !omerIcons.Contains(mark.Icon))
+			{
+				omerIcons.Add(mark.Icon);
 			}
 		}
 	}

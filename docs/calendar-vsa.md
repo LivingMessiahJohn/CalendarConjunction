@@ -44,6 +44,7 @@ CalendarApp/
     Pages/NotFound.razor
   Features/
     Home/Index.razor             /
+    Home/FooterParashaCard.razor Saturday parasha rows for the month on screen
     Home/Data/HebrewCalendar.cs  month grid for YearHelper.MinDate through MaxDate
     About/Index.razor            /about
     Constellations/Index.razor   /constellations
