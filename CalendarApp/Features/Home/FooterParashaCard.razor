@@ -1,0 +1,99 @@
+@using System.Globalization
+@using RCL.Features.Parasha.Enums
+
+<div class="parasha-align">
+	<div class="card parasha-card">
+		<div class="parasha-body">
+			<table class="parasha-table">
+				<thead>
+					<tr>
+						<th scope="col">Brit &amp; Haftorah</th>
+						<th scope="col"><b>Torah</b></th>
+						<th scope="col">@MonthLabel</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var row in Rows)
+					{
+						<tr class="@(row.IsCurrentWeek ? "is-current-week" : null)">
+							<td>@row.BritAndHaftorah</td>
+							<td><b>@row.Torah</b></td>
+							<td class="parasha-day">@row.Day</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<div class="parasha-label">Parasha</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired] public DateOnly CurrentDate { get; set; }
+
+	private IReadOnlyList<Row> Rows { get; set; } = [];
+
+	private string MonthLabel { get; set; } = "";
+
+	protected override void OnParametersSet()
+	{
+		MonthLabel = CurrentDate.ToString("MMM", CultureInfo.InvariantCulture);
+		Rows = ReadingsFor(CurrentDate);
+	}
+
+	private static List<Row> ReadingsFor(DateOnly current)
+	{
+		var byDate = Triennial.List
+			.Where(item => item.DateOnly.Year == current.Year && item.DateOnly.Month == current.Month)
+			.ToDictionary(item => item.DateOnly);
+		var weekSaturday = SaturdayOnOrAfter(current);
+
+		var rows = new List<Row>();
+		foreach (var date in SaturdaysIn(current.Year, current.Month))
+		{
+			byDate.TryGetValue(date, out var reading);
+			rows.Add(new Row(
+				date.Day,
+				reading is null ? "" : reading.TorahAbrv.Trim(),
+				JoinReadings(reading?.BritAbrv ?? "", reading?.HaftorahAbrv ?? ""),
+				date == weekSaturday));
+		}
+
+		return rows;
+	}
+
+	// The month grid is Sun–Sat, so the row for CurrentDate is that week's Saturday.
+	private static DateOnly SaturdayOnOrAfter(DateOnly date)
+	{
+		var days = ((int)DayOfWeek.Saturday - (int)date.DayOfWeek + 7) % 7;
+		return date.AddDays(days);
+	}
+
+	private static IEnumerable<DateOnly> SaturdaysIn(int year, int month)
+	{
+		var first = new DateOnly(year, month, 1);
+		var offset = ((int)DayOfWeek.Saturday - (int)first.DayOfWeek + 7) % 7;
+		var days = DateTime.DaysInMonth(year, month);
+		for (var day = 1 + offset; day <= days; day += 7)
+		{
+			yield return new DateOnly(year, month, day);
+		}
+	}
+
+	private static string JoinReadings(string brit, string haftorah)
+	{
+		if (brit.Length == 0)
+		{
+			return haftorah;
+		}
+
+		if (haftorah.Length == 0)
+		{
+			return brit;
+		}
+
+		return $"{brit} | {haftorah}";
+	}
+
+	private sealed record Row(int Day, string Torah, string BritAndHaftorah, bool IsCurrentWeek);
+}

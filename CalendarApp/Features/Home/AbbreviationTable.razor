@@ -1,16 +1,23 @@
 @if (Items.Count > 0)
 {
-	<div class="xs-legend ms-3">
-	<TableTemplate TItem="EventFlag"
+	<div class="xs-legend">
+	<TableTemplate TItem="LegendRow"
 								 Items="Items"
-								 Caption="Abbreviation Legend"
 								 HeaderCSS="table table-sm table-striped align-middle caption-top">
 		<TableHeader>
 			<th scope="col">Abbr.</th>
 			<th scope="col">Event</th>
 		</TableHeader>
 		<RowTemplate>
-			<td><span class="@context.BadgeCss">@context.TitleXs</span></td>
+			<td>
+				<span class="@context.BadgeCss">
+					@context.TitleXs
+					@foreach (var icon in context.Icons)
+					{
+						<i class="@icon ms-1" aria-hidden="true"></i>
+					}
+				</span>
+			</td>
 			<td>@context.Title</td>
 		</RowTemplate>
 	</TableTemplate>
@@ -18,5 +25,7 @@
 }
 
 @code {
-	[Parameter] public IReadOnlyList<EventFlag> Items { get; set; } = [];
+	[Parameter] public IReadOnlyList<LegendRow> Items { get; set; } = [];
+
+	public sealed record LegendRow(string BadgeCss, string TitleXs, string Title, IReadOnlyList<string> Icons);
 }
